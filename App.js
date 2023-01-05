@@ -1,117 +1,67 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
+// Basic React Native App
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// Screens
+import Start from './src/components/Start';
+import SignUp from './src/components/SignUp';
+import SignIn from './src/components/SignIn';
+import Main from './src/components/Main';
 
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
+// React Native Hooks
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+// Use Icons
+import Ionic from 'react-native-vector-icons/Ionicons';
+
+const App = () => {
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  const BottomTabScreen = () => {
+    return (
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          tabBarHideOnKeyboard: true,
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarStyle: {
+            height: 70,
           },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName;
+            if (route.name === 'Main') {
+              iconName = focused ? 'logo-bitbucket' : 'ios-logo-bitbucket';
+            } else if (route.name === 'Shared') {
+              iconName = focused ? 'share-social' : 'share-social-outline';
+            } else if (route.name === 'Chat') {
+              iconName = focused
+                ? 'chatbubble-ellipses-sharp'
+                : 'chatbubble-ellipses-outline';
+            } else if (route.name === 'Friends') {
+              iconName = focused
+                ? 'notifications-sharp'
+                : 'notifications-outline';
+            }
+
+            return <Ionic name={iconName} size={size} color={color} />;
           },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+        })}>
+        <Tab.Screen name="Main" component={Main} />
+        <Tab.Screen name="Shared" component={Share} />
+        <Tab.Screen name="Chat" component={Chat} />
+        <Tab.Screen name="Friends" component={Alarm} />
+      </Tab.Navigator>
+    );
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Main" component={BottomTabScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
