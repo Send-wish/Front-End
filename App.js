@@ -2,10 +2,17 @@
 import React from 'react';
 
 // Screens
-import Start from './src/components/Start';
-import SignUp from './src/components/SignUp';
-import SignIn from './src/components/SignIn';
-import Main from './src/components/Main';
+// import Start from './src/components/Start';
+// import SignUp from './src/components/SignUp';
+// import SignIn from './src/components/SignIn';
+import Main from './src/screens/Main';
+import Shared from './src/screens/Shared';
+import Chat from './src/screens/Chat';
+import Friends from './src/screens/Friends';
+
+// color theme
+import {ThemeProvider} from 'styled-components';
+import {theme} from './src/theme';
 
 // React Native Hooks
 import {NavigationContainer} from '@react-navigation/native';
@@ -27,6 +34,8 @@ const App = () => {
           headerShown: false,
           tabBarStyle: {
             height: 70,
+            backgroundColor: theme.mainBackground,
+            borderRadius: 20,
           },
           tabBarIcon: ({focused, color, size}) => {
             let iconName;
@@ -48,9 +57,9 @@ const App = () => {
           },
         })}>
         <Tab.Screen name="Main" component={Main} />
-        <Tab.Screen name="Shared" component={Share} />
+        <Tab.Screen name="Shared" component={Shared} />
         <Tab.Screen name="Chat" component={Chat} />
-        <Tab.Screen name="Friends" component={Alarm} />
+        <Tab.Screen name="Friends" component={Friends} />
       </Tab.Navigator>
     );
   };
@@ -58,7 +67,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Main" component={BottomTabScreen} />
+        <Stack.Screen name="Bottom" component={BottomTabScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
