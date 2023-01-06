@@ -16,8 +16,10 @@
     "@react-navigation/native-stack": "^6.9.7",
     "react": "18.2.0",
     "react-native": "^0.70.6",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "^3.18.2",
+    "react-native-theme": "^0.1.8",
     "react-native-vector-icons": "^9.2.0",
     "react-native-view": "^1.1.0",
     "styled-components": "^5.3.6"
@@ -36,4 +38,3 @@
     "preset": "react-native"
   }
 }
-

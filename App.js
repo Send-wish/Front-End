@@ -27,6 +27,7 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   const BottomTabScreen = () => {
     return (
+      <ThemeProvider theme={theme}>
       <Tab.Navigator
         screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
@@ -61,6 +62,7 @@ const App = () => {
         <Tab.Screen name="Chat" component={Chat} />
         <Tab.Screen name="Friends" component={Friends} />
       </Tab.Navigator>
+      </ThemeProvider>
     );
   };
 
