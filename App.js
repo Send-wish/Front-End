@@ -10,6 +10,10 @@ import Shared from './src/screens/Shared';
 import Chat from './src/screens/Chat';
 import Friends from './src/screens/Friends';
 
+// color theme
+import {ThemeProvider} from 'styled-components';
+import {theme} from './src/theme';
+
 // React Native Hooks
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -30,6 +34,8 @@ const App = () => {
           headerShown: false,
           tabBarStyle: {
             height: 70,
+            backgroundColor: theme.mainBackground,
+            borderRadius: 20,
           },
             tabBarIcon: ({focused, color, size}) => {
               let iconName;
