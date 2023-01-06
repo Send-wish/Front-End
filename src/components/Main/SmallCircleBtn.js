@@ -1,18 +1,19 @@
 import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
+import {theme} from '../../theme';
 
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
-  margin: 20px 20px 20px 20px;
-  width: 15px;
-  height: 15px;
+  margin: 6px 8px 0px 2px;
+  width: 25px;
+  height: 25px;
   justify-content: center;
   align-items: center;
-  border-radius: 7.5px;
+  border-radius: 11px;
 `;
 
-const CollectionCircle = ({onPress, disabled}) => {
+const SmallCircleBtn = ({onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Container />
@@ -20,4 +21,4 @@ const CollectionCircle = ({onPress, disabled}) => {
   );
 };
 
-export default CollectionCircle;
+export default SmallCircleBtn;

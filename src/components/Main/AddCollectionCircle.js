@@ -57,4 +57,8 @@ const AddCollectionCircle = ({onPress, title}) => {
   );
 };
 
+<<<<<<< HEAD
 export default AddCollectionCircle;
+=======
+export default AddCollectionCircle;
+>>>>>>> 1ad815514b54f43da7cba1a7b33d178cd5ae3c7a

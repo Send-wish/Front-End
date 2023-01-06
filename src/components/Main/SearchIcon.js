@@ -24,4 +24,8 @@ const SearchIcon = ({onPress}) => {
   );
 };
 
+<<<<<<< HEAD
 export default SearchIcon;
+=======
+export default SearchIcon;
+>>>>>>> 1ad815514b54f43da7cba1a7b33d178cd5ae3c7a
