@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {theme} from '../../theme';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
@@ -13,12 +14,14 @@ const Container = styled.View`
   border-radius: 11px;
 `;
 
-const SmallCircleBtn = ({onPress}) => {
+const SearchIcon = ({onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Container />
+      <Container>
+       <Entypo name="magnifying-glass" size={15} color={theme.basicText} />
+      </Container>
     </TouchableOpacity>
   );
 };
 
-export default SmallCircleBtn;
+export default SearchIcon;
