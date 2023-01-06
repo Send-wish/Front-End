@@ -37,9 +37,12 @@ const App = () => {
             height: 70,
             backgroundColor: theme.mainBackground,
             borderRadius: 20,
+            opacity: 0.9,
+            position: 'absolute'
           },
-            tabBarIcon: ({focused, color, size}) => {
+            tabBarIcon: ({focused, size}) => {
               let iconName;
+              
               if (route.name === 'Main') {
                 iconName = focused ? 'logo-bitbucket' : 'ios-logo-bitbucket';
               } else if (route.name === 'Shared') {
@@ -54,7 +57,7 @@ const App = () => {
                   : 'notifications-outline';
               }
 
-              return <Ionic name={iconName} size={size} color={color} />;
+              return <Ionic name={iconName} size={size} color="white" />;
             },
         })}>
         <Tab.Screen name="Main" component={Main} />
