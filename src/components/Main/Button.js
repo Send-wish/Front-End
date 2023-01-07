@@ -14,13 +14,13 @@ const Container = styled.View`
 
 const Title = styled.Text`
   font-size: 24px;
-  test-align: center;
+  text-align: center;
   color: ${({theme}) => theme.basicText};
 `;
 
 const Button = ({title, onPress, style}) => {
   return (
-    <TouchableOpacity style={{margin: 10, flex:1, justifyContent: "flex-start", alignItems: "center" }} >
+    <TouchableOpacity onPress={onPress} style={{margin: 10, flex:1, justifyContent: "flex-start", alignItems: "center" }} >
     <Container >
         <Title>{title}</Title>
     </Container>

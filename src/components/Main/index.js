@@ -5,7 +5,8 @@ import AddCollectionCircle from './AddCollectionCircle';
 // import FilterIcon from './Filtericon';
 import SmallCircleBtn from './SmallCircleBtn';
 import EditIcon from './EditIcon';
-
+import Input from './Input';
+import Button from './Button';
 
 export {
   CollectionCircle,
@@ -14,5 +15,7 @@ export {
   SmallCircleBtn,
   SearchIcon,
   // FilterIcon,
+  Input,
   EditIcon,
+  Button
 };
