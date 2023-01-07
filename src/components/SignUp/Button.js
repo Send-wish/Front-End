@@ -3,32 +3,27 @@ import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
-  background-color: ${({theme}) => theme.tintColorPink};
-  height: 50px;
-  width: 180px;
+  background-color: ${({theme}) => theme.tintColorGreen};
+  height: 60px;
+  width: 100%;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
-  margin-top: 20px;
+  border-radius: 15px;
+  margin-top: 25px;
+  opacity: ${({disabled}) => (disabled ? 0.5 : 1)};
 `;
 
 const Title = styled.Text`
-  font-size: 24px;
+  font-size: 22px;
   text-align: center;
+  font-weight: bold;
   color: ${({theme}) => theme.basicText};
 `;
 
-const Button = ({title, onPress}) => {
+const Button = ({title, onPress, disabled}) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        margin: 10,
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-      }}>
-      <Container>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <Container disabled ={disabled}>
         <Title>{title}</Title>
       </Container>
     </TouchableOpacity>
