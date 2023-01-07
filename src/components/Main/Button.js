@@ -15,15 +15,16 @@ const Container = styled.View`
 const Title = styled.Text`
   font-size: 24px;
   text-align: center;
+  text-align: center;
   color: ${({theme}) => theme.basicText};
 `;
 
-const Button = ({title, onPress, style}) => {
+const Button = ({title, onPress}) => {
   return (
     <TouchableOpacity onPress={onPress} style={{margin: 10, flex:1, justifyContent: "flex-start", alignItems: "center" }} >
     <Container >
         <Title>{title}</Title>
-    </Container>
+      </Container>
     </TouchableOpacity>
   );
 };

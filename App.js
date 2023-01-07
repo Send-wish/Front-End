@@ -13,6 +13,17 @@ import {
   SignUp,
   Start,
 } from './src/screens';
+import {
+  Chat,
+  Collection,
+  Friends,
+  ItemDetail,
+  Main,
+  Shared,
+  SignIn,
+  SignUp,
+  Start,
+} from './src/screens';
 
 // color theme
 import {ThemeProvider} from 'styled-components';

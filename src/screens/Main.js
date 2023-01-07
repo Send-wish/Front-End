@@ -1,4 +1,5 @@
 import React, {Component, useState} from 'react';
+import React, {Component, useState} from 'react';
 import {
   View,
   Text,
@@ -18,6 +19,8 @@ import {
   AddCollectionCircle,
   SearchIcon,
   EditIcon,
+  Input,
+  Button
   // FilterIcon
 } from '../components/Main';
 import {theme} from '../theme';
