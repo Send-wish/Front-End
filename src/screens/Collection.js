@@ -1,19 +1,29 @@
-import React, {Component} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Modal,
 } from 'react-native';
 import styled from 'styled-components/native';
+import Feather from 'react-native-vector-icons/Feather';
 
 import {
   SafeAreaProvider,
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {SmallCircleBtn, ItemBox, CollectionCircle} from '../components/Main';
+import {
+  SearchIcon,
+  ItemBox,
+  ProfileImage,
+  EditIcon,
+  Input,
+  Button,
+} from '../components/Collection';
+
 import {theme} from '../theme';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -22,6 +32,7 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
+  justify-content: center;
 `;
 
 const UpperContainer = styled.View`
@@ -31,45 +42,29 @@ const UpperContainer = styled.View`
   padding: 0 5px;
 `;
 
-const RoundContainer = styled.View`
-  flex: 6;
+const BottomContainer = styled.View`
+  flex: 4;
   flex-direction: row;
   background-color: ${({theme}) => theme.subBackground};
   padding: 10px;
+  padding-top: 20px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
-  margin: 0px 0px 30px 0px;
-  position: relative;
-`;
-
-const Title = styled.Text`
-  margin: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-`;
-
-const PersonName = styled.Text`
-  margin: 10px 0px 10px 10px;
-  font-size: 15px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-`;
-
-const PencilIcon = styled.Text`
-  color: ${({theme}) => theme.basicText};
-  margin: 15px 15px 0px 0px;
-`;
-
-const PersonIcon = styled.Text`
-  color: ${({theme}) => theme.basicText};
-  margin: 0px 5px 0px 15px;
 `;
 
 const Row = styled.View`
   flex-direction: row;
+`;
+
+const WrapRow = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: 30px;
+`;
+
+const SpackBetweenRow = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const FlexRow = styled.View`
@@ -78,89 +73,162 @@ const FlexRow = styled.View`
   flex-wrap: wrap;
 `;
 
+const Column = styled.View`
+  flex-direction: column;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
+
+const Title = styled.Text`
+  font-size: 25px;
+  font-weight: bold;
+  color: ${({theme}) => theme.basicText};
+`;
+
+const SubTitle = styled.Text`
+  margin-top: 3px;
+  font-size: 12px;
+  color: ${({theme}) => theme.basicText};
+`;
+
+const ModalView = styled.View`
+  flex: 1;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding-top: ${({insets: {top}}) => top}px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.98;
+  padding-left: 20px;
+  padding-right: 20px;
+`;
+
+const StyledTouchableOpacity = styled.TouchableOpacity`
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
 const Collection = ({route, navigation}) => {
   const insets = useSafeAreaInsets();
-  // const [collectionId, collectionTitle, memberId] = route.params;
-  // const [itemId, setItemId] = useState(0);
-  // const [items, setitems] = useState([]);
-  // const [copiedText, setCopiedText] = useState('');
-  // 컬렉션 상세페이지 아이템들 받아오기
-  // collection Id, member Id  등등 필요한 요소를 보내
-  // const _postItemURL = async () => {
-  //   try {
-  //     const response = await fetch(
-  //     fetch('https://api.sendwish.link:8081/item/parsing',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           itemId: itemId,
-  //           collectionId: collectionId,
-  //         }),
-  //       },
-  //     );
-  //     const json = await response.json();
-  //     console.log(json);
-  //   }
-  const _openUrl = url => {
-    console.log('urlopen', url);
-    Linking.openURL(url);
-  };
+  const [visibleModal, setVisibleModal] = useState(false);
+  const refChangedColname = useRef(null);
+  const [ChangedColName, setChangedColname] = useState('');
+  const {collectionId, collectionTitle, nickname} = route.params;
 
-  useEffect(() => {
-    fetch(
-      `https://api.sendwish.link:8081/collection/${memberId}/${collectionId}`,
-      {
-        method: 'GET',
-      },
-    )
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-        setProducts(data.dtos);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
-  <Container insets={insets}>
-    <UpperContainer>
-      <Row>
-        <Title>CollectionName</Title>
-        <PencilIcon>
-          <FontAwesome5 name={'pencil-alt'} size={15} />
-        </PencilIcon>
-      </Row>
-      <Row>
-        <PersonIcon>
-          <Ionic name={'person-add-outline'} size={30} />
-        </PersonIcon>
-        <PersonName>by 와깐나이!</PersonName>
-      </Row>
-    </UpperContainer>
-    <RoundContainer>
-      <ScrollView>
-        <Title>내 위시템 전체보기</Title>
-        <FlexRow>
-          {items.map(item => (
-            <ItemBox
-              productUrl={item?.originUrl}
-              itemImage={item?.imageUrl}
-              itemName={item?.name}
-              itemPrice={item?.price}
+  return (
+    <Container insets={insets}>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={visibleModal}
+        style={{flex: 1}}>
+        <ModalView insets={insets}>
+          <StyledTouchableOpacity onPress={() => setVisibleModal(false)}>
+            <Ionic name="chevron-back" size={25} color={theme.basicText} />
+          </StyledTouchableOpacity>
+          <Input
+            ref={refChangedColname}
+            value={ChangedColName}
+            onChangeText={setChangedColname}
+            onBlur={() => setChangedColname(ChangedColName)}
+            maxLength={20}
+            onSubmitEditing={() => {
+              setVisibleModal(false);
+            }}
+            placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
+            returnKeyType="done"
+          />
+          <Button title="변경하기" onPress={() => setVisibleModal(false)} />
+        </ModalView>
+      </Modal>
+      <UpperContainer>
+        <Row>
+          <Column>
+            <TouchableOpacity
               onPress={() => {
-                console.log('urlcheck', item.originUrl);
-                _openUrl(item.originUrl);
-              }}
+                navigation.navigate('Main');
+              }}>
+              <Ionic name="chevron-back" size={25} color={theme.basicText} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setVisibleModal(true)}>
+              <WrapRow style={{marginTop: 30}}>
+                <Title style={{marginRight: 10}}>
+                <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
+                {collectionTitle + ' '}
+              </Title>
+                  콜렉션</Title>
+                <Feather
+                  name="edit-2"
+                  size={20}
+                  color={theme.basicText}
+                  style={{marginTop: 3}}
+                />
+              </WrapRow>
+            </TouchableOpacity>
+
+            <WrapRow
+              style={{
+                paddingTop: 20,
+                width: 400,
+                height: 60,
+              }}>
+              <ProfileImage />
+              <SubTitle style={{fontSize: 15}}>bulksup님이 담았어요!</SubTitle>
+            </WrapRow>
+          </Column>
+        </Row>
+      </UpperContainer>
+
+      <BottomContainer>
+        <ScrollView>
+          <Column>
+            <SpackBetweenRow>
+              <View style={{marginBottom: 10}}>
+                <SubTitle>총 N개의 위시템</SubTitle>
+              </View>
+              <Row>
+                <SearchIcon />
+                {/* <FilterIcon /> */}
+                <EditIcon />
+              </Row>
+            </SpackBetweenRow>
+          </Column>
+          <FlexRow>
+            <ItemBox
+              title="안녕하세요as
+            gasdgsagdsadgsadgasdgasdgsag"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
             />
-          ))}
-          <ItemBox />
-        </FlexRow>
-      </ScrollView>
-    </RoundContainer>
-  </Container>;
+
+            <ItemBox
+              title="안녕하세요as
+            gasdgsagdsadgsadgasdgasdgsag"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
+            />
+
+            <ItemBox
+              title="안녕하세요as
+            gasdgsagdsadgsadgasdgasdgsag"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
+            />
+          </FlexRow>
+        </ScrollView>
+      </BottomContainer>
+    </Container>
+  );
 };
 
 export default Collection;

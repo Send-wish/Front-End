@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -109,11 +109,11 @@ const Main = ({navigation, route}) => {
   const [visibleMoal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]);
   const [collectionName, setCollectionName] = useState('');
-  // const [items, setItems] = useState([]);
-  // const [itemId, setItemId] = useState('');
+  const [items, setItems] = useState([]);
+  const [itemId, setItemId] = useState(0);
 
   // collection 추가
-  const _MadeCollection = async () => {
+  const _madeCollection = async () => {
     console.log('nickName', nickName);
     console.log('collectionName', collectionName);
     setVisibleModal(false);
@@ -147,7 +147,7 @@ const Main = ({navigation, route}) => {
 
   const _getCollections = async () => {
     try {
-      fetch(`https://api.sendwish.link:8081/collection/${nickName}`, {
+      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
         method: 'GET',
         // headers: {Content_Type: 'application/json'},
       })
@@ -165,7 +165,7 @@ const Main = ({navigation, route}) => {
       console.log(e);
     }
   };
-  // first screen randering
+  // first screen rendering
   useEffect(() => {
     console.log('컬렉션 추가 완료');
     _getCollections();
@@ -175,39 +175,74 @@ const Main = ({navigation, route}) => {
     console.log('url', url);
     Linking.openURL(url);
   };
-  
+
   useEffect(() => {
     console.log('nickName', nickName);
   }, []);
+
   // item 추가
+  const _addItem = async () => {  
+    try{
+      await
+      fetch ('https://api.sendwish.link:8081/item/parsing', {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          url: receiveText // url 아직 못받음 임시변수
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      })
+      .then(json => console.log(json))
+      .then(data => {
+        console.log('send url', data);
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .then(() => _getItems());
+    } catch (e) {
+      console.log('send url fail');
+    }
+  };
 
-  // const _addItem = () => {
-
+  const _getItems = async () => {
+    try { // API 아직 안열림
+      fetch(`https://api.sendwish.link:8081/collection/${memberId}/${itemId}`, {
+        method: 'GET',
+        // headers: {Content_Type: 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setItems(data);
+          setItemId(data);
+          console.log('get items', data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   
-
-
-  // useEffect(() => {
-
-  //   fetch(
-  //     `https://api.sendwish.link:8081/collection/${memberId}/${collectionId}`,
-  //     {
-  //       method: 'GET',
-  //     },
-  //   )
-  //     .then(res => {
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //       setProducts(data.dtos);
-  //     });
-  // }, []);
+  useEffect(() => {
+    console.log('아이템 추가 완료');
+    _getItems();
+  }, []);
 
   return (
     <Container insets={insets}>
       <UpperContainer>
         <Row>
           <Column>
-            <Title style={{marginTop: 30}}>벌크섭님이 담은 아이템</Title>
+            <Title style={{marginTop: 30}}>{nickName}</Title>
           </Column>
         </Row>
         <Row>
@@ -219,8 +254,8 @@ const Main = ({navigation, route}) => {
                 navigation.navigate('Collection');
               }}
             />
-            {/* collection randering */}
-            {collections.map(collection => (
+            {/* collection rendering */}
+            {collections.reverse().map(collection => (
               <CollectionCircle
                 key={collection?.collectionId}
                 collectionId={collection?.collectionId}
@@ -257,7 +292,7 @@ const Main = ({navigation, route}) => {
                     onChangeText={setCollectionName}
                     label="컬렉션 이름"
                   />
-                  <Button title="완료" onPress={() => _MadeCollection()} />
+                  <Button title="완료" onPress={() => _madeCollection()} />
                 </ModalInView>
               </ModalView>
             </Modal>
@@ -292,8 +327,8 @@ const Main = ({navigation, route}) => {
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
             /> */}
-            {/* item randering  */}
-            {/* {items.map(item => (
+            {/* item rendering  */}
+            {items.reverse().map(item => (
               <ItemBox
                 key={item?.itemId}
                 saleRate='30%'
@@ -307,7 +342,7 @@ const Main = ({navigation, route}) => {
                   _openUrl(item?.itemUrl);
                 }}
               />
-            ))} */}
+            ))}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
