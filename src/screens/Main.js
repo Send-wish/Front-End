@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {
   View,
   Text,
@@ -18,10 +18,13 @@ import {
   AddCollectionCircle,
   SearchIcon,
   EditIcon,
+  Input,
+  Button
   // FilterIcon
 } from '../components/Main';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Modal} from 'react-native';
 
 const Container = styled.View`
   flex: 1;
@@ -78,9 +81,31 @@ const SubTitle = styled.Text`
   color: ${({theme}) => theme.subText};
 `;
 
-const Main = () => {
-  const insets = useSafeAreaInsets();
+const ModalView = styled.View`
+  flex: 0.8;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+const ModalInView = styled.View`
+  flex: 1;
+  border-radius: 5px;
+  border-color: ${({theme}) => theme.basicText};
+  border-width: 2px;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding: 10px;
+  margin: 30px;
+  height: 250px;
+`;
+const ModalText = styled.Text`
+  font-size: 20px;
+  color: ${({theme}) => theme.basicText};
+  padding: 10px 10px 10px 10px;
+`;
 
+const Main = ({navigation}) => {
+  const insets = useSafeAreaInsets();
+  const [visibleMoal, setVisibleModal] = useState(false);
   return (
     <Container insets={insets}>
       <UpperContainer>
@@ -94,6 +119,9 @@ const Main = () => {
             <CollectionCircle
               title="콜렉션"
               image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
+              onPress={() => {
+                navigation.navigate('Collection');
+              }}
             />
             <CollectionCircle
               title="콜렉션"
@@ -110,7 +138,23 @@ const Main = () => {
               color={theme.subText}
               style={{marginTop: 45, marginLeft: 10}}
             />
-            <AddCollectionCircle title="새 버킷 추가"></AddCollectionCircle>
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={visibleMoal}>
+              <ModalView>
+                <ModalInView>
+                  <ModalText>컬렉션 이름을 입력해주세요.</ModalText>
+                  {/* Modal 다이얼로그 숨기기 */}
+                  <Input />
+                  <Button title="완료" onPress={() => setVisibleModal(false)} />
+                </ModalInView>
+              </ModalView>
+            </Modal>
+            <AddCollectionCircle
+              onPress={() => setVisibleModal(true)}
+              title="새 버킷 추가"></AddCollectionCircle>
           </ScrollView>
         </Row>
       </UpperContainer>

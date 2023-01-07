@@ -2,13 +2,17 @@
 import React from 'react';
 
 // Screens
-// import Start from './src/components/Start';
-// import SignUp from './src/components/SignUp';
-// import SignIn from './src/components/SignIn';
-import Main from './src/screens/Main';
-import Shared from './src/screens/Shared';
-import Chat from './src/screens/Chat';
-import Friends from './src/screens/Friends';
+import {
+  Chat,
+  Collection,
+  Friends,
+  ItemDetail,
+  Main,
+  Shared,
+  SignIn,
+  SignUp,
+  Start,
+} from './src/screens';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -28,21 +32,21 @@ const App = () => {
   const BottomTabScreen = () => {
     return (
       <ThemeProvider theme={theme}>
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarHideOnKeyboard: true,
-          tabBarShowLabel: false,
-          headerShown: false,
-          tabBarStyle: {
-            height: 70,
-            backgroundColor: theme.mainBackground,
-            borderRadius: 20,
-            opacity: 0.9,
-            position: 'absolute'
-          },
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarHideOnKeyboard: true,
+            tabBarShowLabel: false,
+            headerShown: false,
+            tabBarStyle: {
+              height: 70,
+              backgroundColor: theme.mainBackground,
+              borderRadius: 20,
+              opacity: 0.9,
+              position: 'absolute',
+            },
             tabBarIcon: ({focused, size}) => {
               let iconName;
-              
+
               if (route.name === 'Main') {
                 iconName = focused ? 'logo-bitbucket' : 'ios-logo-bitbucket';
               } else if (route.name === 'Shared') {
@@ -59,22 +63,29 @@ const App = () => {
 
               return <Ionic name={iconName} size={size} color="white" />;
             },
-        })}>
-        <Tab.Screen name="Main" component={Main} />
-        <Tab.Screen name="Shared" component={Shared} />
-        <Tab.Screen name="Chat" component={Chat} />
-        <Tab.Screen name="Friends" component={Friends} />
-      </Tab.Navigator>
+          })}>
+          <Tab.Screen name="Main" component={Main} />
+          <Tab.Screen name="Shared" component={Shared} />
+          <Tab.Screen name="Chat" component={Chat} />
+          <Tab.Screen name="Friends" component={Friends} />
+        </Tab.Navigator>
       </ThemeProvider>
     );
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Bottom" component={BottomTabScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="Collection" component={Collection} />
+          <Stack.Screen name="Start" component={Start} />
+          <Stack.Screen name="Bottom" component={BottomTabScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 

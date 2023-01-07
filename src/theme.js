@@ -13,6 +13,8 @@ const Colors = {
 export const theme = {
   mainBackground: Colors.black,
   subBackground: Colors.grey_3,
+  lightBackground: Colors.grey_1,
+  placeholder: Colors.grey_2,
   componentBackground: Colors.grey_1,
   basicText: Colors.white,
   subText: Colors.grey_1,
