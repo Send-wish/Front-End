@@ -30,6 +30,13 @@ const Row = styled.View`
   align-items: center;
 `;
 
+const Column = styled.View`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+
 const Title = styled.Text`
   font-size: 11px;
   font-weight: bold;
@@ -41,14 +48,14 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const CollectionCircle = ({onPress, title, image}) => {
+const CollectionCircle = ({onPress, collectionTitle, image}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <CollectionImage source={{uri: image}} />
-        <Row>
-          <Title>{title}</Title>
-        </Row>
+        {/* <CollectionImage source={{uri: Image}} /> */}
+        <Column>
+          <Title>{collectionTitle}</Title>
+        </Column>
       </TouchableOpacity>
     </Container>
   );

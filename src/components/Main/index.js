@@ -7,8 +7,6 @@ import SmallCircleBtn from './SmallCircleBtn';
 import EditIcon from './EditIcon';
 import Input from './Input';
 import Button from './Button';
-import Input from './Input';
-import Button from './Button';
 
 export {
   CollectionCircle,
@@ -18,8 +16,6 @@ export {
   SearchIcon,
   // FilterIcon,
   Input,
-  Input,
   EditIcon,
-  Button
   Button
 };

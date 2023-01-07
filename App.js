@@ -13,17 +13,6 @@ import {
   SignUp,
   Start,
 } from './src/screens';
-import {
-  Chat,
-  Collection,
-  Friends,
-  ItemDetail,
-  Main,
-  Shared,
-  SignIn,
-  SignUp,
-  Start,
-} from './src/screens';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -90,8 +79,8 @@ const App = () => {
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="Bottom" component={BottomTabScreen} />
           <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="Bottom" component={BottomTabScreen} />
           <Stack.Screen name="Collection" component={Collection} />
           <Stack.Screen name="Start" component={Start} />
         </Stack.Navigator>

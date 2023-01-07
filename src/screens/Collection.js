@@ -78,52 +78,89 @@ const FlexRow = styled.View`
   flex-wrap: wrap;
 `;
 
-const Collection = () => {
+const Collection = ({route, navigation}) => {
   const insets = useSafeAreaInsets();
+  // const [collectionId, collectionTitle, memberId] = route.params;
+  // const [itemId, setItemId] = useState(0);
+  // const [items, setitems] = useState([]);
+  // const [copiedText, setCopiedText] = useState('');
+  // 컬렉션 상세페이지 아이템들 받아오기
+  // collection Id, member Id  등등 필요한 요소를 보내
+  // const _postItemURL = async () => {
+  //   try {
+  //     const response = await fetch(
+  //     fetch('https://api.sendwish.link:8081/item/parsing',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           itemId: itemId,
+  //           collectionId: collectionId,
+  //         }),
+  //       },
+  //     );
+  //     const json = await response.json();
+  //     console.log(json);
+  //   }
+  const _openUrl = url => {
+    console.log('urlopen', url);
+    Linking.openURL(url);
+  };
 
-  return (
-    <Container insets={insets}>
-      <UpperContainer>
-        <Row>
-          <Title>CollectionName</Title>
-          <PencilIcon>
-            <FontAwesome5 name={'pencil-alt'} size={15} />
-          </PencilIcon>
-        </Row>
-        <Row>
-          <PersonIcon>
-            <Ionic name={'person-add-outline'} size={30} />
-          </PersonIcon>
-          <PersonName>by 서울대 진섭킴</PersonName>
-        </Row>
-      </UpperContainer>
-      <RoundContainer>
-        <ScrollView>
-          <Title>내 위시템 전체보기</Title>
-          <FlexRow>
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-            <ItemBox />
-          </FlexRow>
-        </ScrollView>
-      </RoundContainer>
-    </Container>
-  );
+  useEffect(() => {
+    fetch(
+      `https://api.sendwish.link:8081/collection/${memberId}/${collectionId}`,
+      {
+        method: 'GET',
+      },
+    )
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        setProducts(data.dtos);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
+  <Container insets={insets}>
+    <UpperContainer>
+      <Row>
+        <Title>CollectionName</Title>
+        <PencilIcon>
+          <FontAwesome5 name={'pencil-alt'} size={15} />
+        </PencilIcon>
+      </Row>
+      <Row>
+        <PersonIcon>
+          <Ionic name={'person-add-outline'} size={30} />
+        </PersonIcon>
+        <PersonName>by 와깐나이!</PersonName>
+      </Row>
+    </UpperContainer>
+    <RoundContainer>
+      <ScrollView>
+        <Title>내 위시템 전체보기</Title>
+        <FlexRow>
+          {items.map(item => (
+            <ItemBox
+              productUrl={item?.originUrl}
+              itemImage={item?.imageUrl}
+              itemName={item?.name}
+              itemPrice={item?.price}
+              onPress={() => {
+                console.log('urlcheck', item.originUrl);
+                _openUrl(item.originUrl);
+              }}
+            />
+          ))}
+          <ItemBox />
+        </FlexRow>
+      </ScrollView>
+    </RoundContainer>
+  </Container>;
 };
 
 export default Collection;

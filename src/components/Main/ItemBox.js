@@ -67,16 +67,16 @@ const Row = styled.View`
   width: 80%;
 `;
 
-const ItemBox = ({onPress, saleRate, title, price, image}) => {
+const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <ItemImage source={{uri: image}} />
+        <ItemImage source={{uri: itemImage}} />
         <Row>
           <Sale>{saleRate}</Sale>
-          <Price> {price} </Price>
+          <Price> {itemPrice} </Price>
         </Row>
-        <Title>{title}</Title>
+        <Title>{itemName}</Title>
       </TouchableOpacity>
     </Container>
   );

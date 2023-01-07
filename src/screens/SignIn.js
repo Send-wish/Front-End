@@ -86,14 +86,14 @@ const SignIn = ({navigation}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          memberId: nickName,
+          nickname: nickName,
           password: password,
         }),
       })
         .then(response => response.json())
         .then(result => console.log('result', result)) //for debug
         .then(json => {
-          if (json.resultCode === '200' && nickName !== undefined) {
+          if ( nickName !== undefined) {
             navigation.navigate('Main', nickName);
           }
         })

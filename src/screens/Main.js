@@ -1,5 +1,4 @@
-import React, {Component, useState} from 'react';
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -20,14 +19,12 @@ import {
   SearchIcon,
   EditIcon,
   Input,
-  Button
+  Button,
   // FilterIcon
 } from '../components/Main';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
-import Button from '../components/Main/Button';
-import Input from '../components/Main/Input';
 
 const Container = styled.View`
   flex: 1;
@@ -85,31 +82,126 @@ const SubTitle = styled.Text`
 `;
 
 const ModalView = styled.View`
-    flex: 0.8;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  flex: 0.8;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 const ModalInView = styled.View`
-    flex: 1;
-    border-radius: 5px;
-    border-color: ${({theme}) => theme.basicText};
-    border-width: 2px;
-    background-color: ${({theme}) => theme.mainBackground};
-    padding: 10px;
-    margin: 30px;
-    height: 250px;
+  flex: 1;
+  border-radius: 5px;
+  border-color: ${({theme}) => theme.basicText};
+  border-width: 2px;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding: 10px;
+  margin: 30px;
+  height: 250px;
 `;
 const ModalText = styled.Text`
-    font-size: 20px;
-    color: ${({theme}) => theme.basicText};
-    padding : 10px 10px 10px 10px;
+  font-size: 20px;
+  color: ${({theme}) => theme.basicText};
+  padding: 10px 10px 10px 10px;
 `;
 
-
-const Main = ({navigation}) => {
+const Main = ({navigation, route}) => {
+  const nickName = route.params;
   const insets = useSafeAreaInsets();
   const [visibleMoal, setVisibleModal] = useState(false);
+  const [collections, setCollections] = useState([]);
+  const [collectionName, setCollectionName] = useState('');
+  // const [items, setItems] = useState([]);
+  // const [itemId, setItemId] = useState('');
+
+  // collection 추가
+  const _MadeCollection = async () => {
+    console.log('nickName', nickName);
+    console.log('collectionName', collectionName);
+    setVisibleModal(false);
+    try {
+      fetch('https://api.sendwish.link:8081/collection', {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickName,
+          title: collectionName,
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
+        })
+        .then(json => console.log(json))
+        .then(data => {
+          console.log('made collection', data);
+        })
+        // .catch(error => {
+        //   console.error(error);
+        // })
+        .then(() => _getCollections());
+    } catch (e) {
+      console.log('collection made fail');
+    }
+  };
+
+  const _getCollections = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/collection/${nickName}`, {
+        method: 'GET',
+        // headers: {Content_Type: 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setCollections(data);
+          console.log('get collections', data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  // first screen randering
+  useEffect(() => {
+    console.log('컬렉션 추가 완료');
+    _getCollections();
+  }, []);
+  // item link
+  const _openUrl = url => {
+    console.log('url', url);
+    Linking.openURL(url);
+  };
+  
+  useEffect(() => {
+    console.log('nickName', nickName);
+  }, []);
+  // item 추가
+
+  // const _addItem = () => {
+
+  
+
+
+  // useEffect(() => {
+
+  //   fetch(
+  //     `https://api.sendwish.link:8081/collection/${memberId}/${collectionId}`,
+  //     {
+  //       method: 'GET',
+  //     },
+  //   )
+  //     .then(res => {
+  //       return res.json();
+  //     })
+  //     .then(data => {
+  //       setProducts(data.dtos);
+  //     });
+  // }, []);
+
   return (
     <Container insets={insets}>
       <UpperContainer>
@@ -127,15 +219,24 @@ const Main = ({navigation}) => {
                 navigation.navigate('Collection');
               }}
             />
-            <CollectionCircle
-              title="콜렉션"
-              image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
-            />
+            {/* collection randering */}
+            {collections.map(collection => (
+              <CollectionCircle
+                key={collection?.collectionId}
+                collectionId={collection?.collectionId}
+                collectionTitle={collection?.title}
+                nickName={collection?.nickname}
+                // image={collection?.image}
+                onPress={() =>
+                  navigation.navigate('Collection', {
+                    collectionId: collection?.collectionId,
+                    collectionTitle: collection?.title,
+                    nickName: collection?.nickname,
+                  })
+                }
+              />
+            ))}
 
-            <CollectionCircle
-              title="콜렉션"
-              image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
-            />
             <Ionicons
               name="ellipsis-vertical"
               size={15}
@@ -147,13 +248,17 @@ const Main = ({navigation}) => {
               animationType="slide"
               transparent={true}
               visible={visibleMoal}>
-                <ModalView>
-                  <ModalInView>
+              <ModalView>
+                <ModalInView>
                   <ModalText>컬렉션 이름을 입력해주세요.</ModalText>
                   {/* Modal 다이얼로그 숨기기 */}
-                  <Input />
-                  <Button title="완료" onPress={() => setVisibleModal(false)} />
-                  </ModalInView>
+                  <Input
+                    value={collectionName}
+                    onChangeText={setCollectionName}
+                    label="컬렉션 이름"
+                  />
+                  <Button title="완료" onPress={() => _MadeCollection()} />
+                </ModalInView>
               </ModalView>
             </Modal>
             <AddCollectionCircle
@@ -178,7 +283,7 @@ const Main = ({navigation}) => {
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            <ItemBox
+            {/* <ItemBox
               title="안녕하세요as
             gasdgsagdsadgsadgasdgasdgsag"
               saleRate="60%"
@@ -186,27 +291,23 @@ const Main = ({navigation}) => {
               image={
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
+            /> */}
+            {/* item randering  */}
+            {/* {items.map(item => (
+              <ItemBox
+                key={item?.itemId}
+                saleRate='30%'
+                itemName={item?.name}
+                itemPrice={item?.price}
+                itemImage={item?.originUrl}
+                itemUrl={item?.itemUrl}
+                // itemId={item?.itemId}
+                onPress={() => {
+                  console.log('item recieve', item);
+                  _openUrl(item?.itemUrl);
+                }}
+              />
+            ))} */}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
