@@ -17,6 +17,8 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
+import { Linking } from 'react-native';
+
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -104,13 +106,14 @@ const Main = ({navigation, route}) => {
   const [itemId, setItemId] = useState(0);
   const refChangedColname = useRef(null);
 
-
+  const [loading, setLoading] = useState(false);
 
   // collection 추가
   const _madeCollection = async () => {
     console.log('nickName from Sign In', nickName);
     console.log('collectionName', collectionName);
     setVisibleModal(false);
+    
     try {
       fetch('https://api.sendwish.link:8081/collection', {
         method: 'POST',
@@ -140,6 +143,7 @@ const Main = ({navigation, route}) => {
   };
 
   const _getCollections = async () => {
+    setLoading(true);
     try {
       fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
         method: 'GET',
@@ -151,6 +155,7 @@ const Main = ({navigation, route}) => {
         .then(data => {
           setCollections(data);
           console.log('get collections', data);
+          setLoading(false);
         })
         .catch(error => {
           console.log(error);
@@ -353,7 +358,7 @@ const Main = ({navigation, route}) => {
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            {/* <ItemBox
+            <ItemBox
               itemName="안녕하세요as
             gasdgsagdsadgsadgasdgasdgsag"
               saleRate="60%"
@@ -361,9 +366,13 @@ const Main = ({navigation, route}) => {
               itemImage={
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
-            /> */}
+              onPress={() => {
+                // console.log('item recieve', item);
+                _openUrl(`https://www.notion.so/b9c1497a993642deb4bd265cd9174645`);
+              }}
+            />
             {/* item rendering  */}
-            {items.reverse().map(item => (
+            {/* {items.reverse().map(item => (
               <ItemBox
                 key={item?.itemId}
                 saleRate="30%"
@@ -377,7 +386,7 @@ const Main = ({navigation, route}) => {
                   _openUrl(item?.itemUrl);
                 }}
               />
-            ))}
+            ))} */}
           </FlexRow>
         </ScrollView>
       </BottomContainer>

@@ -7,6 +7,7 @@ import {theme} from '../theme';
 import {Button, Input} from '../components/SignIn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
+import ErrorMessage from '../components/SignIn/ErrorMessage';
 
 const Container = styled.View`
   flex: 1;
@@ -93,7 +94,8 @@ const SignIn = ({navigation}) => {
         }),
       })
         .then(response => response.json())
-        .then(result => console.log('result', result)) //for debug
+        .then(result => {console.log('result', result)}) //for debug
+        // result  값이 유효하지 않으면 (토큰이 발급되지 않으면 알람 메시지 띄우고 로그인 화면 유지)
         .then(json => {
           if (nickName !== undefined) {
             console.log('json....', json);
@@ -104,9 +106,7 @@ const SignIn = ({navigation}) => {
               screen: 'Main',
               params: passName,
             });
-          } else {
-            Alert.alert('로그인 실패', '아이디와 비밀번호를 확인해주세요.');
-          }
+          } 
         })
         .catch(error => {
           console.error(error);
@@ -159,7 +159,7 @@ const SignIn = ({navigation}) => {
             isPassword={true}
             onBlur={() => setPassword(removeWhitespace(password))}
           />
-
+          <ErrorMessage message={errorMessage} />
           <Button
             title="로그인"
             onPress={_handleSignInButtonPress}

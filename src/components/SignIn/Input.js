@@ -1,6 +1,7 @@
 import React, {useState, forwardRef} from 'react';
 import styled from 'styled-components/native';
 import {theme} from '../../theme';
+import PropTypes from "prop-types";
 
 const Container = styled.View`
   flex-direction: column;
@@ -40,6 +41,7 @@ const Input = forwardRef(
       returnKeyType,
       maxLength,
       label,
+      isPassword,
     },
     ref,
   ) => {
@@ -65,6 +67,7 @@ const Input = forwardRef(
           isFocused={isFocused}
           onFocus={() => setIsFocused(true)}
           autoFocus={true}
+          secureTextEntry={isPassword}
         />
       </Container>
     );
@@ -74,5 +77,18 @@ const Input = forwardRef(
 Input.defaultProps = {
   onBlur: () => {},
 };
+
+Input.propTypes = {
+  label: PropTypes.string,
+  value: PropTypes.string.isRequired,
+  onChangeText: PropTypes.func,
+  onSubmitEditing: PropTypes.func,
+  onBlur: PropTypes.func,
+  placeholder: PropTypes.string,
+  returnKeyType: PropTypes.oneOf(["done", "next"]),
+  maxLength: PropTypes.number,
+  isPassword:PropTypes.bool,
+};
+
 
 export default Input;
