@@ -19,6 +19,16 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import { Linking } from 'react-native';
 
+import { useIsFocused } from '@react-navigation/native';
+// const isFocused = useIsFocused(); // isFoucesd Define
+
+// useEffect(() => {
+// return () => {
+// _getCollections();
+// }
+// }, [isFocused]);
+
+
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -166,9 +176,10 @@ const Main = ({navigation, route}) => {
   };
   // first screen rendering
   useEffect(() => {
-    console.log('컬렉션 추가 완료');
+    console.log('컬렉션 추가 or 랜더링 완료');
     _getCollections();
   }, []);
+
   // item link
   const _openUrl = url => {
     console.log('url', url);
