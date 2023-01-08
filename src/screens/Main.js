@@ -212,7 +212,7 @@ const Main = ({navigation, route}) => {
 
   const _getItems = async () => {
     try { // API 아직 안열림
-      fetch(`https://api.sendwish.link:8081/collection/${memberId}/${itemId}`, {
+      fetch(`https://api.sendwish.link:8081/collection/${nickname}/${collectionId}`, {
         method: 'GET',
         // headers: {Content_Type: 'application/json'},
       })
@@ -247,15 +247,19 @@ const Main = ({navigation, route}) => {
         </Row>
         <Row>
           <ScrollView horizontal>
-            {/* <CollectionCircle
+            <CollectionCircle
               title="콜렉션"
               image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
-              onPress={() => {
-                navigation.navigate('Collection');
-              }}
-            /> */}
+              onPress={() =>
+                navigation.navigate('Collection', {
+                  collectionId: collections?.collectionId,
+                  collectionTitle: collections?.title,
+                  nickName: collections?.nickname,
+                })
+              }
+            />
             {/* collection rendering */}
-            {collections.reverse().map(collection => (
+            {/* {collections.reverse().map(collection => (
               <CollectionCircle
                 key={collection?.collectionId}
                 collectionId={collection?.collectionId}
@@ -270,7 +274,7 @@ const Main = ({navigation, route}) => {
                   })
                 }
               />
-            ))}
+            ))} */}
 
             <Ionicons
               name="ellipsis-vertical"

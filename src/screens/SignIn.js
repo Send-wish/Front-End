@@ -94,7 +94,9 @@ const SignIn = ({navigation}) => {
         .then(result => console.log('result', result)) //for debug
         .then(json => {
           if ( nickName !== undefined) {
-            navigation.navigate('Main', nickName);
+            // console.log('json....',json)
+            // console.log('response',response)
+            navigation.navigate('Navigation',{screen: 'Main'});
           }
         })
         .catch(error => {
