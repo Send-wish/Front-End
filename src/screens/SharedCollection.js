@@ -8,9 +8,7 @@ import {
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
-import {
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   SearchIcon,
   ItemBox,
@@ -104,12 +102,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Collection = ({route, navigation}) => {
+const SharedCollection = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const refChangedColname = useRef(null);
   const [ChangedColName, setChangedColname] = useState('');
-  const {collectionId, collectionTitle, nickName} = route.params;
 
   return (
     <Container insets={insets}>
@@ -142,18 +139,13 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                passName = {nickName}
-                navigation.navigate('Main',{params: passName});
+                navigation.navigate('Shared');
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setVisibleModal(true)}>
               <WrapRow style={{marginTop: 30}}>
-                <Title style={{marginRight: 10}}>
-                <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
-                {collectionTitle + ' '}
-              </Title>
-                  콜렉션</Title>
+                <Title style={{marginRight: 10}}>콜렉션 이름</Title>
                 <Feather
                   name="edit-2"
                   size={20}
@@ -227,4 +219,4 @@ const Collection = ({route, navigation}) => {
   );
 };
 
-export default Collection;
+export default SharedCollection;

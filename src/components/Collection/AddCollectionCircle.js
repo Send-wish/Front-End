@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {theme} from '../../theme';
+
 
 const Container = styled.View`
   padding: 10px;
@@ -12,7 +15,7 @@ const Container = styled.View`
   border-radius: 75px;
 `;
 
-const CollectionImage = styled.Image`
+const CollectionImage = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
   padding: 10px;
   margin: 10px 10px 10px 10px;
@@ -37,21 +40,22 @@ const Title = styled.Text`
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: 80px;
   height: 30px;
 `;
 
-const CollectionCircle = ({onPress, collectionTitle, image}) => {
+const AddCollectionCircle = ({onPress, title}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <CollectionImage source={{uri: image}} />
+        <CollectionImage>
+          <AntDesign name="plus" size={30} color={theme.basicText} />
+        </CollectionImage>
         <Row>
-          <Title>{collectionTitle}</Title>
+          <Title>{title}</Title>
         </Row>
       </TouchableOpacity>
     </Container>
   );
 };
 
-export default CollectionCircle;
+export default AddCollectionCircle;
