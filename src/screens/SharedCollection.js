@@ -109,12 +109,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Collection = ({route, navigation}) => {
+const SharedCollection = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const refChangedColname = useRef(null);
   const [ChangedColName, setChangedColname] = useState('');
-  const {collectionId, collectionTitle, nickName} = route.params;
 
   return (
     <Container insets={insets}>
@@ -147,18 +146,13 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Main', nickName);
+                navigation.navigate('Shared');
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setVisibleModal(true)}>
               <WrapRow style={{marginTop: 30}}>
-                <Title style={{marginRight: 10}}>
-                  <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
-                    {collectionTitle + ' '}
-                  </Title>
-                  콜렉션
-                </Title>
+                <Title style={{marginRight: 10}}>콜렉션 이름</Title>
                 <Feather
                   name="edit-2"
                   size={20}
@@ -205,6 +199,26 @@ const Collection = ({route, navigation}) => {
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
             />
+
+            <ItemBox
+              title="안녕하세요as
+            gasdgsagdsadgsadgasdgasdgsag"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
+            />
+
+            <ItemBox
+              title="안녕하세요as
+            gasdgsagdsadgsadgasdgasdgsag"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
+            />
           </FlexRow>
         </ScrollView>
       </BottomContainer>
@@ -212,4 +226,4 @@ const Collection = ({route, navigation}) => {
   );
 };
 
-export default Collection;
+export default SharedCollection;

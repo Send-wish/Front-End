@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, TouchableOpacity, ScrollView} from 'react-native';
+import {Alert, View, TouchableOpacity, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {
   SafeAreaProvider,
@@ -11,6 +11,7 @@ import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
+import Ionic from 'react-native-vector-icons/Ionicons';
 
 const Container = styled.View`
   flex: 1;
@@ -73,7 +74,7 @@ const Title = styled.Text`
 const DEFAULT_PHOTO =
   'https://w7.pngwing.com/pngs/441/722/png-transparent-pikachu-thumbnail.png';
 
-const SignUp = () => {
+const SignUp = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -87,6 +88,7 @@ const SignUp = () => {
   useEffect(() => {
     setDisabled(!(id && password && passwordCheck && !errorMessage));
   }, [id, passwordCheck, password, errorMessage]);
+
   useEffect(() => {
     let error = '';
     if (!id) {
@@ -107,12 +109,13 @@ const SignUp = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          memberId: id,
+          nickname: id,
           password: password,
         }),
       })
         .then(response => response.json())
-        .then(navigation.navigate('Signin', {id}));
+        .then(result => console.log('test : ', result))
+        .then(navigation.navigate('SignIn'));
     } catch (e) {
       Alert.alert('Signup error', e.message);
     }
@@ -120,6 +123,12 @@ const SignUp = () => {
 
   return (
     <Container insets={insets}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('SignIn');
+        }}>
+        <Ionic name="chevron-back" size={25} color={theme.basicText} />
+      </TouchableOpacity>
       <UpperContainer>
         <Title style={{marginTop: 30, marginBottom: 10}}>
           간편한 소비를 위해

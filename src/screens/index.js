@@ -7,6 +7,8 @@ import Shared from './Shared';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Start from './Start';
+import SharedCollection from './SharedCollection';
+
 
 export {
   Chat,
@@ -18,4 +20,5 @@ export {
   SignIn,
   SignUp,
   Start,
+  SharedCollection
 };

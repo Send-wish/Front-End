@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  PanResponder,
   Animated,
+  PanResponder,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {
@@ -180,6 +180,27 @@ const Main = ({navigation, route}) => {
     Linking.openURL(url);
   };
 
+  // pan
+  const pan = useRef(new Animated.ValueXY()).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Only move if the gesture is over the element we want to drag
+        return gestureState.dx > 2 || gestureState.dx < -2;
+      },
+      onPanResponderMove: Animated.event([
+        null,
+        {
+          dx: pan.x, // x, y are Animated.Value
+        },
+      ]),
+      onPanResponderRelease: (e, gestureState) => {
+        // Set the value to the gesture data
+        pan.setValue({x: gestureState.dx, y: 0});
+      },
+    }),
+  ).current;
+
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -272,7 +293,7 @@ const Main = ({navigation, route}) => {
         </Row>
       </UpperContainer>
       <BottomContainer>
-        <ScrollView>
+        <ScrollView scrollEnabled={true}>
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>
@@ -281,15 +302,28 @@ const Main = ({navigation, route}) => {
               </View>
               <Row>
                 <SearchIcon />
-                {/* <FilterIcon /> */}
+
                 <EditIcon />
               </Row>
             </SpackBetweenRow>
           </Column>
           <FlexRow>
+            <View style={{pointerEvents: 'none'}}>
+              <View {...panResponder.panHandlers}>
+                <Text>I can be dragged out of the ScrollView!</Text>
+              </View>
+            </View>
+
             <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
+              title="안녕하세요"
+              saleRate="60%"
+              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              image={
+                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+              }
+            />
+            <ItemBox
+              title="안녕하세요"
               saleRate="60%"
               price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               image={

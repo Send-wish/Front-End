@@ -7,11 +7,13 @@ const Colors = {
   grey_1: '#a6a6a6',
   grey_2: '#636363',
   grey_3: '#2f2f2f',
+  grey_4: '#1a1a1a',
   red: '#e84118',
 };
 
 export const theme = {
   mainBackground: Colors.black,
+  darkBackground: Colors.grey_4,
   subBackground: Colors.grey_3,
   lightBackground: Colors.grey_1,
   placeholder: Colors.grey_2,

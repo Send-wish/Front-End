@@ -78,11 +78,13 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Main" component={Main} />
-          <Stack.Screen name="Collection" component={Collection} />
-          <Stack.Screen name="Start" component={Start} />
           <Stack.Screen name="Bottom" component={BottomTabScreen} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Shared" component={Shared} />
+          <Stack.Screen name="Collection" component={Collection} />
+          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="Start" component={Start} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

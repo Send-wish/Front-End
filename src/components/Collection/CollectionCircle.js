@@ -41,13 +41,13 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const CollectionCircle = ({onPress, collectionTitle, image}) => {
+const CollectionCircle = ({onPress, title, image}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
         <CollectionImage source={{uri: image}} />
         <Row>
-          <Title>{collectionTitle}</Title>
+          <Title>{title}</Title>
         </Row>
       </TouchableOpacity>
     </Container>
