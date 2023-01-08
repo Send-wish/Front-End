@@ -104,7 +104,7 @@ const ModalText = styled.Text`
 `;
 
 const Main = ({navigation, route}) => {
-  const nickName = route.params;
+  const nickName = route.params.nickName;
   const insets = useSafeAreaInsets();
   const [visibleMoal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]);
@@ -114,7 +114,7 @@ const Main = ({navigation, route}) => {
 
   // collection 추가
   const _madeCollection = async () => {
-    console.log('nickName', nickName);
+    console.log('nickName from Sign In', nickName);
     console.log('collectionName', collectionName);
     setVisibleModal(false);
     try {
@@ -177,7 +177,7 @@ const Main = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    console.log('nickName', nickName);
+    console.log('nickName from Sign In', nickName);
   }, []);
 
   // item 추가
@@ -212,7 +212,7 @@ const Main = ({navigation, route}) => {
 
   const _getItems = async () => {
     try { // API 아직 안열림
-      fetch(`https://api.sendwish.link:8081/collection/${nickname}/${collectionId}`, {
+      fetch(`https://api.sendwish.link:8081/collection/${test}/${collectionId}`, {
         method: 'GET',
         // headers: {Content_Type: 'application/json'},
       })
@@ -259,7 +259,7 @@ const Main = ({navigation, route}) => {
               }
             />
             {/* collection rendering */}
-            {/* {collections.reverse().map(collection => (
+            {collections.reverse().map(collection => (
               <CollectionCircle
                 key={collection?.collectionId}
                 collectionId={collection?.collectionId}
@@ -274,7 +274,7 @@ const Main = ({navigation, route}) => {
                   })
                 }
               />
-            ))} */}
+            ))}
 
             <Ionicons
               name="ellipsis-vertical"

@@ -94,9 +94,11 @@ const SignIn = ({navigation}) => {
         .then(result => console.log('result', result)) //for debug
         .then(json => {
           if ( nickName !== undefined) {
-            // console.log('json....',json)
+            console.log('json....',json)
             // console.log('response',response)
-            navigation.navigate('Navigation',{screen: 'Main'});
+              console.log('beforedddddd',nickName)
+              passName={nickName} // {nickName:UserNickName} object 형식으로 넘겨줌 
+            navigation.navigate('Navigation',{screen: 'Main', params:passName});
           }
         })
         .catch(error => {

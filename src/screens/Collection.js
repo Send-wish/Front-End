@@ -147,7 +147,8 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Main',nickName);
+                passName = {nickName}
+                navigation.navigate('Main',{params: passName});
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
