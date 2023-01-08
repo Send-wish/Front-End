@@ -271,8 +271,9 @@ const Main = ({navigation, route}) => {
           </View>
         </Row>
       </UpperContainer>
+
       <BottomContainer>
-        <ScrollView>
+        <ScrollView scrollEnabled={false}>
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>

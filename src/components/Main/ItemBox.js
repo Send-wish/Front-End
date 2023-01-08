@@ -102,18 +102,21 @@ const ItemBox = ({onPress, saleRate, title, price, image}) => {
     }),
   ).current;
 
-  //  State
-
   return (
-    <Container>
-      <TouchableOpacity onPress={onPress}>
-        <ItemImage source={{uri: image}} />
-        <Row>
-          <Sale>{saleRate}</Sale>
-          <Price> {price} </Price>
-        </Row>
-        <Title>{title}</Title>
-      </TouchableOpacity>
+    <Container
+      {...panResponder.panHandlers}
+      style={{
+        transform: [...position.getTranslateTransform(), {scale}],
+      }}
+      onPress={onPress}>
+      {/* <TouchableOpacity onPress={onPress}> */}
+      <ItemImage source={{uri: image}} />
+      <Row>
+        <Sale>{saleRate}</Sale>
+        <Price> {price} </Price>
+      </Row>
+      <Title>{title}</Title>
+      {/* </TouchableOpacity> */}
     </Container>
   );
 };
