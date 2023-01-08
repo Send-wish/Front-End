@@ -32,7 +32,7 @@ const BottomTabScreen = () => {
   const Tab = createBottomTabNavigator();
   return (
     <ThemeProvider theme={theme}>
-      <Tab.Navigator 
+      <Tab.Navigator
         screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
           tabBarShowLabel: false,
@@ -80,7 +80,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="SignIn">
-          {/* <Stack.Screen name="Bottom" component={BottomTabScreen} /> */}
+          <Stack.Screen name="Bottom" component={BottomTabScreen} />
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Main" component={Main} />

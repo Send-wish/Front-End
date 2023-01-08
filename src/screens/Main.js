@@ -247,13 +247,13 @@ const Main = ({navigation, route}) => {
         </Row>
         <Row>
           <ScrollView horizontal>
-            <CollectionCircle
+            {/* <CollectionCircle
               title="콜렉션"
               image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
               onPress={() => {
                 navigation.navigate('Collection');
               }}
-            />
+            /> */}
             {/* collection rendering */}
             {collections.reverse().map(collection => (
               <CollectionCircle

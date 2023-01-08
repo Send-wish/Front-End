@@ -114,7 +114,7 @@ const Collection = ({route, navigation}) => {
   const [visibleModal, setVisibleModal] = useState(false);
   const refChangedColname = useRef(null);
   const [ChangedColName, setChangedColname] = useState('');
-  const {collectionId, collectionTitle, nickname} = route.params;
+  const {collectionId, collectionTitle, nickName} = route.params;
 
   return (
     <Container insets={insets}>
@@ -147,7 +147,7 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Main');
+                navigation.navigate('Main',nickName);
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
