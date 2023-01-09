@@ -7,9 +7,9 @@ import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
-  margin: 1px 1px 3px 1px;
-  width: 120px;
-  height: 160px;
+  margin: 3px 5px 0 0;
+  width: 40px;
+  height: 40px;
   justify-content: center;
   align-items: center;
   border-radius: 30px;
@@ -18,13 +18,12 @@ const Container = styled.View`
 const SignUpImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
   padding: 10px;
-  width: 80px;
-  height: 80px;
+  width: 30px;
+  height: 30px;
   justify-content: center;
   align-items: center;
-  margin-top: 70px;
-  border-radius: 30px;
-  margin-bottom: 10px;
+  margin-top: 0px;
+  border-radius: 10px;
 `;
 
 const Title = styled.Text`
@@ -52,9 +51,8 @@ const ProfileImage = ({title, image, onPress}) => {
     <Container>
       <SignUpImage source={{uri: image}} />
       <TouchableOpacity onPress={onPress}>
-        <Row style={{marginBottom: 30}}>
+        <Row>
           <Title>{title}</Title>
-          <Feather name="edit-2" size={18} color={theme.basicText} />
         </Row>
       </TouchableOpacity>
     </Container>

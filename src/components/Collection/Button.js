@@ -5,12 +5,12 @@ import styled from 'styled-components/native';
 const Container = styled.View`
   background-color: ${({theme}) => theme.tintColorGreen};
   height: 60px;
-  width: 100%;
+  width: 360px;
   justify-content: center;
   align-items: center;
   border-radius: 15px;
   margin-top: 25px;
-  margin-bottom : 200px;
+  margin-bottom : 400px;
 `;
 
 const Title = styled.Text`

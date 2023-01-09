@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {theme} from '../../theme';
-import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
@@ -14,14 +14,14 @@ const Container = styled.View`
   border-radius: 11px;
 `;
 
-const EditIcon = ({onPress}) => {
+const FilterIcon = ({onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Container>
-        <Feather name="edit-2" size={15} color={theme.basicText} />
+        <FontAwesome5 name="filter" size={15} color={theme.basicText} />
       </Container>
     </TouchableOpacity>
   );
 };
 
-export default EditIcon;
+export default FilterIcon;

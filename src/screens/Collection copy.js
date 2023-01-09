@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {View, TouchableOpacity, ScrollView, Modal, TextInput} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,8 +16,6 @@ import {
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import Main from './Main';
-import { useIsFocused } from '@react-navigation/native';
-
 
 const Container = styled.View`
   flex: 1;
@@ -104,25 +102,15 @@ const Collection = ({route, navigation}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const refChangedColname = useRef(null);
-  const {collectionId, collectionTitle, nickName} = route.params;
-  // const [ChangedColName, setChangedColname] = useState('');
   const [ChangedColName, setChangedColname] = useState(collectionTitle);
+  const {collectionId, collectionTitle, nickName} = route.params;
   const [isChanged, setIsChanged] = useState(false);
   
-  console.log('초기값',ChangedColName)
-
-
-  const isFocused = useIsFocused(); // isFoucesd Define
-
-  useEffect(() => {
-  if (isFocused) console.log('Collection focused & re-rendered'); 
-    // _changeCollectionName()
-  }, [isFocused]);
   // const [modifyName, setModifyName] = useState(collectionTitle);
   // useEffect(() => {
   // console.log('namecheck',modifyName)
   // }, [modifyName])
-
+  
   const _changeCollectionName = async () => {
     setVisibleModal(false);
     console.log('data check', nickName, collectionId, ChangedColName)
@@ -146,10 +134,8 @@ const Collection = ({route, navigation}) => {
         })
         .then(data => {
           console.log(data)
-          setCollectionName(data)
+          setChangedColname(data)
           setIsChanged(true)
-          // isFocused(false)
-          // isFocused(true)
           // setModifyName(ChangedColName)
           // console.log('해치웠나',modifyName)
           console.log("chagned true?", isChanged)
@@ -159,7 +145,7 @@ const Collection = ({route, navigation}) => {
           console.log('result', result);
         }); //for debug
     } catch (e) {
-      console.log('change fail', e);
+      console.log('change fail');
     }
   };
 
@@ -171,7 +157,7 @@ const Collection = ({route, navigation}) => {
         visible={visibleModal}
         style={{flex: 1}}>
         <ModalView insets={insets}>
-          <StyledTouchableOpacity onPress={() => _changeCollectionName()}>
+          <StyledTouchableOpacity onPress={() => setVisibleModal(false)}>
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
           <Input
@@ -186,7 +172,7 @@ const Collection = ({route, navigation}) => {
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeCollectionName()}/>
+          <Button title="변경하기" onPress={() => _changeCollectionName()} />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -200,13 +186,15 @@ const Collection = ({route, navigation}) => {
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVisibleModal(true)}>
+            <TouchableOpacity onPress={() => {setVisibleModal(true) 
+                    console.log('컬렉션이름', ChangedColName);}
+          }>
               <WrapRow style={{marginTop: 30}}>
                 <Title style={{marginRight: 10}}>
                   <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
-                    {JSON.stringify(ChangedColName + ' ')}
+                    {ChangedColName.title + ' '}
                     {/* {modifyName+ ' '} */}
-                    {/* {isChanged === true? {collectionTitle} : {ChangedColName}} */}
+                    {/* {isChanged === true? {collectionTitle} : {modifyName[0] + ' '}} */}
                   </Title>
                     콜렉션
                 </Title>
@@ -226,7 +214,7 @@ const Collection = ({route, navigation}) => {
                 height: 60,
               }}>
               <ProfileImage />
-              <SubTitle style={{fontSize: 15}}>기윤님이 담았어요!</SubTitle>
+              <SubTitle style={{fontSize: 15}}>bulksup님이 담았어요!</SubTitle>
             </WrapRow>
           </Column>
         </Row>
@@ -284,3 +272,5 @@ const Collection = ({route, navigation}) => {
 };
 
 export default Collection;
+
+<Title onChangeText={ChangedColName => setChangedColname(ChangedColName)}>{ChangedColName}</Title>
