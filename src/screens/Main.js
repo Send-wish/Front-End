@@ -23,7 +23,7 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
-import { useIsFocused } from '@react-navigation/native';
+// import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -120,9 +120,9 @@ const Main = ({navigation, route}) => {
 
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
-  if (isFocused) console.log('Focused'); 
-  _getCollections() // 컬렌션 목록 랜더링
-  // _getItems() // 아이템 목록 랜더링
+    if (isFocused) console.log('Focused');
+    _getCollections(); // 컬렌션 목록 랜더링
+    // _getItems() // 아이템 목록 랜더링
   }, [isFocused]);
 
   // collection 추가
@@ -130,8 +130,8 @@ const Main = ({navigation, route}) => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
     console.log('collectionName', collectionName); // 컬렉션 이름 확인
 
-    setVisibleModal(false); 
-    
+    setVisibleModal(false);
+
     try {
       fetch('https://api.sendwish.link:8081/collection', {
         method: 'POST',
@@ -247,36 +247,36 @@ const Main = ({navigation, route}) => {
 
   // collection 삭제
   const _deleteCollection = async () => {
-    
     try {
-        fetch(`https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },  
-            body:JSON.stringify({
-                nickname: nickName,
-                collectionId: collectionId,
-            })
-        })
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nickname: nickName,
+            collectionId: collectionId,
+          }),
+        },
+      )
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`${response.status} 에러발생`);
-            }
-            return response.json();
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
         })
-        .then(data =>{
-            console.log(data)
+        .then(data => {
+          console.log(data);
         })
         .then(result => {
-            console.log('result', result);
-        }
-        )
+          console.log('result', result);
+        });
     } catch (e) {
-        console.log('delete fail', e);
+      console.log('delete fail', e);
     }
-};
-
+  };
 
   return (
     <Container insets={insets}>
