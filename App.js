@@ -6,7 +6,7 @@ import {
   Chat,
   Collection,
   Friends,
-  ItemDetail,
+  // ItemDetail,
   Main,
   Shared,
   SignIn,
@@ -78,6 +78,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="SignIn" component={SignIn} />
+        {/* <Stack.Screen name="ItemDetail" component={ItemDetail} /> */}
           <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="Bottom" component={BottomTabScreen} />
           <Stack.Screen name="SignUp" component={SignUp} />

@@ -1,4 +1,4 @@
-import React, {useEffect, Component, useState, useRef} from 'react';
+import React, {forwardRef, useEffect, Component, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Draggable from 'react-native-draggable';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const Container = styled.View`
   flex: 1;
@@ -114,6 +116,9 @@ const Main = ({navigation, route}) => {
   const nickName = route.params;
   const [collections, setCollections] = useState([]);
   const [collectionName, setCollectionName] = useState('');
+  const [xPosition, setXPosition] = useState(0);
+  const [yPosition, setYPosition] = useState(0);
+  const [xyPosition, setXYPosition] = useState([]);
 
   const _madeCollection = async () => {
     console.log('nickName', nickName);
@@ -178,6 +183,22 @@ const Main = ({navigation, route}) => {
   const _openUrl = url => {
     console.log('url', url);
     Linking.openURL(url);
+  };
+
+  const objectRef = useRef();
+
+  const getBoxMeasure = () => {
+    objectRef.current.measureInWindow((x, y) => {
+      setXPosition(x);
+      setYPosition(y);
+      const temp = [{x: x, y: y}];
+      setXYPosition(temp);
+      console.log('x is : ', x);
+      console.log('y is : ', y);
+      console.log('xPosition is : ', xPosition);
+      console.log('yPosition is : ', yPosition);
+      console.log('xyPosition is : ', xyPosition);
+    });
   };
 
   return (
@@ -270,35 +291,53 @@ const Main = ({navigation, route}) => {
             </ScrollView>
           </View>
         </Row>
+        {/* {xyPosition.map(xyPosition => (
+          <ItemBox
+            style={{position: 'absolute', top: yPosition, left: yPosition}}
+            key={xyPosition.x}
+            title="안녕하세요as
+           gasdgsagdsadgsadgasdgasdgsag"
+            saleRate="60%"
+            price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            image={
+              'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+            }
+            onPress={getBoxMeasure}
+            ref={objectRef}
+          />
+        ))} */}
+
       </UpperContainer>
 
       <BottomContainer>
-        <ScrollView scrollEnabled={false}>
-          <Column>
-            <SpackBetweenRow>
-              <View style={{marginBottom: 10}}>
-                <Title>내 위시템 전체보기</Title>
-                <SubTitle>총 N개의 위시템</SubTitle>
-              </View>
-              <Row>
-                <SearchIcon />
-                {/* <FilterIcon /> */}
-                <EditIcon />
-              </Row>
-            </SpackBetweenRow>
-          </Column>
-          <FlexRow>
-            <ItemBox
-              title="안녕하세요as
+      <ScrollView scrollEnabled={false}>
+        <Column>
+          <SpackBetweenRow>
+            <View style={{marginBottom: 10}}>
+              <Title>내 위시템 전체보기</Title>
+              <SubTitle>총 N개의 위시템</SubTitle>
+            </View>
+            <Row>
+              <SearchIcon />
+              {/* <FilterIcon /> */}
+              <EditIcon />
+            </Row>
+          </SpackBetweenRow>
+        </Column>
+        <FlexRow>
+          <ItemBox
+            title="안녕하세요as
             gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-          </FlexRow>
-        </ScrollView>
+            saleRate="60%"
+            price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            image={
+              'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
+            }
+            onPress={getBoxMeasure}
+            ref={objectRef}
+          />
+        </FlexRow>
+      </ScrollView>
       </BottomContainer>
     </Container>
   );

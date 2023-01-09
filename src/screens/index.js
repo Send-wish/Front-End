@@ -1,7 +1,7 @@
 import Chat from './Chat';
 import Collection from './Collection';
 import Friends from './Friends';
-import ItemDetail from './ItemDetail';
+// import ItemDetail from './ItemDetail';
 import Main from './Main';
 import Shared from './Shared';
 import SignIn from './SignIn';
@@ -14,7 +14,7 @@ export {
   Chat,
   Collection,
   Friends,
-  ItemDetail,
+  // ItemDetail,
   Main,
   Shared,
   SignIn,

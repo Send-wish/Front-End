@@ -1,83 +1,53 @@
-import styled from 'styled-components';
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
-import {TouchableOpacity, Animated, Easing, PanResponder} from 'react-native';
-import View from 'react-native-view';
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, Easing, PanResponder, Text, View} from 'react-native';
+import styled from 'styled-components/native';
 
-const Container = styled(Animated.createAnimatedComponent(View))`
-  padding: 10px;
-  margin: 1px 1px 3px 1px;
-  width: 120px;
-  height: 160px;
+const BLACK_COLOR = '#1e272e';
+const GREY = '#485460';
+const GREEN = '#2ecc71';
+const RED = '#e74c3c';
+
+const Container = styled.View`
+  flex: 1;
+  background-color: ${BLACK_COLOR};
+`;
+const Edge = styled.View`
+  flex: 1;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
 `;
-
-const ItemImage = styled.Image`
-  background-color: ${({theme}) => theme.componentBackground};
-  padding: 10px;
-  margin: 3px 3px 3px 3px;
+const WordContainer = styled(Animated.createAnimatedComponent(View))`
   width: 100px;
   height: 100px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
-  flex-wrap: wrap;
-  border-style: solid;
-  border: ${({theme}) => theme.line};
+  background-color: ${GREY};
+  border-radius: 50px;
 `;
-
-const Title = styled.Text`
-  margin: 1px;
-  font-size: 10px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  width: 80px;
-  height: 25px;
-  flex-wrap: wrap;
+const Word = styled.Text`
+  font-size: 38px;
+  font-weight: 500;
+  color: ${props => props.color};
 `;
-
-const Price = styled.Text`
-  margin: 1px;
-  font-size: 11px;
-  font-weight: bold;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  color: ${({theme}) => theme.basicText};
-`;
-
-const Sale = styled.Text`
-  margin: 1px;
-  font-size: 11px;
-  font-weight: bold;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  color: ${({theme}) => theme.tintColorPink};
-`;
-
-const Row = styled.View`
-  flex-direction: row;
+const Center = styled.View`
+  flex: 3;
   justify-content: center;
   align-items: center;
-  width: 80%;
+  z-index: 10;
+`;
+const IconCard = styled(Animated.createAnimatedComponent(View))`
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  z-index: 10;
+  position: absolute;
 `;
 
-const ItemBox = forwardRef(({onPress, saleRate, title, price, image}, ref) => {
+export default function App() {
   // Values
   const opacity = useRef(new Animated.Value(1)).current;
   const scale = useRef(new Animated.Value(1)).current;
-  const position = useRef(new Animated.ValueXY({x: 0, y: 0, z: 20})).current;
+  const position = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
 
   const scaleOne = position.y.interpolate({
     inputRange: [-300, -80],
@@ -94,13 +64,13 @@ const ItemBox = forwardRef(({onPress, saleRate, title, price, image}, ref) => {
   // Animations
 
   // 눌렀을 때 조금 작아짐
-  const onPressIn = Animated.spring(opacity, {
-    toValue: 0.5,
+  const onPressIn = Animated.spring(scale, {
+    toValue: 0.9,
     useNativeDriver: true,
   });
 
   // 뗐을 때 원래대로
-  const onPressOut = Animated.spring(opacity, {
+  const onPressOut = Animated.spring(scale, {
     toValue: 1,
     useNativeDriver: true,
   });
@@ -137,9 +107,8 @@ const ItemBox = forwardRef(({onPress, saleRate, title, price, image}, ref) => {
 
       // 진행 중일 때 실행되는 함수 ( 첫번째 인자 : event, 두번째 인자 : gestureState)
       onPanResponderMove: (_, {dx, dy}) => {
-        // console.log(dy);
+        console.log(dy);
         position.setValue({x: dx, y: dy});
-        onPressIn.start();
       },
       //터치 이벤트가 발생 할 때 실행되는 함수
       onPanResponderGrant: () => {
@@ -171,6 +140,7 @@ const ItemBox = forwardRef(({onPress, saleRate, title, price, image}, ref) => {
     }),
   ).current;
 
+  // State
   const nextAction = () => {
     Animated.parallel([
       Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
@@ -179,22 +149,33 @@ const ItemBox = forwardRef(({onPress, saleRate, title, price, image}, ref) => {
   };
 
   return (
-    <Container
-        {...panResponder.panHandlers}
-        style={{
-          opacity,
-          transform: [...position.getTranslateTransform(), {scale}],
-        }}>
-          <TouchableOpacity ref={ref} onPress={onPress}>
-        <ItemImage source={{uri: image}} />
-        <Row>
-          <Sale>{saleRate}</Sale>
-          <Price> {price} </Price>
-        </Row>
-        <Title>{title}</Title>
-    </TouchableOpacity>
-      </Container>
-  );
-});
+    // '알아' 써클 : scaleOne 함수 실행하여 변할 예정 (커짐)
+    <Container>
+      <Edge>
+        <WordContainer style={{transform: [{scale: scaleOne}]}}>
+          <Word color={GREEN}>알아</Word>
+        </WordContainer>
+      </Edge>
 
-export default ItemBox;
+
+      <Center>
+        <IconCard
+        // panResponder의 panHandlers를 IconCard에 넣어줌
+          {...panResponder.panHandlers}
+          style={{
+            opacity : opacity,
+            transform: [...position.getTranslateTransform(), {scale}],
+          }}>
+          <Text>Drag me!</Text>
+        </IconCard>
+      </Center>
+
+      {/* '몰라' 써클 : scaleOne 함수 실행하여 변할 예정 (커짐) */}
+      <Edge>
+        <WordContainer style={{transform: [{scale: scaleTwo}]}}>
+          <Word color={RED}>몰라</Word>
+        </WordContainer>
+      </Edge>
+    </Container>
+  );
+}
