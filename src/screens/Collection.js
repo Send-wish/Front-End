@@ -15,7 +15,6 @@ import {
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
-import Main from './Main';
 import { useIsFocused } from '@react-navigation/native';
 
 
@@ -103,29 +102,24 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 const Collection = ({route, navigation}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const refChangedColname = useRef(null);
-  const {collectionId, collectionTitle, nickName} = route.params;
-  // const [ChangedColName, setChangedColname] = useState('');
-  const [ChangedColName, setChangedColname] = useState(collectionTitle);
+  const refCollectionName = useRef(null);
+  const {collectionId, collectionName, nickName} = route.params;
+  const [collectionTitle, setCollectionTitle] = useState(collectionName);
   const [isChanged, setIsChanged] = useState(false);
   
-  console.log('초기값',ChangedColName)
+  console.log('Collection Name from Main',collectionTitle)
+  console.log('Collection Name from Main',collectionName)
 
 
   const isFocused = useIsFocused(); // isFoucesd Define
-
+  // 화면 이동시 리랜더링  건들지 말것 
   useEffect(() => {
   if (isFocused) console.log('Collection focused & re-rendered'); 
-    // _changeCollectionName()
   }, [isFocused]);
-  // const [modifyName, setModifyName] = useState(collectionTitle);
-  // useEffect(() => {
-  // console.log('namecheck',modifyName)
-  // }, [modifyName])
 
   const _changeCollectionName = async () => {
     setVisibleModal(false);
-    console.log('data check', nickName, collectionId, ChangedColName)
+    console.log('data check', nickName, collectionId, collectionName)
     try {
       await fetch('https://api.sendwish.link:8081/collection', {
         method: 'PATCH',
@@ -135,7 +129,7 @@ const Collection = ({route, navigation}) => {
         body: JSON.stringify({
           nickname: nickName,
           collectionId: collectionId,
-          newTitle: ChangedColName,
+          newTitle: collectionTitle,
         }),
       })
         .then(response => {
@@ -146,14 +140,11 @@ const Collection = ({route, navigation}) => {
         })
         .then(data => {
           console.log(data)
-          setCollectionName(data)
+
           setIsChanged(true)
-          // isFocused(false)
-          // isFocused(true)
-          // setModifyName(ChangedColName)
-          // console.log('해치웠나',modifyName)
+
           console.log("chagned true?", isChanged)
-          console.log('change_check!!',ChangedColName)
+          console.log('change_check!!',collectionTitle)
         })
         .then(result => {
           console.log('result', result);
@@ -175,10 +166,10 @@ const Collection = ({route, navigation}) => {
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
           <Input
-            ref={refChangedColname}
-            value={ChangedColName}
-            onChangeText={setChangedColname}
-            onBlur={() => setChangedColname(ChangedColName)}
+            ref={refCollectionName}
+            value={collectionTitle}
+            onChangeText={setCollectionTitle}
+            onBlur={() => setCollectionTitle(collectionTitle)}
             maxLength={20}
             onSubmitEditing={() => {
               _changeCollectionName();
@@ -194,9 +185,10 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                passName = {nickName};
-                console.log('check colleciton to main nickName 전달',passName)
-                navigation.navigate('Main', {params: passName});
+                passData = {nickName, collectionId, collectionTitle};
+                console.log('check colleciton to main Data 전달',passData)
+                // console.log(params);
+                navigation.navigate('Main', {params: collectionId, collectionTitle, nickName});
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
@@ -204,9 +196,7 @@ const Collection = ({route, navigation}) => {
               <WrapRow style={{marginTop: 30}}>
                 <Title style={{marginRight: 10}}>
                   <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
-                    {JSON.stringify(ChangedColName + ' ')}
-                    {/* {modifyName+ ' '} */}
-                    {/* {isChanged === true? {collectionTitle} : {ChangedColName}} */}
+                    {collectionTitle}
                   </Title>
                     콜렉션
                 </Title>

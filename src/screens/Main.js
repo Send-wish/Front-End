@@ -20,12 +20,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { Linking } from 'react-native';
 
 import { useIsFocused } from '@react-navigation/native';
-// const isFocused = useIsFocused(); // isFoucesd Define
-
-// useEffect(() => {
-// if (isFocused) console.log('Focused'); 
-// }, [isFocused]);
-
 
 const Container = styled.View`
   flex: 1;
@@ -108,26 +102,29 @@ const Main = ({navigation, route}) => {
   const nickName = route.params.nickName;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [collections, setCollections] = useState([]);
-  const [collectionName, setCollectionName] = useState('');
-  const [items, setItems] = useState([]);
-  const [itemId, setItemId] = useState(0);
+  const [collections, setCollections] = useState([]); // 컬렉션 목록
+  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
+  const [items, setItems] = useState([]); // 아이템 목록
+  const [itemId, setItemId] = useState(0); // 아이템별 아이디
   const refChangedColname = useRef(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
 
-  const isFocused = useIsFocused(); // isFoucesd Define
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
+  // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
   if (isFocused) console.log('Focused'); 
-  _getCollections()
+  _getCollections() // 컬렌션 목록 랜더링
+  // _getItems() // 아이템 목록 랜더링
   }, [isFocused]);
 
   // collection 추가
   const _madeCollection = async () => {
-    console.log('nickName from Sign In', nickName);
-    console.log('collectionName', collectionName);
-    setVisibleModal(false);
+    console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
+    console.log('collectionName', collectionName); // 컬렉션 이름 확인
+
+    setVisibleModal(false); 
     
     try {
       fetch('https://api.sendwish.link:8081/collection', {
@@ -148,9 +145,6 @@ const Main = ({navigation, route}) => {
         .then(data => {
           console.log('made collection', data);
         })
-        // .catch(error => {
-        //   console.error(error);
-        // })
         .then(() => _getCollections());
     } catch (e) {
       console.log('collection made fail');
@@ -179,11 +173,6 @@ const Main = ({navigation, route}) => {
       console.log(e);
     }
   };
-  // first screen rendering
-  useEffect(() => {
-    console.log('컬렉션 추가 or 랜더링 완료');
-    _getCollections();
-  }, []);
 
   // item link
   const _openUrl = url => {
@@ -250,10 +239,6 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  useEffect(() => {
-    console.log('아이템 추가 완료');
-    _getItems();
-  }, []);
 
   return (
     <Container insets={insets}>
@@ -285,7 +270,7 @@ const Main = ({navigation, route}) => {
               ref={refChangedColname}
               value={collectionName}
               onChangeText={setCollectionName}
-              onBlur={() => setCollectionName(setCollectionName)}
+              onBlur={() => setCollectionName(collectionName)}
               maxLength={20}
               onSubmitEditing={() => {
                 _madeCollection();
@@ -337,7 +322,7 @@ const Main = ({navigation, route}) => {
                   onPress={() =>
                     navigation.navigate('Collection', {
                       collectionId: collection?.collectionId,
-                      collectionTitle: collection?.title,
+                      collectionName: collection?.title,
                       nickName: collection?.nickname,
                     })
                   }
