@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -17,7 +17,11 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import { Linking } from 'react-native';
+import {Linking} from 'react-native';
+
+import {useIsFocused} from '@react-navigation/native';
+
+import ShareMenu from 'react-native-share-menu';
 
 import { useIsFocused } from '@react-navigation/native';
 
@@ -219,7 +223,7 @@ const Main = ({navigation, route}) => {
     try {
       // API 아직 안열림
       fetch(
-        `https://api.sendwish.link:8081/collection/${test}/${collectionId}`,
+        `https://api.sendwish.link:8081/collection/honghonghong/${collectionId}`,
         {
           method: 'GET',
           // headers: {Content_Type: 'application/json'},
@@ -396,13 +400,17 @@ const Main = ({navigation, route}) => {
               itemName="안녕하세요as
             gasdgsagdsadgsadgasdgasdgsag"
               saleRate="60%"
-              itemPrice={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              itemPrice={(70000)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               itemImage={
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
               onPress={() => {
                 // console.log('item recieve', item);
-                _openUrl(`https://www.notion.so/b9c1497a993642deb4bd265cd9174645`);
+                _openUrl(
+                  `https://www.notion.so/b9c1497a993642deb4bd265cd9174645`,
+                );
               }}
             />
             {/* item rendering  */}

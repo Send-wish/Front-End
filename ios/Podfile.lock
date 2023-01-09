@@ -379,6 +379,8 @@ PODS:
   - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
+  - RNShareMenu (6.0.0):
+    - React
   - RNVectorIcons (9.2.0):
     - React-Core
   - SocketRocket (0.6.0)
@@ -448,6 +450,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNShareMenu (from `../node_modules/react-native-share-menu`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -542,6 +545,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNShareMenu:
+    :path: "../node_modules/react-native-share-menu"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -597,11 +602,12 @@ SPEC CHECKSUMS:
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
+  RNShareMenu: cb9dac548c8bf147d06f0bf07296ad51ea9f5fc3
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: cda3da0a6cc0631c959db53f164b271646073a07
+PODFILE CHECKSUM: e2138361517ea9c7499dc4e492742fd69c9bd282
 
 COCOAPODS: 1.11.3

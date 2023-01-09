@@ -39,5 +39,17 @@ target 'SandWish' do
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+      end
+    end
   end
+end
+
+target 'Share' do
+  use_react_native!
+  
+  pod 'RNShareMenu', :path => '../node_modules/react-native-share-menu'
+  # Manually link packages here to keep your extension bundle size minimal
 end
