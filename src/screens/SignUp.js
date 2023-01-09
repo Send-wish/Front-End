@@ -119,7 +119,7 @@ const SignUp = ({navigation}) => {
 
       <MiddleContainer>
         <Row>
-          <ProfileImage title="벌크섭" />
+          <ProfileImage title="기윤" />
         </Row>
       </MiddleContainer>
       <BottomContainer>
