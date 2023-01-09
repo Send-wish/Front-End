@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import React, {useRef} from 'react';
-import {TouchableOpacity, Animated, PanResponder} from 'react-native';
+import React from 'react';
+import {TouchableOpacity} from 'react-native';
 import View from 'react-native-view';
 
-const Container = styled(Animated.createAnimatedComponent(View))`
+const Container = styled.View`
   padding: 10px;
   margin: 1px 1px 3px 1px;
   width: 120px;
@@ -67,52 +67,16 @@ const Row = styled.View`
   width: 80%;
 `;
 
-const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
-  // Values
-  const scale = useRef(new Animated.Value(1)).current;
-  const position = useRef(new Animated.ValueXY({x: 0, y: 0, z: 5})).current;
-
-  //Animations
-  const onPressIn = Animated.spring(scale, {
-    toValue: 0.9,
-    useNativeDriver: true,
-  });
-  const onPressOut = Animated.spring(scale, {
-    toValue: 1,
-    useNativeDriver: true,
-  });
-  const goHome = Animated.spring(position, {
-    toValue: 0,
-    useNativeDriver: true,
-  });
-
-  // PanResponders
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, {dx, dy, dz}) => {
-        position.setValue({x: dx, y: dy, z: dz});
-      },
-      onPanResponderGrant: () => {
-        onPressIn.start();
-      },
-      onPanResponderRelease: () => {
-        Animated.parallel([onPressOut, goHome]).start();
-      },
-    }),
-  ).current;
-
-  //  State
-
+const ItemBox = ({onPress, saleRate, title, price, image}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <ItemImage source={{uri: itemImage}} />
+        <ItemImage source={{uri: image}} />
         <Row>
           <Sale>{saleRate}</Sale>
-          <Price> {itemPrice} </Price>
+          <Price> {price} </Price>
         </Row>
-        <Title>{itemName}</Title>
+        <Title>{title}</Title>
       </TouchableOpacity>
     </Container>
   );

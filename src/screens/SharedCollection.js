@@ -1,5 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {View, TouchableOpacity, ScrollView, Modal, TextInput} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -15,7 +20,6 @@ import {
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
-import Main from './Main';
 
 const Container = styled.View`
   flex: 1;
@@ -98,55 +102,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Collection = ({route, navigation}) => {
+const SharedCollection = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const refChangedColname = useRef(null);
   const [ChangedColName, setChangedColname] = useState('');
-  const {collectionId, collectionTitle, nickName} = route.params;
-  const [isChanged, setIsChanged] = useState(false);
-  
-  const [modifyName, setModifyName] = useState(collectionTitle);
-  useEffect(() => {
-  console.log('namecheck',modifyName)
-  }, [modifyName])
-  const _changeCollectionName = async () => {
-    setVisibleModal(false);
-    console.log('data check', nickName, collectionId, ChangedColName)
-    try {
-      await fetch('https://api.sendwish.link:8081/collection', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nickname: nickName,
-          collectionId: collectionId,
-          newTitle: ChangedColName,
-        }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log(data)
-          setChangedColname(data)
-          setIsChanged(true)
-          setModifyName(ChangedColName)
-          console.log('해치웠나',modifyName)
-          console.log("chagned true?", isChanged)
-          console.log('change_check!!',ChangedColName)
-        })
-        .then(result => {
-          console.log('result', result);
-        }); //for debug
-    } catch (e) {
-      console.log('change fail');
-    }
-  };
 
   return (
     <Container insets={insets}>
@@ -166,12 +126,12 @@ const Collection = ({route, navigation}) => {
             onBlur={() => setChangedColname(ChangedColName)}
             maxLength={20}
             onSubmitEditing={() => {
-              _changeCollectionName();
+              setVisibleModal(false);
             }}
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeCollectionName()} />
+          <Button title="변경하기" onPress={() => setVisibleModal(false)} />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -179,22 +139,13 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                passName = {nickName};
-                console.log('check colleciton to main nickName 전달',passName)
-                navigation.navigate('Main', {params: passName});
+                navigation.navigate('Shared');
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setVisibleModal(true)}>
               <WrapRow style={{marginTop: 30}}>
-                <Title style={{marginRight: 10}}>
-                  <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
-                    {/* {collectionTitle + ' '} */}
-                    {modifyName+ ' '}
-                    {/* {isChanged === true? {collectionTitle} : {ChangedColName}} */}
-                  </Title>
-                    콜렉션
-                </Title>
+                <Title style={{marginRight: 10}}>콜렉션 이름</Title>
                 <Feather
                   name="edit-2"
                   size={20}
@@ -268,4 +219,4 @@ const Collection = ({route, navigation}) => {
   );
 };
 
-export default Collection;
+export default SharedCollection;

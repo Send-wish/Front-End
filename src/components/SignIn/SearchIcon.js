@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {theme} from '../../theme';
-import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
@@ -14,14 +14,14 @@ const Container = styled.View`
   border-radius: 11px;
 `;
 
-const EditIcon = ({onPress}) => {
+const SearchIcon = ({onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Container>
-        <Feather name="edit-2" size={15} color={theme.basicText} />
+       <Entypo name="magnifying-glass" size={15} color={theme.basicText} />
       </Container>
     </TouchableOpacity>
   );
 };
 
-export default EditIcon;
+export default SearchIcon;

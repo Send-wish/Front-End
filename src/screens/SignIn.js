@@ -1,15 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
-import styled from 'styled-components/native';
 
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {Alert, TouchableOpacity} from 'react-native';
+import styled from 'styled-components/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
-import logo from '../assets/logo.png';
-import { Button, Input } from '../components/Main';
+import {Button, Input} from '../components/SignIn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {removeWhitespace} from '../utils';
+import ErrorMessage from '../components/SignIn/ErrorMessage';
 
 const Container = styled.View`
   flex: 1;
@@ -17,58 +15,63 @@ const Container = styled.View`
   padding-top: ${({insets: {top}}) => top}px;
 `;
 
-const Logo = styled.Image`
-  width: 100px;
-  height: 100px;
-  background-color: ${({theme}) => theme.basicText};
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  border-radius: 20px;
-`;
-
-const TopArea = styled.View`
+const UpperContainer = styled.View`
   flex: 1;
   flex-direction: column;
   background-color: ${({theme}) => theme.mainBackground};
   justify-content: center;
-  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
-
-const TopAreaText = styled.Text`
-  font-size: 50px;
-  font-weight: bold;
-  color: ${({theme}) => theme.tintColorPink};
-  text-align: center;
-  margin: 15px;
-  flex-wrap: wrap;
-`;
-
-const MainArea = styled.View`
-  flex: 1;
-  flex-direction: row;
-  border-radius: 20px;
+const BottomContainer = styled.View`
+  flex: 2;
+  flex-direction: column;
   background-color: ${({theme}) => theme.mainBackground};
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 25px;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+`;
+
+const CenterRow = styled.View`
+  margin-top: 10px;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  align-items: center;
 `;
 
-const BottomArea = styled.View`
-  flex-direction: row;
-  flex: 1;
-  background-color: ${({theme}) => theme.mainBackground};
+
+const Title = styled.Text`
+  font-size: 30px;
+  font-weight: bold;
+  color: ${({theme}) => theme.basicText};
 `;
 
 const SignIn = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const [nickName, setNickName] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const refNickName = useRef(null);
   const refPassword = useRef(null);
 
   useEffect(() => {
-    setDisabled(!(nickName && password));
+    setDisabled(!(nickName && password && !errorMessage));
   }, [nickName, password]);
+
+  useEffect(() => {
+    let error = '';
+    if (!nickName) {
+      error = '별명을 입력해주세요 :)';
+    } else if (password.length < 6) {
+      error = '비밀번호는 최소 6글자 이상이어야 해요 :)';
+    }
+    setErrorMessage(error);
+  }, [nickName, password, errorMessage]);
 
   const _handleNickNameChange = nickName => {
     setNickName(nickName);
@@ -86,16 +89,24 @@ const SignIn = ({navigation}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          memberId: nickName,
+          nickname: nickName,
           password: password,
         }),
       })
         .then(response => response.json())
-        .then(result => console.log('result', result)) //for debug
+        .then(result => {console.log('result', result)}) //for debug
+        // result  값이 유효하지 않으면 (토큰이 발급되지 않으면 알람 메시지 띄우고 로그인 화면 유지)
         .then(json => {
-          if (json.resultCode === '200' && nickName !== undefined) {
-            navigation.navigate('Main', nickName);
-          }
+          if (nickName !== undefined) {
+            console.log('json....', json);
+            // console.log('response',response)
+            console.log('beforedddddd', nickName);
+            passName = {nickName}; // {nickName:UserNickName} object 형식으로 넘겨줌
+            navigation.navigate('Navigation', {
+              screen: 'Main',
+              params: passName,
+            });
+          } 
         })
         .catch(error => {
           console.error(error);
@@ -106,27 +117,36 @@ const SignIn = ({navigation}) => {
     }
   };
 
+  const _handleSignUpBtn = () => {
+    navigation.navigate('SignUp');
+  };
+
+
   return (
     <Container insets={insets}>
-      <TopArea>
-        <TopAreaText>
-          <TopAreaText>Send </TopAreaText>
-          <TopAreaText style={{color: theme.tintColorGreen}}>Wish</TopAreaText>
-        </TopAreaText>
-        <Logo source={logo} />
-      </TopArea>
-      <KeyboardAwareScrollView
-        extraScrollHeight={-100}
+      <UpperContainer>
+        <Title style={{marginTop: 30}}>간편한 소비, Sendwish</Title>
+        <Row>
+          <Title style={{marginTop: 10}}>
+            <Title style={{color: theme.tintColorGreen}}>콜렉션</Title>에
+            담아보세요!{' '}
+          </Title>
+        </Row>
+      </UpperContainer>
+      <BottomContainer>
+        <KeyboardAwareScrollView extraScrollHeight={140}
         keyboardShouldPersistTaps="handled">
-        <Input
-          label="아이디"
-          placeholer="아이디"
-          value={nickName}
-          onChangeText={_handleNickNameChange}
-          returnKeyType="next"
-          onSubmitEditing={() => refPassword.current.focus()}
-        />
-        <MainArea>
+          <Input
+            ref={refNickName}
+            value={nickName}
+            label="별명"
+            placeholder="별명"
+            returnKeyType="next"
+            onChangeText={_handleNickNameChange}
+            onBlur={() => setNickName(nickName.trim())}
+            maxLength={12}
+            onSubmitEditing={() => refNickName.current.focus()}
+          />
           <Input
             label="비밀번호"
             placeholer="비밀번호"
@@ -137,21 +157,25 @@ const SignIn = ({navigation}) => {
             onSubmitEditing={_handleSignInButtonPress}
             secureTextEntry
             isPassword={true}
+            onBlur={() => setPassword(removeWhitespace(password))}
           />
-        </MainArea>
-        <BottomArea>
+          <ErrorMessage message={errorMessage} />
           <Button
-            title="Sign In"
+            title="로그인"
             onPress={_handleSignInButtonPress}
             disabled={disabled}
           />
-          <Button
-            title="Sign Up"
-            onPress={() => navigation.navigate('SignUp')}
-            style={{color: theme.tintColorGreen}}
-          />
-        </BottomArea>
-      </KeyboardAwareScrollView>
+          <TouchableOpacity>
+            <CenterRow>
+              <Title
+                style={{fontSize: 18, color: theme.subText}}
+                onPress={_handleSignUpBtn}>
+                회원가입하러 가기
+              </Title>
+            </CenterRow>
+          </TouchableOpacity>
+        </KeyboardAwareScrollView>
+      </BottomContainer>
     </Container>
   );
 };
