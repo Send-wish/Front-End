@@ -1,5 +1,5 @@
 // Basic React Native App
-import React, {useState, useEffect, useCallback,useLayoutEffect} from 'react';
+import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 
 // Screens
 import {
@@ -20,9 +20,11 @@ import {theme} from './src/theme';
 
 // React Native Hooks
 import {NavigationContainer} from '@react-navigation/native';
-import {BottomTabView, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabView,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -57,8 +59,8 @@ const Navigation = () => {
               : 'chatbubble-ellipses-outline';
           } else if (route.name === 'Friends') {
             iconName = focused
-              ? 'notifications-sharp'
-              : 'notifications-outline';
+              ? 'md-person'
+              : 'md-person-outline';
           }
           return <Ionic name={iconName} size={size} color="white" />;
         },
@@ -72,7 +74,6 @@ const Navigation = () => {
 };
 
 const App = () => {
-
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>

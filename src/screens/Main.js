@@ -223,7 +223,7 @@ const Main = ({navigation, route}) => {
     try {
       // API 아직 안열림
       fetch(
-        `https://api.sendwish.link:8081/collection/honghonghong/${collectionId}`,
+        `https://api.sendwish.link:8081/collection/${test}/${collectionId}`,
         {
           method: 'GET',
           // headers: {Content_Type: 'application/json'},
@@ -284,6 +284,10 @@ const Main = ({navigation, route}) => {
   const handleShare = useCallback(item => {
     console.log('item is : ', item);
 
+    if (!sharedUrl){
+      console.log( 'sharedUrl is null!!!!')
+      return;
+    }
     if (!item.data) {
       console.log('data is null!!!!');
       return;

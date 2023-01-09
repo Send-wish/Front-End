@@ -149,7 +149,7 @@ const SignIn = ({navigation}) => {
           />
           <Input
             label="비밀번호"
-            placeholer="비밀번호"
+            placeholder="비밀번호"
             ref={refPassword}
             value={password}
             onChangeText={_handlePasswordChange}
