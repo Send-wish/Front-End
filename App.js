@@ -22,7 +22,7 @@ import {theme} from './src/theme';
 import {NavigationContainer} from '@react-navigation/native';
 import {BottomTabView, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -79,10 +79,10 @@ const App = () => {
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="SignIn">
-          <Stack.Screen name="Navigation" component={Navigation} />
           {/* <Stack.Screen name="Start" component={Start} /> */}
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Navigation" component={Navigation} />
           <Stack.Screen name="Collection" component={Collection} />
           {/* <Stack.Screen name="SharedCollection" component={SharedCollection} /> */}
           {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}

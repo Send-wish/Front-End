@@ -23,9 +23,7 @@ import { useIsFocused } from '@react-navigation/native';
 // const isFocused = useIsFocused(); // isFoucesd Define
 
 // useEffect(() => {
-// return () => {
-// _getCollections();
-// }
+// if (isFocused) console.log('Focused'); 
 // }, [isFocused]);
 
 
@@ -117,6 +115,13 @@ const Main = ({navigation, route}) => {
   const refChangedColname = useRef(null);
 
   const [loading, setLoading] = useState(false);
+
+  const isFocused = useIsFocused(); // isFoucesd Define
+
+  useEffect(() => {
+  if (isFocused) console.log('Focused'); 
+  _getCollections()
+  }, [isFocused]);
 
   // collection 추가
   const _madeCollection = async () => {
