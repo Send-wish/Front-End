@@ -112,6 +112,8 @@ const Main = ({navigation, route}) => {
 
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
+  // const collectionId = 1; // 컬렉션별 아이디 테스트용
+
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
   if (isFocused) console.log('Focused'); 
@@ -239,6 +241,38 @@ const Main = ({navigation, route}) => {
     }
   };
 
+  // collection 삭제
+  const _deleteCollection = async () => {
+    
+    try {
+        fetch(`https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },  
+            body:JSON.stringify({
+                nickname: nickName,
+                collectionId: collectionId,
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`${response.status} 에러발생`);
+            }
+            return response.json();
+        })
+        .then(data =>{
+            console.log(data)
+        })
+        .then(result => {
+            console.log('result', result);
+        }
+        )
+    } catch (e) {
+        console.log('delete fail', e);
+    }
+};
+
 
   return (
     <Container insets={insets}>
@@ -328,7 +362,6 @@ const Main = ({navigation, route}) => {
                   }
                 />
               ))}
-
               <Ionicons
                 name="ellipsis-vertical"
                 size={15}
