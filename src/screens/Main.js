@@ -278,6 +278,34 @@ const Main = ({navigation, route}) => {
     }
   };
 
+  // Shared item
+  const [sharedUrl, setSharedUrl] = useState('');
+
+  const handleShare = useCallback(item => {
+    console.log('item is : ', item);
+
+    if (!item.data) {
+      console.log('data is null!!!!');
+      return;
+    }
+
+    var {mimeType, data, extraData} = item;
+    console.log('data is : ', data);
+    setSharedUrl(data[0].data);
+  }, []);
+
+  useEffect(() => {
+    ShareMenu.getInitialShare(handleShare);
+  }, []);
+
+  useEffect(() => {
+    const listener = ShareMenu.addNewShareListener(handleShare);
+    return () => {
+      listener.remove();
+    };
+  }, []);
+  console.log('sharedUrl is : ', sharedUrl);
+
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
