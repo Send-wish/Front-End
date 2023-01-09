@@ -1,5 +1,5 @@
 // Basic React Native App
-import React, {useLayoutEffect} from 'react';
+import React, {useState, useEffect, useCallback,useLayoutEffect} from 'react';
 
 // Screens
 import {
@@ -26,6 +26,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
+import ShareMenu from 'react-native-share-menu';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -72,6 +73,30 @@ const Navigation = () => {
 };
 
 const App = () => {
+  const [sharedUrl, setSharedUrl] = useState('');
+
+  const handleShare = useCallback(item => {
+    if (!item) {
+      return;
+    }
+
+    var {mimeType, data, extraData} = item;
+
+    setSharedUrl(data[0].data);
+  }, []);
+
+  useEffect(() => {
+    ShareMenu.getInitialShare(handleShare);
+  }, []);
+
+  useEffect(() => {
+    const listener = ShareMenu.addNewShareListener(handleShare);
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+  console.log(sharedUrl);
 
   return (
     <ThemeProvider theme={theme}>
