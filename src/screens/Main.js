@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -17,15 +17,17 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import { Linking } from 'react-native';
+import {Linking} from 'react-native';
 
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+
+import ShareMenu from 'react-native-share-menu';
+
 // const isFocused = useIsFocused(); // isFoucesd Define
 
 // useEffect(() => {
-// if (isFocused) console.log('Focused'); 
+// if (isFocused) console.log('Focused');
 // }, [isFocused]);
-
 
 const Container = styled.View`
   flex: 1;
@@ -119,8 +121,8 @@ const Main = ({navigation, route}) => {
   const isFocused = useIsFocused(); // isFoucesd Define
 
   useEffect(() => {
-  if (isFocused) console.log('Focused'); 
-  _getCollections()
+    if (isFocused) console.log('Focused');
+    _getCollections();
   }, [isFocused]);
 
   // collection 추가
@@ -128,7 +130,7 @@ const Main = ({navigation, route}) => {
     console.log('nickName from Sign In', nickName);
     console.log('collectionName', collectionName);
     setVisibleModal(false);
-    
+
     try {
       fetch('https://api.sendwish.link:8081/collection', {
         method: 'POST',
@@ -228,7 +230,7 @@ const Main = ({navigation, route}) => {
     try {
       // API 아직 안열림
       fetch(
-        `https://api.sendwish.link:8081/collection/${test}/${collectionId}`,
+        `https://api.sendwish.link:8081/collection/honghonghong/${collectionId}`,
         {
           method: 'GET',
           // headers: {Content_Type: 'application/json'},
@@ -254,6 +256,34 @@ const Main = ({navigation, route}) => {
     console.log('아이템 추가 완료');
     _getItems();
   }, []);
+
+  // Shared item
+  const [sharedUrl, setSharedUrl] = useState('');
+
+  const handleShare = useCallback(item => {
+    console.log('item is : ', item);
+
+    if (!item.data) {
+      console.log('data is null!!!!');
+      return;
+    }
+
+    var {mimeType, data, extraData} = item;
+    console.log('data is : ', data);
+    setSharedUrl(data[0].data);
+  }, []);
+
+  useEffect(() => {
+    ShareMenu.getInitialShare(handleShare);
+  }, []);
+
+  useEffect(() => {
+    const listener = ShareMenu.addNewShareListener(handleShare);
+    return () => {
+      listener.remove();
+    };
+  }, []);
+  console.log('sharedUrl is : ', sharedUrl);
 
   return (
     <Container insets={insets}>
@@ -378,13 +408,17 @@ const Main = ({navigation, route}) => {
               itemName="안녕하세요as
             gasdgsagdsadgsadgasdgasdgsag"
               saleRate="60%"
-              itemPrice={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              itemPrice={(70000)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               itemImage={
                 'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
               }
               onPress={() => {
                 // console.log('item recieve', item);
-                _openUrl(`https://www.notion.so/b9c1497a993642deb4bd265cd9174645`);
+                _openUrl(
+                  `https://www.notion.so/b9c1497a993642deb4bd265cd9174645`,
+                );
               }}
             />
             {/* item rendering  */}
