@@ -216,7 +216,7 @@ const Collection = ({route, navigation}) => {
                 height: 60,
               }}>
               <ProfileImage />
-              <SubTitle style={{fontSize: 15}}>기윤님이 담았어요!</SubTitle>
+              <SubTitle style={{fontSize: 15}}>{nickName}님이 담았어요!</SubTitle>
             </WrapRow>
           </Column>
         </Row>
