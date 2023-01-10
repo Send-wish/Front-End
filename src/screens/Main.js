@@ -232,10 +232,14 @@ const Main = ({navigation, route}) => {
   const _getItems = async () => {
     try {
       // API 아직 안열림
-      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json'},
-      })
+      fetch(
+        `https://api.sendwish.link:8081/collection/${test}/${collectionId}`,
+        {
+          method: 'GET',
+          // headers: {Content_Type: 'application/json'},
+        },
+      )
+
         .then(res => {
           return res.json();
         })
@@ -295,6 +299,7 @@ const Main = ({navigation, route}) => {
 
     if (!item.data || item.data.lenth < 1) {
       console.log('===== item.data is null!');
+
       return;
     }
 

@@ -64,6 +64,7 @@ const Navigation = () => {
               ? 'chatbubble-ellipses-sharp'
               : 'chatbubble-ellipses-sharp';
           } else if (route.name === 'Friends') {
+          
             iconName = focused ? 'people-sharp' : 'people-sharp';
           }
 
