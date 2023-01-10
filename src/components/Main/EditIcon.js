@@ -14,11 +14,11 @@ const Container = styled.View`
   border-radius: 11px;
 `;
 
-const EditIcon = ({onPress}) => {
+const EditIcon = ({onPress,name}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Container>
-        <Feather name="edit-2" size={15} color={theme.basicText} />
+        <Feather name={name} size={15} color={theme.basicText} />
       </Container>
     </TouchableOpacity>
   );

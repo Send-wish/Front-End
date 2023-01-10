@@ -121,6 +121,8 @@ const Main = ({navigation, route}) => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [sharedUrl, setSharedUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [addToCollection, setAddToCollection] = useState([]);
+  const [targetCollectionId, setTargetCollectionId] = useState('');
 
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
@@ -231,7 +233,6 @@ const Main = ({navigation, route}) => {
 
   const _getItems = async () => {
     try {
-      // API 아직 안열림
       fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'},
@@ -334,10 +335,81 @@ const Main = ({navigation, route}) => {
   }, []);
 
   _pressEditButton = () => {
-    // isEditing ? setIsEditing(false) : setIsEditing(true);
+    isEditing ? setIsEditing(false) : setIsEditing(true);
   };
 
-  console.log('isEditing is : ', isEditing);
+  _addItemToList = itemId => {
+    if (addToCollection.includes(itemId)) {
+      tempArray = addToCollection;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddToCollection(tempArray);
+      console.log('addToCollection2 is : ', addToCollection);
+    } else {
+      tempArray = addToCollection;
+      tempArray.push(itemId);
+      setAddToCollection(tempArray);
+      console.log('addToCollection2 is : ', addToCollection);
+    }
+  };
+
+  _pressTargetCollection = async collectionId => {
+    try {
+      fetch('https://api.sendwish.link:8081/collection/item', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: collectionId,
+          listItemId: addToCollection,
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('data is : ', data);
+        });
+    } catch (e) {
+      console.log('adding item to collection failed');
+    }
+  };
+
+  const _deleteItems = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname: nickName,
+          listItemId: addToCollection,
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+        })
+        .then(result => {
+          console.log('result', result);
+        });
+    } catch (e) {
+      console.log('items delete fail', e);
+    }
+  };
 
   return (
     <Container insets={insets}>
@@ -388,8 +460,18 @@ const Main = ({navigation, route}) => {
       <UpperContainer>
         <Row>
           <Column>
-            <Title style={{marginTop: 30}}>
-              <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
+            <Title
+              style={{
+                marginTop: 30,
+                color: isEditing ? theme.strongSubText : theme.basicText,
+              }}>
+              <Title
+                style={{
+                  fontSize: 27,
+                  color: isEditing
+                    ? theme.tintcolorPalegreen
+                    : theme.tintColorGreen,
+                }}>
                 {nickName + ' '}
               </Title>
               님이 담은 아이템
@@ -400,104 +482,152 @@ const Main = ({navigation, route}) => {
           <View style={{height: 150}}>
             <ScrollView horizontal>
               {/* collection rendering */}
-
-              {/* {useEffect(() => {
-                collections.reverse().map(collection => (
-                  <CollectionCircle
-                    key={collection?.collectionId}
-                    collectionId={collection?.collectionId}
-                    collectionTitle={collection?.title}
-                    nickName={collection?.nickname}
-                    onPress={() =>
-                      navigation.navigate('Collection', {
-                        collectionId: collection?.collectionId,
-                        collectionName: collection?.title,
-                        nickName: collection?.nickname,
-                      })
-                    }
-                  />
-                ));
-              }, [])} */}
-
-              {collections.reverse().map(collection => (
-                <CollectionCircle
-                  key={collection?.collectionId}
-                  collectionId={collection?.collectionId}
-                  collectionTitle={collection?.title}
-                  nickName={collection?.nickname}
-                  onPress={() =>
-                    navigation.navigate('Collection', {
-                      collectionId: collection?.collectionId,
-                      collectionName: collection?.title,
-                      nickName: collection?.nickname,
-                    })
-                  }
-                />
-              ))}
+              {collections.error
+                ? null
+                : collections.map(collection => (
+                    <CollectionCircle
+                      imageStyle={{
+                        opacity: isEditing ? 0.5 : 1,
+                      }}
+                      titleStyle={{
+                        color: isEditing ? theme.subText : theme.basicText,
+                      }}
+                      key={collection?.collectionId}
+                      collectionId={collection?.collectionId}
+                      collectionTitle={collection?.title}
+                      nickName={collection?.nickname}
+                      onPress={() =>
+                        isEditing
+                          ? _pressTargetCollection(collection?.collectionId)
+                          : navigation.navigate('Collection', {
+                              collectionId: collection?.collectionId,
+                              collectionName: collection?.title,
+                              nickName: collection?.nickname,
+                            })
+                      }
+                    />
+                  ))}
 
               <Ionicons
                 name="ellipsis-vertical"
                 size={15}
-                color={theme.subText}
-                style={{marginTop: 45, marginLeft: 10}}
+                style={{
+                  marginTop: 45,
+                  marginLeft: 10,
+                  color: isEditing
+                    ? theme.subBackground
+                    : theme.componentBackground,
+                }}
               />
               <AddCollectionCircle
-                onPress={() => setVisibleModal(true)}
-                title="새 버킷 추가"></AddCollectionCircle>
+                imageStyle={{
+                  backgroundColor: isEditing
+                    ? theme.subBackground
+                    : theme.componentBackground,
+                }}
+                titleStyle={{
+                  color: isEditing ? theme.subText : theme.basicText,
+                }}
+                onPress={() => (isEditing ? {} : setVisibleModal(true))}
+                title="새 콜렉션 추가"></AddCollectionCircle>
             </ScrollView>
           </View>
         </Row>
       </UpperContainer>
 
-      <BottomContainer onPress={() => console.log('pressed')}>
+      <BottomContainer
+        style={{
+          backgroundColor: isEditing
+            ? theme.strongBackground
+            : theme.subBackground,
+        }}>
         <ScrollView scrollEnabled={true}>
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>
-                <Title>내 위시템 전체보기</Title>
-                <SubTitle>총 N개의 위시템</SubTitle>
+                <Title
+                  style={{
+                    color: isEditing ? theme.strongSubText : theme.basicText,
+                  }}>
+                  내 위시템 전체보기
+                </Title>
+                <SubTitle
+                  style={{
+                    color: isEditing ? theme.strongSubText : theme.subText,
+                  }}>
+                  총 {items.length}개의 위시템
+                </SubTitle>
               </View>
               <Row>
-                <SearchIcon />
+                <SearchIcon style={{opacity: isEditing ? 0 : 1}} />
                 {/* <FilterIcon /> */}
-                <EditIcon onPress={() => _pressEditButton()} />
+                <EditIcon
+                  onPress={() => _pressEditButton()}
+                  name={isEditing ? 'x' : 'edit-2'}
+                />
               </Row>
             </SpackBetweenRow>
           </Column>
           <FlexRow>
             {/* item rendering  */}
-            {items.reverse().map(item => (
-              <ItemBox
-                key={item?.itemId}
-                saleRate="가격"
-                itemName={item?.name}
-                itemPrice={new String(item?.price).replace(
-                  /\B(?=(\d{3})+(?!\d))/g,
-                  ',',
-                )}
-                itemImage={item?.imgUrl}
-                itemId={item?.itemId}
-                onPress={() => {
-                  _openUrl(item?.originUrl);
-                }}
-              />
-            ))}
+            {items.error
+              ? null
+              : items.map(item => (
+                  <ItemBox
+                    imageStyle={{
+                      opacity: isEditing ? 0.1 : 1,
+                    }}
+                    titleStyle={{
+                      color: isEditing ? theme.subText : theme.basicText,
+                    }}
+                    priceStyle={{
+                      color: isEditing
+                        ? theme.tintcolorPalepink
+                        : theme.tintColorPink,
+                    }}
+                    key={item?.itemId}
+                    saleRate="가격"
+                    itemName={item?.name}
+                    itemPrice={new String(item?.price).replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ',',
+                    )}
+                    itemImage={item?.imgUrl}
+                    itemId={item?.itemId}
+                    onPress={() => {
+                      isEditing
+                        ? _addItemToList(item?.itemId)
+                        : _openUrl(item?.originUrl);
+                    }}
+                    isEditing={isEditing}
+                  />
+                ))}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
 
-      {/* <TouchableOpacity
-        onPress={() => {}}
+      <View
         style={{
           position: 'absolute',
-          top: '40%',
-          backgroundColor: 'red',
+          top: '86%',
           width: '100%',
-          height: '70%',
-          zIndex: 400,
+          height: '00%',
+          paddingLeft: 20,
+          paddingRight: 20,
+          display: isEditing ? 'flex' : 'none',
         }}>
-        <View></View>
-      </TouchableOpacity> */}
+        <Button
+          style={{
+            marginBottom: 0,
+            position: 'absolute',
+          }}
+          buttonStyle={{backgroundColor: theme.tintColorPink}}
+          title="삭제하기"
+          onPress={() => {
+            _deleteItems();
+          }}
+        />
+      </View>
     </Container>
   );
 };

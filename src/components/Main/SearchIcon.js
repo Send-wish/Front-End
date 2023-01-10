@@ -14,10 +14,10 @@ const Container = styled.View`
   border-radius: 11px;
 `;
 
-const SearchIcon = ({onPress}) => {
+const SearchIcon = ({onPress, style}) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Container>
+      <Container style ={style}>
        <Entypo name="magnifying-glass" size={15} color={theme.basicText} />
       </Container>
     </TouchableOpacity>

@@ -1,5 +1,11 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
-import {View, TouchableOpacity, ScrollView, Modal, TextInput} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  TextInput,
+} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -15,8 +21,8 @@ import {
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
-import { useIsFocused } from '@react-navigation/native';
-
+import {useIsFocused} from '@react-navigation/native';
+import {get} from 'react-native/Libraries/Utilities/PixelRatio';
 
 const Container = styled.View`
   flex: 1;
@@ -100,26 +106,25 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Collection = ({route, navigation}) => {
+  const {collectionId, collectionName, nickName} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const refCollectionName = useRef(null);
-  const {collectionId, collectionName, nickName} = route.params;
   const [collectionTitle, setCollectionTitle] = useState(collectionName);
   const [isChanged, setIsChanged] = useState(false);
-  
-  console.log('Collection Name from Main',collectionTitle)
-  console.log('Collection Name from Main',collectionName)
-
+  const [items, setItems] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   const isFocused = useIsFocused(); // isFoucesd Define
-  // 화면 이동시 리랜더링  건들지 말것 
+  // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-  if (isFocused) console.log('Collection focused & re-rendered'); 
+    if (isFocused) console.log('Collection focused & re-rendered');
+    _getItemsFromCollection();
   }, [isFocused]);
 
   const _changeCollectionName = async () => {
     setVisibleModal(false);
-    console.log('data check', nickName, collectionId, collectionName)
+    console.log(nickName, collectionId, collectionName);
     try {
       await fetch('https://api.sendwish.link:8081/collection', {
         method: 'PATCH',
@@ -139,18 +144,76 @@ const Collection = ({route, navigation}) => {
           return response.json();
         })
         .then(data => {
-          console.log(data)
+          console.log(data);
 
-          setIsChanged(true)
+          setIsChanged(true);
 
-          console.log("chagned true?", isChanged)
-          console.log('change_check!!',collectionTitle)
+          console.log('chagned true?', isChanged);
+          console.log('change_check!!', collectionTitle);
         })
         .then(result => {
           console.log('result', result);
         }); //for debug
     } catch (e) {
       console.log('change fail', e);
+    }
+  };
+
+  const _getItemsFromCollection = async () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          data.dtos? setItems(data.dtos) : setItems([]);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const _openUrl = url => {
+    console.log('url', url);
+    Linking.openURL(url);
+  };
+
+  _pressEditButton = () => {
+    isEditing ? setIsEditing(false) : setIsEditing(true);
+  };
+
+  const _deleteItemsFromCollection = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname: nickName,
+          listItemId: addToCollection,
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+        })
+        .then(result => {
+          console.log('result', result);
+        });
+    } catch (e) {
+      console.log('items delete fail', e);
     }
   };
 
@@ -177,7 +240,7 @@ const Collection = ({route, navigation}) => {
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeCollectionName()}/>
+          <Button title="변경하기" onPress={() => _changeCollectionName()} />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -186,25 +249,38 @@ const Collection = ({route, navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 passData = {nickName, collectionId, collectionTitle};
-                console.log('check colleciton to main Data 전달',passData)
+                console.log('check colleciton to main Data 전달', passData);
                 // console.log(params);
-                navigation.navigate('Main', {params: collectionId, collectionTitle, nickName});
+                navigation.navigate('Main', {
+                  params: collectionId,
+                  collectionTitle,
+                  nickName,
+                });
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setVisibleModal(true)}>
               <WrapRow style={{marginTop: 30}}>
-                <Title style={{marginRight: 10}}>
-                  <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
+                <Title
+                  style={{
+                    marginRight: 10,
+                    color: isEditing ? theme.strongSubText : theme.basicText,
+                  }}>
+                  <Title
+                    style={{
+                      fontSize: 27,
+                      color: isEditing
+                        ? theme.tintcolorPalegreen
+                        : theme.tintColorGreen,
+                    }}>
                     {collectionTitle}
                   </Title>
-                    콜렉션
+                  콜렉션
                 </Title>
                 <Feather
                   name="edit-2"
                   size={20}
-                  color={theme.basicText}
-                  style={{marginTop: 3}}
+                  style={{marginTop: 3, color : isEditing? theme.strongSubText : theme.basicText}}
                 />
               </WrapRow>
             </TouchableOpacity>
@@ -216,7 +292,13 @@ const Collection = ({route, navigation}) => {
                 height: 60,
               }}>
               <ProfileImage />
-              <SubTitle style={{fontSize: 15}}>{nickName}님이 담았어요!</SubTitle>
+              <SubTitle
+                style={{
+                  fontSize: 15,
+                  color: isEditing ? theme.strongSubText : theme.basicText,
+                }}>
+                {nickName}님이 담았어요!
+              </SubTitle>
             </WrapRow>
           </Column>
         </Row>
@@ -232,43 +314,71 @@ const Collection = ({route, navigation}) => {
               <Row>
                 <SearchIcon />
                 {/* <FilterIcon /> */}
-                <EditIcon />
+                <EditIcon
+                  onPress={() => _pressEditButton()}
+                  name={isEditing ? 'x' : 'edit-2'}
+                />
               </Row>
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
+            {items.error
+              ? null
+              : items.map(item => (
+                  <ItemBox
+                    imageStyle={{
+                      opacity: isEditing ? 0.1 : 1,
+                    }}
+                    titleStyle={{
+                      color: isEditing ? theme.subText : theme.basicText,
+                    }}
+                    priceStyle={{
+                      color: isEditing
+                        ? theme.tintcolorPalepink
+                        : theme.tintColorPink,
+                    }}
+                    key={item?.itemId}
+                    saleRate="가격"
+                    itemName={item?.name}
+                    itemPrice={new String(item?.price).replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ',',
+                    )}
+                    itemImage={item?.imgUrl}
+                    itemId={item?.itemId}
+                    onPress={() => {
+                      isEditing
+                        ? _addItemToList(item?.itemId)
+                        : _openUrl(item?.originUrl);
+                    }}
+                    isEditing={isEditing}
+                  />
+                ))}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
+      <View
+        style={{
+          position: 'absolute',
+          top: '86%',
+          width: '100%',
+          height: '00%',
+          paddingLeft: 20,
+          paddingRight: 20,
+          display: isEditing ? 'flex' : 'none',
+        }}>
+        <Button
+          style={{
+            marginBottom: 0,
+            position: 'absolute',
+          }}
+          buttonStyle={{backgroundColor: theme.tintColorPink}}
+          title="삭제하기"
+          onPress={() => {
+            _deleteItemsFromCollection();
+          }}
+        />
+      </View>
     </Container>
   );
 };

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 
 const Container = styled.View`
@@ -41,13 +41,48 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const CollectionCircle = ({onPress, collectionTitle, image}) => {
+const CollectionCircle = ({
+  onPress,
+  collectionTitle,
+  imageStyle,
+  titleStyle,
+  nickName,
+  collectionId,
+}) => {
+  const [items, setItems] = useState([]);
+  const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
+
+  const _getItemsFromCollection = async () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setItems(data.dtos);
+        })
+        .then(setImageUrl(items[0].imgUrl));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    _getItemsFromCollection();
+  });
+
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <CollectionImage source={{uri: image}} />
+        <CollectionImage source={{uri: imageUrl}} stytle={imageStyle} />
         <Row>
-          <Title>{collectionTitle}</Title>
+          <Title style={titleStyle}>{collectionTitle}</Title>
         </Row>
       </TouchableOpacity>
     </Container>

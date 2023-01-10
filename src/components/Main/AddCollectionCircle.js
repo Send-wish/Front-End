@@ -42,15 +42,15 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const AddCollectionCircle = ({onPress, title}) => {
+const AddCollectionCircle = ({onPress, title, imageStyle, titleStyle}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <CollectionImage>
-          <AntDesign name="plus" size={30} color={theme.basicText} />
+        <CollectionImage style={imageStyle}>
+          <AntDesign name="plus" size={30}/>
         </CollectionImage>
         <Row>
-          <Title>{title}</Title>
+          <Title style={titleStyle}>{title}</Title>
         </Row>
       </TouchableOpacity>
     </Container>
