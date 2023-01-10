@@ -1,6 +1,5 @@
-import Chat from './Chat';
 import Collection from './Collection';
-import Friends from './Friends';
+import Chat from './Chat';
 import ItemDetail from './ItemDetail';
 import Main from './Main';
 import Shared from './Shared';
@@ -11,7 +10,6 @@ import Start from './Start';
 export {
   Chat,
   Collection,
-  Friends,
   ItemDetail,
   Main,
   Shared,

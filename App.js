@@ -5,7 +5,6 @@ import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 import {
   Chat,
   Collection,
-  Friends,
   ItemDetail,
   Main,
   Shared,
@@ -63,11 +62,7 @@ const Navigation = () => {
             iconName = focused
               ? 'chatbubble-ellipses-sharp'
               : 'chatbubble-ellipses-sharp';
-          } else if (route.name === 'Friends') {
-          
-            iconName = focused ? 'people-sharp' : 'people-sharp';
           }
-
           let iconSize = focused ? 30 : 23;
 
           let iconColor = focused ? theme.basicText : theme.subText;
@@ -77,7 +72,6 @@ const Navigation = () => {
       <Tab.Screen name="Main" component={Main}/>
       <Tab.Screen name="Shared" component={Shared} />
       <Tab.Screen name="Chat" component={Chat} />
-      <Tab.Screen name="Friends" component={Friends} />
     </Tab.Navigator>
   );
 };
