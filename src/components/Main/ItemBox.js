@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React, {useRef} from 'react';
-import {TouchableOpacity, Animated, PanResponder} from 'react-native';
-import View from 'react-native-view';
+import {TouchableOpacity, Animated, PanResponder, View} from 'react-native';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
   padding: 10px;
@@ -67,7 +66,15 @@ const Row = styled.View`
   width: 80%;
 `;
 
-const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
+const ItemBox = ({
+  onPress,
+  saleRate,
+  itemName,
+  itemPrice,
+  itemImage,
+  itemId,
+  itemUrl,
+}) => {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
   const position = useRef(new Animated.ValueXY({x: 0, y: 0, z: 5})).current;
@@ -107,10 +114,10 @@ const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <ItemImage source={{uri: itemImage}} />
+      <ItemImage source={{uri: itemImage}} />
         <Row>
           <Sale>{saleRate}</Sale>
-          <Price> {itemPrice} </Price>
+          <Price> {itemPrice}원 </Price>
         </Row>
         <Title>{itemName}</Title>
       </TouchableOpacity>

@@ -2,12 +2,11 @@ import React, {useState, useEffect, useRef} from 'react';
 import {Alert, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Input, ProfileImage, Button} from '../components/SignUp';
+import {Input, ProfileImage, Button, ErrorMessage} from '../components/SignUp';
 import {theme} from '../theme';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
 import Ionic from 'react-native-vector-icons/Ionicons';
-
 
 const Container = styled.View`
   flex: 1;
@@ -95,8 +94,17 @@ const SignUp = ({navigation}) => {
         }),
       })
         .then(response => response.json())
-        .then(result => console.log('test : ', result))
-        .then(navigation.navigate('SignIn'));
+        .then(result => {
+          {
+            if (result.error) {
+              Alert.alert(result.error);
+              console.log('===== result.error : ', result.error);
+            } else {
+              navigation.navigate('SignIn');
+            }
+          }
+        })
+        .then();
     } catch (e) {
       Alert.alert('Signup error', e.message);
     }
@@ -119,7 +127,7 @@ const SignUp = ({navigation}) => {
 
       <MiddleContainer>
         <Row>
-          <ProfileImage title="기윤" />
+          <ProfileImage title={nickName} />
         </Row>
       </MiddleContainer>
       <BottomContainer>
@@ -133,7 +141,7 @@ const SignUp = ({navigation}) => {
             onChangeText={setNickName}
             onBlur={() => setNickName(nickName.trim())}
             maxLength={12}
-            onSubmitEditing={() => refNickName.current.focus()}
+            onSubmitEditing={() => refPassword.current.focus()}
           />
           <Input
             value={password}
@@ -156,6 +164,8 @@ const SignUp = ({navigation}) => {
             onSubmitEditing={_handleSignupBtnpress}
             onBlur={() => setPasswordCheck(removeWhitespace(passwordCheck))}
           />
+          <ErrorMessage message={errorMessage} />
+
           <Button
             title="회원가입 완료하기"
             onPress={_handleSignupBtnpress}

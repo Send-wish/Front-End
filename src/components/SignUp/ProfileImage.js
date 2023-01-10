@@ -8,7 +8,7 @@ import {theme} from '../../theme';
 const Container = styled.View`
   padding: 10px;
   margin: 1px 1px 3px 1px;
-  width: 120px;
+  width: 300px;
   height: 160px;
   justify-content: center;
   align-items: center;
@@ -51,8 +51,8 @@ const ProfileImage = ({title, image, onPress}) => {
   return (
     <Container>
       <SignUpImage source={{uri: image}} />
-      <TouchableOpacity onPress={onPress}>
-        <Row style={{marginBottom: 30}}>
+      <TouchableOpacity onPress={onPress} style={{width: '100%'}}>
+        <Row style={{marginBottom: 30, widht: '100%'}}>
           <Title>{title}</Title>
           <Feather name="edit-2" size={18} color={theme.basicText} />
         </Row>
