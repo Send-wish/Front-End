@@ -5,7 +5,7 @@ import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import { SearchIcon, EditIcon, ProfileImage, ListFriend } from '../components/Friends';
+import { Sharing, EditIcon, ProfileImage, ListFriend } from '../components/Friends';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -104,11 +104,6 @@ const Friends = () => {
                 <Title>내 친구 목록 전체보기</Title>
                 <SubTitle>당신의 wish item 을 공유해보세요 !</SubTitle>
               </View>
-              <Row>
-                <SearchIcon />
-                {/* <FilterIcon /> */}
-                <EditIcon />
-              </Row>
             </SpackBetweenRow>
           </Column>
               <ListFriend nickName={"뭐고!"}/>

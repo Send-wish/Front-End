@@ -1,5 +1,5 @@
 import CollectionCircle from './CollectionCircle';
-import SearchIcon from './SearchIcon';
+import Sharing from './Sharing';
 import AddCollectionCircle from './AddCollectionCircle';
 import EditIcon from './EditIcon';
 import Input from './Input';
@@ -9,7 +9,7 @@ import ListFriend from './ListFriend';
 export {
   CollectionCircle,
   AddCollectionCircle,
-  SearchIcon,
+  Sharing,
   Input,
   EditIcon,
   ProfileImage,

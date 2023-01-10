@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
+import Sharing from "./Sharing";
+import EditIcon from "./EditIcon";
 
 const Container = styled.View`
     width: 95%;
@@ -12,6 +14,8 @@ const Container = styled.View`
     padding: 10px;
     justify-content: center;
     opacity: 0.9;
+    flex-wrap: wrap;
+    align-items: center;
 `;
 
 const StyledText = styled.Text`
@@ -25,7 +29,7 @@ const ListFriend = ({nickName}) => {
     return (
         <Container>
             <StyledText>{nickName}</StyledText>
-            {/* <StyledText>{email}</StyledText> */}
+            <Sharing />
         </Container>
     );
 }
