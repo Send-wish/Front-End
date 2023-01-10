@@ -1,13 +1,19 @@
-// UI 기본 틀 잡기 > 함수구현 > 친구목록 리스트 UI > 친구추가,삭제=Button /  친구목록 불러오기 / 친구 검색 = InputText / 랜더링 틀 
-// nickName 랜더링시 받아오고 친구 목록 요청 
 
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+// 친구추가,삭제=Button /  친구목록 불러오기 / 랜더링 틀
+// nickName 랜더링시 받아오고 친구 목록 요청
+
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useReducer,
+} from 'react';
 import {View, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import { Sharing, EditIcon, ProfileImage, ListFriend } from '../components/Friends';
+import {Input, ProfileImage, ListFriend, AddIcon, ShareIcon, DeleteIcon } from '../components/Friends';
 import {theme} from '../theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -18,14 +24,21 @@ const Container = styled.View`
 `;
 
 const UpperContainer = styled.View`
-  flex: 1;
+  flex: 0.7;
   flex-direction: column;
   background-color: ${({theme}) => theme.mainBackground};
   padding: 0 5px;
+  flex-wrap: wrap;
 `;
-
+const MiddleContainer = styled.View`
+  flex: 0.7;
+  flex-direction: column;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding: 0 5px;
+  flex-wrap: wrap;
+`;
 const BottomContainer = styled.View`
-  flex: 4;
+  flex: 5;
   flex-direction: row;
   background-color: ${({theme}) => theme.subBackground};
   padding: 10px;
@@ -66,11 +79,93 @@ const SubTitle = styled.Text`
   color: ${({theme}) => theme.subText};
 `;
 
+
 const Friends = () => {
 
   const insets = useSafeAreaInsets();
- 
+  const [frName, setFrName] = useState('');
+  const [friends, setFriends] = useState([]);
 
+  // 요청 서버통신 완료
+  // 친구 추가하기 > 친구리스트 리랜더링 
+const _addFriends = async () => {
+  try {
+    // 아직 안열림
+    await fetch('https://api.sendwish.link:8081/friend', {
+      method: 'POST',
+      headers: {'Content-Type': `application/json`},
+      body: JSON.stringify({
+        memberNickname: "giyoun",
+        addMemberNickname: "기윤",
+      }),
+    })
+      .then(response => {
+        console.log('errorcheck!!response addfriend: ', response);
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      })
+      .then(json => console.log('from server data check',json))
+      // .then(data => {
+      //   console.log('add friend check', data);
+      // })
+      .catch(error => {
+        console.error(error);
+      })
+      .then(() => _getFriends());
+  } catch (e) {
+    console.log('add friend fail');
+  }
+};
+
+const _getFriends = async () => {
+  try {
+    // API 아직 안열림
+    fetch('https://api.sendwish.link:8081/friend/giyoun', {
+      method: 'GET',
+      headers: {'Content-Type': `application/json`},
+    })
+      .then(response => {
+        console.log('errorcheck!!response Get  friend: ', response);
+        return response.json();
+      })
+      .then(data => {
+        setFriends(data);
+        console.log('get friends', data);
+      });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// 친구 삭제하기 통신 완료
+// 친구 삭제하기 > 친구리스트 리랜더링
+const _deleteFriend = async () => {
+  // 변수 감싸서 변형
+  // cosnt name = encodeURI("bulksup")
+  try {
+    fetch('https://api.sendwish.link:8081/friend/giyoun/runner', {
+      method: 'DELETE'
+    })
+      .then(response => {
+        console.log('errorcheck!!response: ', response);
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+      })
+      .then(result => {
+        console.log('result', result);
+      });
+  } catch (e) {
+    console.log('friend delete fail', e);
+  }
+};
+  // console.log(nickName);
   // const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
   // 화면이동시마다 랜더링 건들지 말것
@@ -82,20 +177,31 @@ const Friends = () => {
     <Container insets={insets}>
       <UpperContainer>
         <Row>
-          <ProfileImage image={src="data:image/png;base64,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 "}/>
-              <Title style={{marginTop: 70, fontSize: 30, color: theme.tintColorPink}}>
-                {'  '+"유수민" + ' ' }
-                {/* {nickName + ' '} */}
-              </Title>
-              <Title style={{marginTop: 75, fontSize: 25,}}>님의 친구 목록</Title>
+          <Title
+            style={{marginTop: 45, fontSize: 30, color: theme.tintColorPink}}>
+            {'  ' + '유수민' + ' '}
+            {/* {nickName + ' '} */}
+          </Title>
+          <Title style={{marginTop: 50, fontSize: 25}}>님의 친구 목록</Title>
         </Row>
         <Row>
-          <View style={{height: 150}}>
-
-          </View>
+          <View style={{height: 150}}></View>
         </Row>
       </UpperContainer>
-
+      <MiddleContainer>
+        {/* 입력 받은 값 인자로 추가하기 함수에 전달해서 받고 조회 랜더링 함수 호출 연동 */}
+        <Input 
+            value={frName}
+            onChangeText={setFrName}
+            onBlur={() => setFrName(frName)}
+            maxLength={20}
+            onSubmitEditing={() => {
+              _addFriends();
+            }}
+            placeholder="추가할 친구 닉네임을 입력해주세요 :)"
+            returnKeyType="done"/>
+        <AddIcon onPress={()=> {_addFriends()}}/>
+      </MiddleContainer>
       <BottomContainer>
         <ScrollView>
           <Column>
@@ -106,19 +212,22 @@ const Friends = () => {
               </View>
             </SpackBetweenRow>
           </Column>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-              <ListFriend nickName={"뭐고!"}/>
-          <FlexRow>
-          </FlexRow>
+          <ListFriend friendName={'뭐고!'} />
+          <ListFriend friendName={'뭐고!'} />
+          <ListFriend friendName={'뭐고!'} />
+          <ListFriend friendName={'뭐고!'} />
+          <ListFriend friendName={'뭐고!'} />
+
+          {/* 공유하기 > 쉐어 컬렉션으로 Navigate / 삭제 > delete 버튼별로 다르게 설정해야하고 랜더링 뜨게 해야함 */}
+          {/* {friends.reverse().map(friend => (
+            <ListFriend
+              key={friend?.nickname}
+              friendName={item?.name}
+              />
+              ))}
+              <ShareIcon onPress={()=> navigation.navigte('Main', {params:nickName })}/>
+              <DeleteIcon /> */}
+          <FlexRow></FlexRow>
         </ScrollView>
       </BottomContainer>
     </Container>

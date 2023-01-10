@@ -4,14 +4,16 @@ import {theme} from '../../theme';
 
 const Container = styled.View`
   flex-direction: column;
-  width: 100%;
-  margin-top: 10px;
+  width: 80%;
+  margin: 10px;
+  height: 10px;
+  
 `;
 const Label = styled.Text`
   font-size: 16px;
   font-weight: 600;
   margin-left: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   color: ${({theme, isFocused}) =>
     isFocused ? theme.basicText : theme.basicText};
 `;
@@ -24,7 +26,7 @@ const StyledInput = styled.TextInput.attrs(({theme}) => ({
   font-size: 18px;
   border: ${({theme}) => theme.basicText};
   border-top-width: 0;
-  border-bottom-width: 0.5px;
+  border-bottom-width: 2px;
   border-left-width: 0;
   border-right-width: 0;
   margin-bottom: 130px;

@@ -1,18 +1,21 @@
 import CollectionCircle from './CollectionCircle';
-import Sharing from './Sharing';
+import ShareIcon from './ShareIcon';
 import AddCollectionCircle from './AddCollectionCircle';
-import EditIcon from './EditIcon';
+import DeleteIcon from './DeleteIcon';
 import Input from './Input';
 import Button from './Button';
 import ProfileImage from './ProfileImage';
 import ListFriend from './ListFriend';
+import AddIcon from './AddIcon';
+
 export {
   CollectionCircle,
   AddCollectionCircle,
-  Sharing,
+  ShareIcon,
   Input,
-  EditIcon,
+  DeleteIcon,
   ProfileImage,
   Button,
   ListFriend,
+  AddIcon,
 };

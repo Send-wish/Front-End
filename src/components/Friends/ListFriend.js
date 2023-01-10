@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components/native";
-import Sharing from "./Sharing";
-import EditIcon from "./EditIcon";
+import ShareIcon from "./ShareIcon";
+import DeleteIcon from './DeleteIcon';
+
 
 const Container = styled.View`
     width: 95%;
@@ -14,22 +15,24 @@ const Container = styled.View`
     padding: 10px;
     justify-content: center;
     opacity: 0.9;
-    flex-wrap: wrap;
+    flex-direction:row;
     align-items: center;
 `;
 
 const StyledText = styled.Text`
-    margin-left: 5%;
+    margin-left: 10%;
     color: white;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
+    margin-right: 10px;
 `;
 
-const ListFriend = ({nickName}) => {
+const ListFriend = ({friendName, onPress}) => {
     return (
         <Container>
-            <StyledText>{nickName}</StyledText>
-            <Sharing />
+            <StyledText>{friendName}</StyledText>
+            <ShareIcon onPress={onPress} />
+            <DeleteIcon onPress={onPress} />
         </Container>
     );
 }
