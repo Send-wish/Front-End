@@ -21,12 +21,6 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {
-  BottomTabView,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -233,10 +227,10 @@ const Main = ({navigation, route}) => {
     try {
       // API 아직 안열림
       fetch(
-        `https://api.sendwish.link:8081/collection/${test}/${collectionId}`,
+        `https://api.sendwish.link:8081/items/${nickName}`,
         {
           method: 'GET',
-          // headers: {Content_Type: 'application/json'},
+          headers: {Content_Type: 'application/json'},
         },
       )
 
