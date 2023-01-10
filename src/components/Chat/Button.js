@@ -3,7 +3,7 @@ import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
-  background-color: ${({theme}) => theme.tintColorGreen};
+  background-color: ${({theme}) => theme.tintColorPink};
   height: 60px;
   width: 100%;
   justify-content: center;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
 
 const Container = styled.View`
   padding: 10px;
@@ -13,15 +13,16 @@ const Container = styled.View`
 `;
 
 const CollectionImage = styled.Image`
-  background-color: ${({theme}) => theme.componentBackground};
+  background-color: ${({theme}) => theme.mainBackground};
   padding: 10px;
   margin: 10px 10px 10px 10px;
+  border-width: 1px;
   width: 75px;
   height: 75px;
   justify-content: center;
   align-items: center;
   border-radius: 30px;
-  border-color: ${({theme}) => theme.line};
+  border-color: ${({theme}) => theme.basicText};
 `;
 
 const Row = styled.View`
@@ -41,15 +42,17 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const CollectionCircle = ({onPress, collectionTitle, image}) => {
+const CollectionCircle = ({onLongPress, friendName, image}) => {
   return (
     <Container>
-      <TouchableOpacity onPress={onPress}>
-        <CollectionImage source={{uri: image}} />
+      <TouchableHighlight onLongPress={onLongPress}>
+        <View>
         <Row>
-          <Title>{collectionTitle}</Title>
+        <CollectionImage source={{uri: image}} value={friendName}/>
         </Row>
-      </TouchableOpacity>
+        <Title>{friendName}</Title>
+        </View>
+      </TouchableHighlight>
     </Container>
   );
 };

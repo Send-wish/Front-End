@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {theme} from '../../theme';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Container = styled.View`
   padding: 10px;
@@ -47,7 +47,7 @@ const AddCollectionCircle = ({onPress, title}) => {
     <Container>
       <TouchableOpacity onPress={onPress}>
         <CollectionImage>
-          <AntDesign name="plus" size={30} color={theme.basicText} />
+        <Ionicons name="person-add" size={40} color={theme.basicText} />
         </CollectionImage>
         <Row>
           <Title>{title}</Title>
