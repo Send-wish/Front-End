@@ -5,12 +5,10 @@ import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 import {
   Chat,
   Collection,
-  ItemDetail,
   Main,
   Shared,
   SignIn,
   SignUp,
-  Start,
 } from './src/screens';
 
 // color theme
