@@ -9,7 +9,7 @@ const Container = styled.View`
   justify-content: center;
   align-items: center;
   border-radius: 15px;
-  margin-top: 25px;
+  margin-top: 3px;
   opacity: ${({disabled}) => (disabled ? 0.5 : 1)};
 `;
 

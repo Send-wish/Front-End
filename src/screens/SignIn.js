@@ -43,7 +43,6 @@ const CenterRow = styled.View`
   justify-content: center;
 `;
 
-
 const Title = styled.Text`
   font-size: 30px;
   font-weight: bold;
@@ -94,19 +93,22 @@ const SignIn = ({navigation}) => {
         }),
       })
         .then(response => response.json())
-        .then(result => {console.log('result', result)}) //for debug
+        .then(result => {
+          {
+            if (result.error) {
+              Alert.alert('아이디와 비밀번호를 확인해주세요 :)');
+              console.log('===== result.error : ', result.error);
+              throw new Error(`로그인 에러발생`);
+            }
+          }
+        })
         // result  값이 유효하지 않으면 (토큰이 발급되지 않으면 알람 메시지 띄우고 로그인 화면 유지)
         .then(json => {
-          if (nickName !== undefined) {
-            console.log('json....', json);
-            // console.log('response',response)
-            console.log('beforedddddd', nickName);
-            passName = {nickName}; // {nickName:UserNickName} object 형식으로 넘겨줌
-            navigation.navigate('Navigation', {
-              screen: 'Main',
-              params: passName,
-            });
-          } 
+          passName = {nickName}; // {nickName:UserNickName} object 형식으로 넘겨줌
+          navigation.navigate('Navigation', {
+            screen: 'Main',
+            params: passName,
+          });
         })
         .catch(error => {
           console.error(error);
@@ -121,7 +123,6 @@ const SignIn = ({navigation}) => {
     navigation.navigate('SignUp');
   };
 
-
   return (
     <Container insets={insets}>
       <UpperContainer>
@@ -134,8 +135,9 @@ const SignIn = ({navigation}) => {
         </Row>
       </UpperContainer>
       <BottomContainer>
-        <KeyboardAwareScrollView extraScrollHeight={140}
-        keyboardShouldPersistTaps="handled">
+        <KeyboardAwareScrollView
+          extraScrollHeight={140}
+          keyboardShouldPersistTaps="handled">
           <Input
             ref={refNickName}
             value={nickName}
@@ -148,9 +150,9 @@ const SignIn = ({navigation}) => {
             onSubmitEditing={() => refNickName.current.focus()}
           />
           <Input
-            label="비밀번호"
-            placeholer="비밀번호"
             ref={refPassword}
+            label="비밀번호"
+            placeholder="비밀번호"
             value={password}
             onChangeText={_handlePasswordChange}
             returnKeyType="done"

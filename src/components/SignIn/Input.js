@@ -40,8 +40,8 @@ const Input = forwardRef(
       placeholder,
       returnKeyType,
       maxLength,
-      label,
       isPassword,
+      label,
     },
     ref,
   ) => {

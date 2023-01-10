@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -17,11 +17,16 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {Linking} from 'react-native';
-
 import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
+
+import {NavigationContainer} from '@react-navigation/native';
+import {
+  BottomTabView,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -29,6 +34,7 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
+  z-index: 100;
 `;
 
 const UpperContainer = styled.View`
@@ -107,14 +113,14 @@ const Main = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]); // 컬렉션 목록
-  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
   const [items, setItems] = useState([]); // 아이템 목록
+  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
   const [itemId, setItemId] = useState(0); // 아이템별 아이디
   const refChangedColname = useRef(null);
-
   const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
-
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+  const [sharedUrl, setSharedUrl] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
@@ -122,10 +128,10 @@ const Main = ({navigation, route}) => {
   useEffect(() => {
     if (isFocused) console.log('Focused');
     _getCollections(); // 컬렌션 목록 랜더링
-    // _getItems() // 아이템 목록 랜더링
+    _getItems(); // 아이템 목록 랜더링
   }, [isFocused]);
 
-  // collection 추가
+  // collection add
   const _madeCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
     console.log('collectionName', collectionName); // 컬렉션 이름 확인
@@ -157,6 +163,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
+  // get collections
   const _getCollections = async () => {
     setLoading(true);
     try {
@@ -192,18 +199,21 @@ const Main = ({navigation, route}) => {
 
   // item 추가
   const _addItem = async () => {
+    console.log('addItem start!');
     try {
       await fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
-          url: receiveText, // url 아직 못받음 임시변수
+          url: sharedUrl, // url 아직 못받음 임시변수
+          nickname: nickName,
         }),
       })
         .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
+          // if (!response.ok) {
+          //   console.log('===== add item fail');
+          //   throw new Error(`${response.status} 에러발생`);
+          // }
           return response.json();
         })
         .then(json => console.log(json))
@@ -222,23 +232,17 @@ const Main = ({navigation, route}) => {
   const _getItems = async () => {
     try {
       // API 아직 안열림
-      fetch(
-        `https://api.sendwish.link:8081/collection/honghonghong/${collectionId}`,
-        {
-          method: 'GET',
-          // headers: {Content_Type: 'application/json'},
-        },
-      )
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
         .then(res => {
           return res.json();
         })
         .then(data => {
           setItems(data);
-          setItemId(data);
-          console.log('get items', data);
-        })
-        .catch(error => {
-          console.log(error);
+          console.log('========in items :', data.imgUrl, data.name, data.price);
+          console.log('======= get items :', data);
         });
     } catch (e) {
       console.log(e);
@@ -279,32 +283,61 @@ const Main = ({navigation, route}) => {
   };
 
   // Shared item
-  const [sharedUrl, setSharedUrl] = useState('');
 
+  // Handle share
   const handleShare = useCallback(item => {
-    console.log('item is : ', item);
+    console.log('===== item is : ', item);
 
-    if (!item.data) {
-      console.log('data is null!!!!');
+    if (!item) {
+      console.log('===== item is null!');
+      return;
+    }
+
+    if (!item.data || item.data.lenth < 1) {
+      console.log('===== item.data is null!');
       return;
     }
 
     var {mimeType, data, extraData} = item;
-    console.log('data is : ', data);
-    setSharedUrl(data[0].data);
+
+    if (data === undefined) {
+      return;
+    }
+    if (data.length < 1 || data === '' || !data) {
+      console.log('===== data is null!!!!!!!');
+      return;
+    }
+
+    if (data) {
+      console.log('===== data is : ', data);
+      setSharedUrl(data[0].data);
+    } else {
+      return;
+    }
   }, []);
 
+  // Share Init
   useEffect(() => {
     ShareMenu.getInitialShare(handleShare);
   }, []);
 
+  useEffect(() => {
+    _addItem();
+  }, [sharedUrl]);
+
+  // Share Listener, remove
   useEffect(() => {
     const listener = ShareMenu.addNewShareListener(handleShare);
     return () => {
       listener.remove();
     };
   }, []);
-  console.log('sharedUrl is : ', sharedUrl);
+
+  _pressEditButton = () => {
+    // isEditing ? setIsEditing(false) : setIsEditing(true);
+  };
+
+  console.log('isEditing is : ', isEditing);
 
   return (
     <Container insets={insets}>
@@ -366,25 +399,32 @@ const Main = ({navigation, route}) => {
         <Row>
           <View style={{height: 150}}>
             <ScrollView horizontal>
-              {/* <CollectionCircle
-                title="콜렉션"
-                image="https://www.pngplay.com/wp-content/uploads/12/Pikachu-Meme-Background-PNG.png"
-                onPress={() =>
-                  navigation.navigate('Collection', {
-                    collectionId: collections?.collectionId,
-                    collectionTitle: collections?.title,
-                    nickName: collections?.nickname,
-                  })
-                }
-              /> */}
               {/* collection rendering */}
+
+              {/* {useEffect(() => {
+                collections.reverse().map(collection => (
+                  <CollectionCircle
+                    key={collection?.collectionId}
+                    collectionId={collection?.collectionId}
+                    collectionTitle={collection?.title}
+                    nickName={collection?.nickname}
+                    onPress={() =>
+                      navigation.navigate('Collection', {
+                        collectionId: collection?.collectionId,
+                        collectionName: collection?.title,
+                        nickName: collection?.nickname,
+                      })
+                    }
+                  />
+                ));
+              }, [])} */}
+
               {collections.reverse().map(collection => (
                 <CollectionCircle
                   key={collection?.collectionId}
                   collectionId={collection?.collectionId}
                   collectionTitle={collection?.title}
                   nickName={collection?.nickname}
-                  // image={collection?.image}
                   onPress={() =>
                     navigation.navigate('Collection', {
                       collectionId: collection?.collectionId,
@@ -394,6 +434,7 @@ const Main = ({navigation, route}) => {
                   }
                 />
               ))}
+
               <Ionicons
                 name="ellipsis-vertical"
                 size={15}
@@ -408,8 +449,8 @@ const Main = ({navigation, route}) => {
         </Row>
       </UpperContainer>
 
-      <BottomContainer>
-        <ScrollView scrollEnabled={false}>
+      <BottomContainer onPress={() => console.log('pressed')}>
+        <ScrollView scrollEnabled={true}>
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>
@@ -419,47 +460,44 @@ const Main = ({navigation, route}) => {
               <Row>
                 <SearchIcon />
                 {/* <FilterIcon /> */}
-                <EditIcon />
+                <EditIcon onPress={() => _pressEditButton()} />
               </Row>
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            <ItemBox
-              itemName="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              itemPrice={(70000)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              itemImage={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-              onPress={() => {
-                // console.log('item recieve', item);
-                _openUrl(
-                  `https://www.notion.so/b9c1497a993642deb4bd265cd9174645`,
-                );
-              }}
-            />
             {/* item rendering  */}
-            {/* {items.reverse().map(item => (
+            {items.reverse().map(item => (
               <ItemBox
                 key={item?.itemId}
-                saleRate="30%"
+                saleRate="가격"
                 itemName={item?.name}
-                itemPrice={item?.price}
-                itemImage={item?.originUrl}
-                itemUrl={item?.itemUrl}
-                // itemId={item?.itemId}
+                itemPrice={new String(item?.price).replace(
+                  /\B(?=(\d{3})+(?!\d))/g,
+                  ',',
+                )}
+                itemImage={item?.imgUrl}
+                itemId={item?.itemId}
                 onPress={() => {
-                  console.log('item recieve', item);
-                  _openUrl(item?.itemUrl);
+                  _openUrl(item?.originUrl);
                 }}
               />
-            ))} */}
+            ))}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
+
+      {/* <TouchableOpacity
+        onPress={() => {}}
+        style={{
+          position: 'absolute',
+          top: '40%',
+          backgroundColor: 'red',
+          width: '100%',
+          height: '70%',
+          zIndex: 400,
+        }}>
+        <View></View>
+      </TouchableOpacity> */}
     </Container>
   );
 };

@@ -1,5 +1,5 @@
 // Basic React Native App
-import React, {useState, useEffect, useCallback,useLayoutEffect} from 'react';
+import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 
 // Screens
 import {
@@ -20,15 +20,19 @@ import {theme} from './src/theme';
 
 // React Native Hooks
 import {NavigationContainer} from '@react-navigation/native';
-import {BottomTabView, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabView,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+
 
 const Navigation = () => {
   return (
@@ -40,30 +44,36 @@ const Navigation = () => {
         tabBarStyle: {
           height: 70,
           backgroundColor: theme.mainBackground,
-          borderRadius: 20,
-          opacity: 0.9,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          opacity: 0.8,
           position: 'absolute',
+          borderTopWidth: 0,
+          paddingTop: 10,
+          paddingRight: 30,
+          paddingLeft: 30,
         },
         tabBarIcon: ({focused, size}) => {
           let iconName;
-
           if (route.name === 'Main') {
-            iconName = focused ? 'logo-bitbucket' : 'ios-logo-bitbucket';
+            iconName = focused ? 'ios-basket' : 'ios-basket';
           } else if (route.name === 'Shared') {
-            iconName = focused ? 'share-social' : 'share-social-outline';
+            iconName = focused ? 'share-social' : 'share-social';
           } else if (route.name === 'Chat') {
             iconName = focused
               ? 'chatbubble-ellipses-sharp'
-              : 'chatbubble-ellipses-outline';
+              : 'chatbubble-ellipses-sharp';
           } else if (route.name === 'Friends') {
-            iconName = focused
-              ? 'notifications-sharp'
-              : 'notifications-outline';
+            iconName = focused ? 'people-sharp' : 'people-sharp';
           }
-          return <Ionic name={iconName} size={size} color="white" />;
+
+          let iconSize = focused ? 30 : 23;
+
+          let iconColor = focused ? theme.basicText : theme.subText;
+          return <Ionic name={iconName} size={iconSize} color={iconColor} />;
         },
       })}>
-      <Tab.Screen name="Main" component={Main} />
+      <Tab.Screen name="Main" component={Main}/>
       <Tab.Screen name="Shared" component={Shared} />
       <Tab.Screen name="Chat" component={Chat} />
       <Tab.Screen name="Friends" component={Friends} />
@@ -72,7 +82,6 @@ const Navigation = () => {
 };
 
 const App = () => {
-
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>
@@ -80,6 +89,7 @@ const App = () => {
           screenOptions={{headerShown: false}}
           initialRouteName="SignIn">
           {/* <Stack.Screen name="Start" component={Start} /> */}
+          <Stack.Screen name="App" component={App} />
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Navigation" component={Navigation} />
