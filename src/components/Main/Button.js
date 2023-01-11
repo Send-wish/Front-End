@@ -21,10 +21,10 @@ const Title = styled.Text`
   color: ${({theme}) => theme.basicText};
 `;
 
-const Button = ({title, onPress}) => {
+const Button = ({title, buttonStyle, onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Container>
+      <Container style={buttonStyle}>
         <Title>{title}</Title>
       </Container>
     </TouchableOpacity>
