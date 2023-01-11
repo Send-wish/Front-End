@@ -5,6 +5,7 @@ import {
   ScrollView,
   Modal,
   TextInput,
+  Linking
 } from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -172,7 +173,7 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          data.dtos? setItems(data.dtos) : setItems([]);
+          data.dtos ? setItems(data.dtos) : setItems([]);
         });
     } catch (e) {
       console.log(e);
@@ -280,7 +281,10 @@ const Collection = ({route, navigation}) => {
                 <Feather
                   name="edit-2"
                   size={20}
-                  style={{marginTop: 3, color : isEditing? theme.strongSubText : theme.basicText}}
+                  style={{
+                    marginTop: 3,
+                    color: isEditing ? theme.strongSubText : theme.basicText,
+                  }}
                 />
               </WrapRow>
             </TouchableOpacity>

@@ -480,7 +480,7 @@ const Main = ({navigation, route}) => {
         </Row>
         <Row>
           <View style={{height: 150}}>
-            <ScrollView horizontal>
+            <ScrollView horizontal style ={{width : '100%'}}>
               {/* collection rendering */}
               {collections.error
                 ? null
