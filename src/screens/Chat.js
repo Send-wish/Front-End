@@ -193,8 +193,13 @@ const Chat = (props) => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
-      fetch(`https://api.sendwish.link:8081/friend/${nickName}/${frName}`, {
+      fetch('https://api.sendwish.link:8081/friend', {
         method: 'DELETE',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickName,
+          friendNickname:frName,
+      })
       })
         .then(response => {
           // console.log('errorcheck!!response: ', response);
@@ -209,7 +214,7 @@ const Chat = (props) => {
         })
         .then(result => {
           console.log('result', result);
-          // _getFriends();
+          _getFriends();
         });
     } catch (e) {
       console.log('friend delete fail', e);

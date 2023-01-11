@@ -1,11 +1,5 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  View,
-  ScrollView,
-  Linking,
-  TouchableOpacity,
-  TouchableHighlight,
-} from 'react-native';
+import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -27,9 +21,9 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
+import TempCircle from '../components/Shared/TempCircle';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -103,6 +97,16 @@ const ModalView = styled.View`
   align-items: center;
   opacity: 0.98;
 `;
+const ModalInnerView = styled.View`
+  width: 100%;
+  /* height: 15%; */
+  background-color: ${({theme}) => theme.subBackground};
+  border-radius: 20px;
+  margin-top:-100px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+`;
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   width: 100%;
@@ -112,12 +116,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Main = ({navigation, route}) => {
-
   const nickName = route.params.nickName;
   // console.log('route=',route);
   // console.log('params=',route.params);
   // console.log('nickName', route.params.nickName);
-  
+
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]); // 컬렉션 목록
@@ -133,7 +136,6 @@ const Main = ({navigation, route}) => {
   const [targetCollectionId, setTargetCollectionId] = useState('');
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
 
-
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
   // 화면이동시마다 랜더링 건들지 말것
@@ -142,7 +144,6 @@ const Main = ({navigation, route}) => {
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
   }, [isFocused]);
-
 
   // collection add
   const _madeCollection = async () => {
@@ -349,25 +350,13 @@ const Main = ({navigation, route}) => {
   }, []);
 
   _pressEditButton = () => {
-    if (isCollectionEditing) {
-      setIsCollectionEditing(false);
-    } else {
-      if (isEditing) {
-        setIsEditing(false);
-      } else {
-        setIsEditing(true);
-      }
-    }
+    isEditing ? setIsEditing(false) : setIsEditing(true);
   };
 
   _longPressCollection = () => {
-    if (isEditing) {
-      return;
-    } else {
-      isCollectionEditing
-        ? setIsCollectionEditing(false)
-        : setIsCollectionEditing(true);
-    }
+    isCollectionEditing
+      ? setIsCollectionEditing(false)
+      : setIsCollectionEditing(true);
   };
 
   _addItemToList = itemId => {
@@ -443,7 +432,6 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  console.log('######isCollectionEditing : ', isCollectionEditing);
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -463,10 +451,10 @@ const Main = ({navigation, route}) => {
                 justifyContent: 'flex-start',
               }}>
               <View style={{width: 330}}>
-                <Title style={{marginBottom: 10}}>새 콜렉션 만들기</Title>
-                <Title>새 콜렉션의 이름을 입력해주세요.</Title>
+                <Title style={{marginBottom: 10}}>공유 콜렉션 만들기</Title>
+                <Title>콜렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  새 콜렉션의 이름을 입력해주세요.
+                  공유 콜렉션의 이름을 입력해주세요.
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -482,11 +470,19 @@ const Main = ({navigation, route}) => {
               placeholder="새 콜렉션 이름"
               returnKeyType="done"
             />
+            <View style={{position:'relative'}}>
+            <ModalInnerView>
+            <ScrollView horizontal style={{height:100}}>
+            <TempCircle frName={"유수민"} />
+            <TempCircle frName={"유수민"} />
+            <TempCircle frName={"유수민"} />
+            </ScrollView>
+            </ModalInnerView>
+            </View>
             <Button
               title="새 콜렉션 만들기"
               onPress={() => _madeCollection()}
             />
-            <View style={{marginBottom: 20}} />
           </KeyboardAwareScrollView>
         </ModalView>
       </Modal>
@@ -526,6 +522,10 @@ const Main = ({navigation, route}) => {
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
+                        imageStyle={{
+                          opacity: isEditing ? 0.5 : 1,
+                          position: 'absolute',
+                        }}
                         titleStyle={{
                           color: isEditing ? theme.subText : theme.basicText,
                         }}
@@ -554,8 +554,6 @@ const Main = ({navigation, route}) => {
                                 nickName: collection?.nickname,
                               })
                         }
-                        isCollectionEditing={isCollectionEditing}
-                        isEditing={isEditing}
                       />
                     ))}
 
@@ -611,15 +609,11 @@ const Main = ({navigation, route}) => {
                 </SubTitle>
               </View>
               <Row>
-                <SearchIcon
-                  style={{
-                    display: isEditing || isCollectionEditing ? 'none' : 'flex',
-                  }}
-                />
+                <SearchIcon style={{opacity: isEditing ? 0 : 1}} />
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
-                  name={isEditing || isCollectionEditing ? 'x' : 'edit-2'}
+                  name={isEditing ? 'x' : 'edit-2'}
                 />
               </Row>
             </SpackBetweenRow>
@@ -630,9 +624,6 @@ const Main = ({navigation, route}) => {
               ? null
               : items.map(item => (
                   <ItemBox
-                    onLongPress={() => {
-                      _pressEditButton();
-                    }}
                     imageStyle={{
                       opacity: isEditing ? 0.1 : 1,
                     }}
