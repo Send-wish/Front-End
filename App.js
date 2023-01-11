@@ -16,7 +16,7 @@ import {ThemeProvider} from 'styled-components';
 import {theme} from './src/theme';
 
 // React Native Hooks
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useLinkProps} from '@react-navigation/native';
 import {
   BottomTabView,
   createBottomTabNavigator,
@@ -31,7 +31,7 @@ const Tab = createBottomTabNavigator();
 
 
 
-const Navigation = () => {
+const Navigation = (props) => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -67,9 +67,9 @@ const Navigation = () => {
           return <Ionic name={iconName} size={iconSize} color={iconColor} />;
         },
       })}>
-      <Tab.Screen name="Main" component={Main}/>
-      <Tab.Screen name="Shared" component={Shared} />
-      <Tab.Screen name="Chat" component={Chat} />
+      <Tab.Screen name="Main" component={Main} initialParams={props.route.params}/>
+      <Tab.Screen name="Shared" component={Shared} initialParams={props.route.params}/>
+      <Tab.Screen name="Chat" component={Chat} initialParams={props.route.params}/>
     </Tab.Navigator>
   );
 };
