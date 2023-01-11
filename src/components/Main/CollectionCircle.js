@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableHighlight, TouchableOpacity, View} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   padding: 10px;
@@ -43,14 +44,26 @@ const Title = styled.Text`
 
 const CollectionCircle = ({
   onPress,
+  onPress2,
   collectionTitle,
   imageStyle,
   titleStyle,
   nickName,
   collectionId,
+  onLongPress,
 }) => {
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+
+  useEffect(() => {
+    if (isFocused) console.log('Focused');
+    _getItemsFromCollection();
+  }, [isFocused]);
+
+  useEffect(() => {
+    _setImageUrl();
+  }, [items]);
 
   const _getItemsFromCollection = async () => {
     try {
@@ -65,26 +78,38 @@ const CollectionCircle = ({
           return res.json();
         })
         .then(data => {
+          console.log('check@@@@@@@', data.dtos);
           setItems(data.dtos);
-        })
-        .then(setImageUrl(items[0].imgUrl));
+        });
+      // .then(_setImageUrl);
     } catch (e) {
       console.log(e);
     }
   };
 
-  useEffect(() => {
-    _getItemsFromCollection();
-  });
+  const _setImageUrl = () => {
+    if (items.length > 0) {
+      setImageUrl(items[0].imgUrl);
+    }
+  };
+
+  const _onPress = async () => {
+    onPress()
+      .then(_getItemsFromCollection())
+      .then(_setImageUrl())
+      .then(onPress2());
+  };
 
   return (
     <Container>
-      <TouchableOpacity onPress={onPress}>
-        <CollectionImage source={{uri: imageUrl}} stytle={imageStyle} />
-        <Row>
-          <Title style={titleStyle}>{collectionTitle}</Title>
-        </Row>
-      </TouchableOpacity>
+      <TouchableHighlight onPress={_onPress} onLongPress={onLongPress}>
+        <View>
+          <CollectionImage source={{uri: imageUrl}} stytle={imageStyle} />
+          <Row>
+            <Title style={titleStyle}>{collectionTitle}</Title>
+          </Row>
+        </View>
+      </TouchableHighlight>
     </Container>
   );
 };
