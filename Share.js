@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, Pressable, Image, StyleSheet} from 'react-native';
 import {ShareMenuReactView} from 'react-native-share-menu';
+import SharedGroupPreferences from 'react-native-shared-group-preferences'
 
 const Button = ({onPress, title, style}) => (
   <Pressable onPress={onPress}>
@@ -10,6 +11,24 @@ const Button = ({onPress, title, style}) => (
 
 const Share = () => {
   const [sending, setSending] = useState(false);
+
+  const appGroupIdentifier = "group.app.sendwish.jungle"
+
+  const loadUsernameFromSharedStorage = async () => {
+    try {
+    const value = await SharedGroupPreferences.getItem("nickNameData", appGroupIdentifier) 
+    // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
+    console.log('share check data==in share', value);
+    nickName = value;
+    console.log('nickName check in share', nickName);
+    // this.setState({username:value.name})
+  } catch(errorCode) {
+    // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
+    // errorCode 1 = there is no value for that key
+    console.log(errorCode)
+  }
+  }
+  loadUsernameFromSharedStorage();
 
   useEffect(() => {
     ShareMenuReactView.data()
@@ -35,14 +54,17 @@ const Share = () => {
         console.log(error.config);
       });
   }, []);
+
+
+
   const postItem = url => {
     try {
       fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
-          url: url, // url 아직 못받음 임시변수
-          nickname: '브리도',
+          url: url,
+          nickname: nickName,
         }),
       })
         .then(response => {
