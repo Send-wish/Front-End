@@ -51,5 +51,7 @@ target 'Share' do
   use_react_native!
   
   pod 'RNShareMenu', :path => '../node_modules/react-native-share-menu'
+  pod 'RNReactNativeSharedGroupPreferences', :path => '../node_modules/react-native-shared-group-preferences'
+
   # Manually link packages here to keep your extension bundle size minimal
 end
