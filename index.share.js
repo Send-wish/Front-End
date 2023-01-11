@@ -1,3 +1,4 @@
 import {AppRegistry} from 'react-native';
+import Share from './Share';
 
-AppRegistry.registerComponent('ShareMenuModuleComponent', () => CustomShare);
+AppRegistry.registerComponent('ShareMenuModuleComponent', () => Share);
