@@ -21,7 +21,9 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
+
 // import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -123,6 +125,7 @@ const Main = ({navigation, route}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [addToCollection, setAddToCollection] = useState([]);
   const [targetCollectionId, setTargetCollectionId] = useState('');
+  const [isCollectionEditing, setIsCollectionEditing] = useState(false);
 
 
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
@@ -139,9 +142,7 @@ const Main = ({navigation, route}) => {
   const _madeCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
     console.log('collectionName', collectionName); // 컬렉션 이름 확인
-
     setVisibleModal(false);
-
     try {
       fetch('https://api.sendwish.link:8081/collection', {
         method: 'POST',
@@ -201,9 +202,12 @@ const Main = ({navigation, route}) => {
     console.log('nickName from Sign In', nickName);
   }, []);
 
-  // item 추가
+  // 자동 shred item 추가
   const _addItem = async () => {
     console.log('addItem start!');
+    if (sharedUrl === '' || sharedUrl === undefined || sharedUrl === null) {
+      return;
+    }
     try {
       await fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
@@ -227,6 +231,7 @@ const Main = ({navigation, route}) => {
         .catch(error => {
           console.error(error);
         })
+        .then(() => setSharedUrl(''))
         .then(() => _getItems());
     } catch (e) {
       console.log('send url fail');
@@ -235,7 +240,6 @@ const Main = ({navigation, route}) => {
 
   const _getItems = async () => {
     try {
-
       fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'},
@@ -342,6 +346,10 @@ const Main = ({navigation, route}) => {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   };
 
+  _longPressCollection = () => {
+    isCollectionEditing ? setIsCollectionEditing(false) : setIsCollectionEditing(true);
+  };
+
   _addItemToList = itemId => {
     if (addToCollection.includes(itemId)) {
       tempArray = addToCollection;
@@ -352,35 +360,33 @@ const Main = ({navigation, route}) => {
         }
       }
       setAddToCollection(tempArray);
-      console.log('addToCollection2 is : ', addToCollection);
     } else {
       tempArray = addToCollection;
       tempArray.push(itemId);
       setAddToCollection(tempArray);
-      console.log('addToCollection2 is : ', addToCollection);
     }
   };
 
   _pressTargetCollection = async collectionId => {
+    setIsEditing(false);
     try {
-      fetch('https://api.sendwish.link:8081/collection/item', {
+      fetch('https://api.sendwish.link:8081/item/enrollment', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           nickname: nickName,
           collectionId: collectionId,
-          listItemId: addToCollection,
+          itemIdList: addToCollection,
         }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('data is : ', data);
-        });
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      });
+      // .then(data => {
+      //   console.log('data is : ', data);
+      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }
@@ -388,14 +394,14 @@ const Main = ({navigation, route}) => {
 
   const _deleteItems = async () => {
     try {
-      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+      fetch(`https://api.sendwish.link:8081/items`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           nickname: nickName,
-          listItemId: addToCollection,
+          itemIdList: addToCollection,
         }),
       })
         .then(response => {
@@ -409,7 +415,9 @@ const Main = ({navigation, route}) => {
         })
         .then(result => {
           console.log('result', result);
-        });
+        })
+        .then(_getItems)
+        .then(setAddToCollection([]));
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -484,57 +492,75 @@ const Main = ({navigation, route}) => {
         </Row>
         <Row>
           <View style={{height: 150}}>
-            <ScrollView horizontal style ={{width : '100%'}}>
-              {/* collection rendering */}
-              {collections.error
-                ? null
-                : collections.map(collection => (
-                    <CollectionCircle
-                      imageStyle={{
-                        opacity: isEditing ? 0.5 : 1,
-                      }}
-                      titleStyle={{
-                        color: isEditing ? theme.subText : theme.basicText,
-                      }}
-                      key={collection?.collectionId}
-                      collectionId={collection?.collectionId}
-                      collectionTitle={collection?.title}
-                      nickName={collection?.nickname}
-                      onPress={() =>
-                        isEditing
-                          ? _pressTargetCollection(collection?.collectionId)
-                          : navigation.navigate('Collection', {
-                              collectionId: collection?.collectionId,
-                              collectionName: collection?.title,
-                              nickName: collection?.nickname,
-                            })
-                      }
-                    />
-                  ))}
+            <View
+              style={{
+                widh: '100%',
+                marginLeft: 10,
+                marginRight: 10,
+                height: 300,
+              }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {/* collection rendering */}
+                {collections.error
+                  ? null
+                  : collections.map(collection => (
+                      <CollectionCircle
+                        imageStyle={{
+                          opacity: isEditing ? 0.5 : 1, position: 'absolute',
+                        }}
+                        titleStyle={{
+                          color: isEditing ? theme.subText : theme.basicText,
+                        }}
+                        key={collection?.collectionId}
+                        collectionId={collection?.collectionId}
+                        collectionTitle={collection?.title}
+                        nickName={collection?.nickname}
+                        onPress={() =>
+                          isEditing
+                            ? _pressTargetCollection(collection?.collectionId)
+                            : navigation.navigate('Collection', {
+                                collectionId: collection?.collectionId,
+                                collectionName: collection?.title,
+                                nickName: collection?.nickname,
+                              })
+                        }
+                        onLongPress={() => { _longPressCollection()}}
+                        onPress2={() =>
+                          isEditing
+                            ? _getCollections()
+                            : navigation.navigate('Collection', {
+                                collectionId: collection?.collectionId,
+                                collectionName: collection?.title,
+                                nickName: collection?.nickname,
+                              })
+                        }
+                      />
+                    ))}
 
-              <Ionicons
-                name="ellipsis-vertical"
-                size={15}
-                style={{
-                  marginTop: 45,
-                  marginLeft: 10,
-                  color: isEditing
-                    ? theme.subBackground
-                    : theme.componentBackground,
-                }}
-              />
-              <AddCollectionCircle
-                imageStyle={{
-                  backgroundColor: isEditing
-                    ? theme.subBackground
-                    : theme.componentBackground,
-                }}
-                titleStyle={{
-                  color: isEditing ? theme.subText : theme.basicText,
-                }}
-                onPress={() => (isEditing ? {} : setVisibleModal(true))}
-                title="새 콜렉션 추가"></AddCollectionCircle>
-            </ScrollView>
+                <Ionicons
+                  name="ellipsis-vertical"
+                  size={15}
+                  style={{
+                    marginTop: 45,
+                    marginLeft: 10,
+                    color: isEditing
+                      ? theme.subBackground
+                      : theme.componentBackground,
+                  }}
+                />
+                <AddCollectionCircle
+                  imageStyle={{
+                    backgroundColor: isEditing
+                      ? theme.subBackground
+                      : theme.componentBackground,
+                  }}
+                  titleStyle={{
+                    color: isEditing ? theme.subText : theme.basicText,
+                  }}
+                  onPress={() => (isEditing ? {} : setVisibleModal(true))}
+                  title="새 콜렉션 추가"></AddCollectionCircle>
+              </ScrollView>
+            </View>
           </View>
         </Row>
       </UpperContainer>
