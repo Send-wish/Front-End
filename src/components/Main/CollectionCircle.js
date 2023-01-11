@@ -95,10 +95,13 @@ const CollectionCircle = ({
           return res.json();
         })
         .then(data => {
-          console.log('check@@@@@@@', data.dtos);
+          if (!data.nickname) {
+            return;
+          }
           setItems(data.dtos);
-        });
-      // .then(_setImageUrl);
+          console.log(items);
+        })
+        .then(_setImageUrl);
     } catch (e) {
       console.log(e);
     }
