@@ -42,15 +42,15 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const CollectionCircle = ({onLongPress, friendName, image}) => {
+const CollectionCircle = ({onLongPress, frName, image}) => {
   return (
     <Container>
       <TouchableHighlight onLongPress={onLongPress}>
         <View>
         <Row>
-        <CollectionImage source={{uri: image}} value={friendName}/>
+        <CollectionImage source={{uri: image}} value={frName}/>
         </Row>
-        <Title>{friendName}</Title>
+        <Title>{frName}</Title>
         </View>
       </TouchableHighlight>
     </Container>
