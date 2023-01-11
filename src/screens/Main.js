@@ -21,12 +21,6 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {
-  BottomTabView,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -233,6 +227,7 @@ const Main = ({navigation, route}) => {
 
   const _getItems = async () => {
     try {
+
       fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'},
@@ -296,6 +291,7 @@ const Main = ({navigation, route}) => {
 
     if (!item.data || item.data.lenth < 1) {
       console.log('===== item.data is null!');
+
       return;
     }
 
