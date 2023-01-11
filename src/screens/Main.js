@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+  TouchableHighlight,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -332,11 +338,25 @@ const Main = ({navigation, route}) => {
   }, []);
 
   _pressEditButton = () => {
-    isEditing ? setIsEditing(false) : setIsEditing(true);
+    if (isCollectionEditing) {
+      setIsCollectionEditing(false);
+    } else {
+      if (isEditing) {
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    }
   };
 
   _longPressCollection = () => {
-    isCollectionEditing ? setIsCollectionEditing(false) : setIsCollectionEditing(true);
+    if (isEditing) {
+      return;
+    } else {
+      isCollectionEditing
+        ? setIsCollectionEditing(false)
+        : setIsCollectionEditing(true);
+    }
   };
 
   _addItemToList = itemId => {
@@ -412,6 +432,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
+  console.log('######isCollectionEditing : ', isCollectionEditing);
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -494,9 +515,6 @@ const Main = ({navigation, route}) => {
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
-                        imageStyle={{
-                          opacity: isEditing ? 0.5 : 1, position: 'absolute',
-                        }}
                         titleStyle={{
                           color: isEditing ? theme.subText : theme.basicText,
                         }}
@@ -513,7 +531,9 @@ const Main = ({navigation, route}) => {
                                 nickName: collection?.nickname,
                               })
                         }
-                        onLongPress={() => { _longPressCollection()}}
+                        onLongPress={() => {
+                          _longPressCollection();
+                        }}
                         onPress2={() =>
                           isEditing
                             ? _getCollections()
@@ -523,6 +543,8 @@ const Main = ({navigation, route}) => {
                                 nickName: collection?.nickname,
                               })
                         }
+                        isCollectionEditing={isCollectionEditing}
+                        isEditing={isEditing}
                       />
                     ))}
 
@@ -578,11 +600,15 @@ const Main = ({navigation, route}) => {
                 </SubTitle>
               </View>
               <Row>
-                <SearchIcon style={{opacity: isEditing ? 0 : 1}} />
+                <SearchIcon
+                  style={{
+                    display: isEditing || isCollectionEditing ? 'none' : 'flex',
+                  }}
+                />
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
-                  name={isEditing ? 'x' : 'edit-2'}
+                  name={isEditing || isCollectionEditing ? 'x' : 'edit-2'}
                 />
               </Row>
             </SpackBetweenRow>
@@ -593,6 +619,9 @@ const Main = ({navigation, route}) => {
               ? null
               : items.map(item => (
                   <ItemBox
+                    onLongPress={() => {
+                      _pressEditButton();
+                    }}
                     imageStyle={{
                       opacity: isEditing ? 0.1 : 1,
                     }}
