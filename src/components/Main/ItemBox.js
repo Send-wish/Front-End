@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import React, {useRef, useState, useEffect} from 'react';
-import {TouchableOpacity, Animated, PanResponder, View} from 'react-native';
+import {
+  TouchableOpacity,
+  Animated,
+  PanResponder,
+  View,
+  TouchableHighlight,
+} from 'react-native';
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -84,6 +90,7 @@ const Row = styled.View`
 
 const ItemBox = ({
   onPress,
+  onLongPress,
   saleRate,
   itemName,
   itemPrice,
@@ -140,9 +147,10 @@ const ItemBox = ({
 
   return (
     <View>
-      <TouchableOpacity
+      <TouchableHighlight
         onPress={onPress}
-        style={{display: isEditing ? 'none' : 'flex'}}>
+        style={{display: isEditing ? 'none' : 'flex'}}
+        onLongPress={onLongPress}>
         <Container>
           <ItemImage source={{uri: itemImage}} style={imageStyle} />
           <Row>
@@ -151,9 +159,9 @@ const ItemBox = ({
           </Row>
           <Title style={titleStyle}>{itemName}</Title>
         </Container>
-      </TouchableOpacity>
+      </TouchableHighlight>
 
-      <TouchableOpacity
+      <TouchableHighlight
         onPress={_pressCheckButton}
         style={{display: isEditing ? 'flex' : 'none'}}>
         <Container>
@@ -196,7 +204,7 @@ const ItemBox = ({
             {itemName}
           </Title>
         </Container>
-      </TouchableOpacity>
+      </TouchableHighlight>
     </View>
   );
 };

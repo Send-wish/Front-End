@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import React, {useEffect, useState} from 'react';
 import {TouchableHighlight, TouchableOpacity, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
+import Feather from 'react-native-vector-icons/Feather';
+import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
@@ -15,6 +17,18 @@ const Container = styled.View`
 
 const CollectionImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
+  padding: 10px;
+  margin: 10px 10px 10px 10px;
+  width: 75px;
+  height: 75px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+  border-color: ${({theme}) => theme.line};
+`;
+
+const CollectionView = styled.View`
+  background-color: ${({theme}) => theme.tintColorPink};
   padding: 10px;
   margin: 10px 10px 10px 10px;
   width: 75px;
@@ -47,10 +61,13 @@ const CollectionCircle = ({
   onPress2,
   collectionTitle,
   imageStyle,
+  imageStyle2,
   titleStyle,
   nickName,
   collectionId,
   onLongPress,
+  isCollectionEditing,
+  isEditing,
 }) => {
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
@@ -78,10 +95,13 @@ const CollectionCircle = ({
           return res.json();
         })
         .then(data => {
-          console.log('check@@@@@@@', data.dtos);
+          if (!data.nickname) {
+            return;
+          }
           setItems(data.dtos);
-        });
-      // .then(_setImageUrl);
+          console.log(items);
+        })
+        .then(_setImageUrl);
     } catch (e) {
       console.log(e);
     }
@@ -102,9 +122,37 @@ const CollectionCircle = ({
 
   return (
     <Container>
-      <TouchableHighlight onPress={_onPress} onLongPress={onLongPress}>
+      <TouchableHighlight
+        onPress={_onPress}
+        onLongPress={onLongPress}
+        style={{opacity: isEditing ? 0.5 : 1}}>
         <View>
-          <CollectionImage source={{uri: imageUrl}} stytle={imageStyle} />
+          <CollectionImage
+            source={{uri: imageUrl}}
+            style={{display: isCollectionEditing ? 'none' : 'flex'}}
+          />
+          <View
+            style={{
+              display: isCollectionEditing ? 'flex' : 'none',
+            }}>
+            <CollectionView>
+              <CollectionImage
+                source={{uri: imageUrl}}
+                style={{opacity: 0.5}}
+              />
+            </CollectionView>
+            <View
+              style={{
+                borderRadius: 100,
+                position: 'absolute',
+                marginLeft: 55,
+                marginTop: 3,
+                backgroundColor: theme.mainBackground,
+                opacity: 0.7,
+              }}>
+              <Feather name="minus-circle" size={30} color="white" />
+            </View>
+          </View>
           <Row>
             <Title style={titleStyle}>{collectionTitle}</Title>
           </Row>
