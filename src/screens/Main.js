@@ -21,6 +21,7 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -103,7 +104,12 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Main = ({navigation, route}) => {
+
   const nickName = route.params.nickName;
+  // console.log('route=',route);
+  // console.log('params=',route.params);
+  // console.log('nickName', route.params.nickName);
+  
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]); // 컬렉션 목록
@@ -118,6 +124,7 @@ const Main = ({navigation, route}) => {
   const [addToCollection, setAddToCollection] = useState([]);
   const [targetCollectionId, setTargetCollectionId] = useState('');
 
+
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
   // 화면이동시마다 랜더링 건들지 말것
@@ -126,6 +133,7 @@ const Main = ({navigation, route}) => {
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
   }, [isFocused]);
+
 
   // collection add
   const _madeCollection = async () => {
