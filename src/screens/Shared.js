@@ -108,10 +108,10 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Shared = (props) => {
+const Shared = props => {
   // Tab navigator route params check
   const nickName = props.route.params.params.nickName;
-  console.log('shared screen name check',nickName);
+  console.log('shared screen name check', nickName);
 
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -123,15 +123,18 @@ const Shared = (props) => {
   const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [isEditing, setIsEditing] = useState(false);
+  // const [sharedUrl, setSharedUrl] = useState('');
   const [addToShareCollection, setAddToShareCollection] = useState([]);
+  const [isShareCollectionEditing, setIsShareCollectionEditing] =
+    useState(false);
+
   const [targetShareCollectionId, setTargetShareCollectionId] = useState('');
-  const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
   // 공유 컬렉션 친구 추가
   const [isFriendselected, setIsFriendselected] = useState(false);
   const [addFriendList, setAddFriendList] = useState([nickName]);
   const [friends, setFriends] = useState([]);
 
-  console.log('친구목록확인',addFriendList);
+  console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -140,7 +143,7 @@ const Shared = (props) => {
     _getFriends();
   }, [isFocused]);
 
-  // collection add
+  // share collection add
   const _madeShareCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
     console.log('shareCollectionName', shareCollectionName); // 공유 컬렉션 이름 확인
@@ -171,7 +174,7 @@ const Shared = (props) => {
     }
   };
 
-  // get collections
+  // get share collections
   const _getShareCollections = async () => {
     setLoading(true);
     try {
@@ -197,38 +200,11 @@ const Shared = (props) => {
       console.log(e);
     }
   };
-
-  // item link
-  const _openUrl = url => {
-    console.log('url', url);
-    Linking.openURL(url);
-  };
-
-
-  const _getItems = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json'},
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          setItems(data);
-          console.log('========in share screen items :', data.imgUrl, data.name, data.price);
-          console.log('======= get share screen items :', data);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  // collection 삭제
-  const _deleteShareCollection = async () => {
+  // share collection 삭제
+  const _deleteShareCollection = async (shareCollectionId, nickName) => {
     try {
       fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
         {
           method: 'DELETE',
           headers: {
@@ -236,12 +212,15 @@ const Shared = (props) => {
           },
           body: JSON.stringify({
             nickname: nickName,
-            collectionId: collectionId,
+            collectionId: shareCollectionId,
           }),
         },
       )
         .then(response => {
           if (!response.ok) {
+            console.log("delete nickname chekc!!!!!",nickName)
+            console.log("delete ㅑ야야e chekc!!!!!",shareCollectionId)
+
             throw new Error(`${response.status} 에러발생`);
           }
           return response.json();
@@ -251,42 +230,16 @@ const Shared = (props) => {
         })
         .then(result => {
           console.log('result', result);
-        });
+        })
+        .then(() => _getShareCollections());
     } catch (e) {
       console.log('delete fail', e);
     }
   };
 
- const _pressEditButton = () => {
-    isEditing ? setIsEditing(false) : setIsEditing(true);
-  };
-
-  const _longPressCollection = () => {
-    isShareCollectionEditing
-      ? setIsShareCollectionEditing(false)
-      : setIsShareCollectionEditing(true);
-  };
-
-  const _addItemToShareList = itemId => {
-    if (addToShareCollection.includes(itemId)) {
-      tempArray = addToShareCollection;
-      for (let i = 0; i < tempArray.length; i++) {
-        if (tempArray[i] === itemId) {
-          tempArray.splice(i, 1);
-          i--;
-        }
-      }
-      setAddToShareCollection(tempArray);
-    } else {
-      tempArray = addToCollection;
-      tempArray.push(itemId);
-      setAddToShareCollection(tempArray);
-    }
-  };
-
+  // 친구 목록 불러오기
   const _getFriends = async () => {
     try {
-      // API 아직 안열림
       fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
         method: 'GET',
         headers: {'Content-Type': `application/json`},
@@ -303,8 +256,8 @@ const Shared = (props) => {
       console.log(e);
     }
   };
-
-  const _addFriendList  = (frName) => {
+  // 공유 컬렉션 만들 친구 추가하기
+  const _addFriendList = frName => {
     if (addFriendList.includes(frName)) {
       friendArray = addFriendList;
       for (let i = 0; i < friendArray.length; i++) {
@@ -323,8 +276,78 @@ const Shared = (props) => {
     }
   };
 
+  // 전체 아이템 불러오기
+  const _getItems = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setItems(data);
+          console.log(
+            'in share screen items :',
+            data.imgUrl,
+            data.name,
+            data.price,
+          );
+          console.log(' get share screen items :', data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  const _addItemToShareCollection = async collectionId => {
+  // item link
+  const _openUrl = url => {
+    console.log('url', url);
+    Linking.openURL(url);
+  };
+
+  const _pressEditButton = () => {
+    if (isShareCollectionEditing) {
+      setIsShareCollectionEditing(false);
+    } else {
+      if (isEditing) {
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    }
+  };
+
+  const _longPressCollection = () => {
+    if (isEditing) {
+      return;
+    } else {
+      isShareCollectionEditing
+        ? setIsShareCollectionEditing(false)
+        : setIsShareCollectionEditing(true);
+    }
+  };
+
+  const _addItemToShareList = itemId => {
+    if (addToShareCollection.includes(itemId)) {
+      tempArray = addToShareCollection;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddToShareCollection(tempArray);
+    } else {
+      tempArray = addToShareCollection;
+      tempArray.push(itemId);
+      setAddToShareCollection(tempArray);
+    }
+    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
+  };
+
+  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -332,8 +355,8 @@ const Shared = (props) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           nickname: nickName,
-          collectionId: collectionId,
-          itemIdList: addToCollection,
+          collectionId: shareCollectionId,
+          itemIdList: addToShareCollection,
         }),
       }).then(response => {
         if (!response.ok) {
@@ -358,7 +381,7 @@ const Shared = (props) => {
         },
         body: JSON.stringify({
           nickname: nickName,
-          itemIdList: addToCollection,
+          itemIdList: addToShareCollection,
         }),
       })
         .then(response => {
@@ -374,9 +397,32 @@ const Shared = (props) => {
           console.log('result', result);
         })
         .then(_getItems)
-        .then(setAddToCollection([]));
+        .then(setAddToShareCollection([]));
     } catch (e) {
       console.log('items delete fail', e);
+    }
+  };
+
+  const _pressTargetShareCollection = (
+    shareCollectionId,
+    nickName,
+    shareCollectionName,
+  ) => {
+    setIsShareCollectionEditing(false);
+    // 콜렉션 수정중이 아닐 때,
+    if (!isShareCollectionEditing) {
+      if (isEditing) {
+        _addItemToShareCollection(shareCollectionId, nickName);
+      } else {
+        navigation.navigate('ShareCollection', {
+          collectionId: shareCollectionId,
+          nickname: nickName,
+          collectionName: shareCollectionName,
+        });
+      }
+      // 콜렉션 수정 중일 때,
+    } else {
+      _deleteShareCollection(shareCollectionId, nickName);
     }
   };
 
@@ -421,25 +467,26 @@ const Shared = (props) => {
             <View style={{position: 'relative'}}>
               <ModalInnerView>
                 <ScrollView horizontal style={{height: 100}}>
-
                   {/* 임시 */}
                   {friends.map(friend => (
-                   <TempCircle
-                   key={friend?.friend_id}
-                   friendId={friend?.friend_id}
-                   frName={friend?.friend_nickname}
-                   imageStyle={{
-                     opacity: isFriendselected ? 1 : 0.5,
-                     position: 'absolute',
-                   }}
-                   titleStyle={{
-                     color: isFriendselected ? theme.subText : theme.basicText,
-                   }}
-                   onPress={() => {
-                     _addFriendList(friend?.friend_nickname);
-                   }}
-                   isClicked={isFriendselected}
-                  />
+                    <TempCircle
+                      key={friend?.friend_id}
+                      friendId={friend?.friend_id}
+                      frName={friend?.friend_nickname}
+                      imageStyle={{
+                        opacity: isFriendselected ? 1 : 0.5,
+                        position: 'absolute',
+                      }}
+                      titleStyle={{
+                        color: isFriendselected
+                          ? theme.subText
+                          : theme.basicText,
+                      }}
+                      onPress={() => {
+                        _addFriendList(friend?.friend_nickname);
+                      }}
+                      isClicked={isFriendselected}
+                    />
                   ))}
                 </ScrollView>
               </ModalInnerView>
@@ -499,26 +546,17 @@ const Shared = (props) => {
                         shareCollectionName={shareCollection?.title}
                         nickName={shareCollectionName?.nickname}
                         onPress={() =>
-                          isEditing
-                            ? _pressTargetCollection(shareCollectionName?.collectionId)
-                            : navigation.navigate('Collection', {
-                                collectionId: shareCollectionName?.collectionId,
-                                collectionName: shareCollectionName?.title,
-                                nickName: shareCollectionName?.nickname,
-                              })
+                          _pressTargetShareCollection(
+                            shareCollection?.collectionId,
+                            nickName,
+                            shareCollection?.title
+                          )
                         }
                         onLongPress={() => {
                           _longPressCollection();
                         }}
-                        onPress2={() =>
-                          isEditing
-                            ? _getCollections()
-                            : navigation.navigate('Collection', {
-                                collectionId: collection?.collectionId,
-                                collectionName: collection?.title,
-                                nickName: collection?.nickname,
-                              })
-                        }
+                        isShareCollectionEditing={isShareCollectionEditing}
+                        isEditing={isEditing}
                       />
                     ))}
 
@@ -589,6 +627,9 @@ const Shared = (props) => {
               ? null
               : items.map(item => (
                   <ItemBox
+                    onLongPress={() => {
+                      _pressEditButton();
+                    }}
                     imageStyle={{
                       opacity: isEditing ? 0.1 : 1,
                     }}
