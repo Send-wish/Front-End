@@ -85,7 +85,11 @@ const Share = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 150,
     backgroundColor: 'white',
   },
   header: {
