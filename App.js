@@ -2,14 +2,8 @@
 import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 
 // Screens
-import {
-  Chat,
-  Collection,
-  Main,
-  Shared,
-  SignIn,
-  SignUp,
-} from './src/screens';
+import {Chat, Collection, Main, Shared, SignIn, SignUp} from './src/screens';
+import Share from './Share';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -25,13 +19,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
+import {back} from 'react-native/Libraries/Animated/Easing';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
-
-const Navigation = (props) => {
+const Navigation = props => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -67,9 +60,21 @@ const Navigation = (props) => {
           return <Ionic name={iconName} size={iconSize} color={iconColor} />;
         },
       })}>
-      <Tab.Screen name="Main" component={Main} initialParams={props.route.params}/>
-      <Tab.Screen name="Shared" component={Shared} initialParams={props.route.params}/>
-      <Tab.Screen name="Chat" component={Chat} initialParams={props.route.params}/>
+      <Tab.Screen
+        name="Main"
+        component={Main}
+        initialParams={props.route.params}
+      />
+      <Tab.Screen
+        name="Shared"
+        component={Shared}
+        initialParams={props.route.params}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={Chat}
+        initialParams={props.route.params}
+      />
     </Tab.Navigator>
   );
 };
@@ -79,7 +84,9 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator
-          screenOptions={{headerShown: false}}
+          screenOptions={{
+            headerShown: false,
+          }}
           initialRouteName="SignIn">
           {/* <Stack.Screen name="Start" component={Start} /> */}
           <Stack.Screen name="App" component={App} />
@@ -87,6 +94,16 @@ const App = () => {
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Navigation" component={Navigation} />
           <Stack.Screen name="Collection" component={Collection} />
+          <Stack.Screen
+            name="Shared"
+            component={Shared}
+            options={{presentation: 'transparent'}}
+          />
+          <Stack.Screen
+            name="Share"
+            component={Share}
+            options={{presentation: 'transparent'}}
+          />
           {/* <Stack.Screen name="SharedCollection" component={SharedCollection} /> */}
           {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}
         </Stack.Navigator>
