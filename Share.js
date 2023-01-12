@@ -165,6 +165,7 @@ const Share = () => {
         })
         .then()
         .catch(error => {
+          console.log('아이템저장서버통신에러');
           console.error(error);
         });
     } catch (e) {

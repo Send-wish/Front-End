@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+  TouchableHighlight,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -21,9 +27,8 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
-import TempCircle from '../components/Shared/TempCircle';
-
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import SharedGroupPreferences from 'react-native-shared-group-preferences'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import {useIsFocused} from '@react-navigation/native';
 
@@ -97,16 +102,6 @@ const ModalView = styled.View`
   align-items: center;
   opacity: 0.98;
 `;
-const ModalInnerView = styled.View`
-  width: 100%;
-  /* height: 15%; */
-  background-color: ${({theme}) => theme.subBackground};
-  border-radius: 20px;
-  margin-top: -100px;
-  padding: 20px;
-  justify-content: center;
-  align-items: center;
-`;
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   width: 100%;
@@ -117,10 +112,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const Main = ({navigation, route}) => {
   const nickName = route.params.nickName;
-  // console.log('route=',route);
-  // console.log('params=',route.params);
-  // console.log('nickName', route.params.nickName);
-
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]); // 컬렉션 목록
@@ -133,14 +124,37 @@ const Main = ({navigation, route}) => {
   const [sharedUrl, setSharedUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [addToCollection, setAddToCollection] = useState([]);
-  const [targetCollectionId, setTargetCollectionId] = useState('');
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
-  // 공유 컬렉션 친구 추가
-  const [isFriendselected, setIsFriendselected] = useState(false);
-  const [addFriendList, setAddFriendList] = useState([]);
 
-  // const collectionId = 1; // 컬렉션별 아이디 테스트용
+  const appGroupIdentifier = "group.app.sendwish.jungle"
 
+  const saveUserDataToSharedStorage = async (nickName) => {
+    try{
+      await SharedGroupPreferences.setItem("nickNameData", nickName,appGroupIdentifier)
+      // this.loadUsernameFromSharedStorage()
+      console.log('share data saved==========', nickName);
+    } catch(errorCode) {
+      // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
+      // errorCode 1 = there is no value for that key
+      console.log(errorCode)
+    }
+  }
+  saveUserDataToSharedStorage(nickName);
+
+  const loadUsernameFromSharedStorage = async () => {
+    try {
+    const value = await SharedGroupPreferences.getItem("nickNameData", appGroupIdentifier) 
+    // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
+    console.log('share check data==', value);
+    // this.setState({username:value.name})
+  } catch(errorCode) {
+    // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
+    // errorCode 1 = there is no value for that key
+    console.log(errorCode)
+  }
+  }
+  loadUsernameFromSharedStorage();
+  
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -268,7 +282,7 @@ const Main = ({navigation, route}) => {
   };
 
   // collection 삭제
-  const _deleteCollection = async () => {
+  const _deleteCollection = async (collectionId, nickName) => {
     try {
       fetch(
         `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
@@ -294,7 +308,8 @@ const Main = ({navigation, route}) => {
         })
         .then(result => {
           console.log('result', result);
-        });
+        })
+        .then(() => _getCollections());
     } catch (e) {
       console.log('delete fail', e);
     }
@@ -353,13 +368,25 @@ const Main = ({navigation, route}) => {
   }, []);
 
   _pressEditButton = () => {
-    isEditing ? setIsEditing(false) : setIsEditing(true);
+    if (isCollectionEditing) {
+      setIsCollectionEditing(false);
+    } else {
+      if (isEditing) {
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    }
   };
 
   _longPressCollection = () => {
-    isCollectionEditing
-      ? setIsCollectionEditing(false)
-      : setIsCollectionEditing(true);
+    if (isEditing) {
+      return;
+    } else {
+      isCollectionEditing
+        ? setIsCollectionEditing(false)
+        : setIsCollectionEditing(true);
+    }
   };
 
   _addItemToList = itemId => {
@@ -377,9 +404,16 @@ const Main = ({navigation, route}) => {
       tempArray.push(itemId);
       setAddToCollection(tempArray);
     }
+    console.log('****************addToCollection is : ', addToCollection);
   };
 
-  _pressTargetCollection = async collectionId => {
+  const _addItemToCollection = async (collectionId, nickName) => {
+    console.log(
+      '_addItemToCollection is called!!!!!!!!!!!!!!!! : ',
+      collectionId,
+      nickName,
+      addToCollection,
+    );
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -390,17 +424,37 @@ const Main = ({navigation, route}) => {
           collectionId: collectionId,
           itemIdList: addToCollection,
         }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        return response.json();
-      });
-      // .then(data => {
-      //   console.log('data is : ', data);
-      // });
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`${response.status} 에러발생`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('@@@@@@@@@@@@@@@@@@@!!!!@@@@@@@@@@@@data is : ', data);
+        });
     } catch (e) {
       console.log('adding item to collection failed');
+    }
+  };
+
+  const _pressTargetCollection = (collectionId, collectionName, nickName) => {
+    setIsCollectionEditing(false);
+    // 콜렉션 수정중이 아닐 때,
+    if (!isCollectionEditing) {
+      if (isEditing) {
+        _addItemToCollection(collectionId, nickName);
+      } else {
+        navigation.navigate('Collection', {
+          collectionId: collectionId,
+          collectionName: collectionName,
+          nickName: nickName,
+        });
+      }
+      // 콜렉션 수정 중일 때,
+    } else {
+      _deleteCollection(collectionId, nickName);
     }
   };
 
@@ -454,10 +508,10 @@ const Main = ({navigation, route}) => {
                 justifyContent: 'flex-start',
               }}>
               <View style={{width: 330}}>
-                <Title style={{marginBottom: 10}}>공유 콜렉션 만들기</Title>
-                <Title>콜렉션의 이름을 입력해주세요.</Title>
+                <Title style={{marginBottom: 10}}>새 콜렉션 만들기</Title>
+                <Title>새 콜렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  공유 콜렉션의 이름을 입력해주세요.
+                  새 콜렉션의 이름을 입력해주세요.
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -473,36 +527,11 @@ const Main = ({navigation, route}) => {
               placeholder="새 콜렉션 이름"
               returnKeyType="done"
             />
-            <View style={{position: 'relative'}}>
-              <ModalInnerView>
-                <ScrollView horizontal style={{height: 100}}>
-                  {/* 임시 */}
-                  {/* <TempCircle
-                    frName={'유수민'}
-                    imageStyle={{
-                      opacity: isFriendselected ? 1 : 0.5,
-                      position: 'absolute',
-                    }}
-                    titleStyle={{
-                      color: isFriendselected ? theme.subText : theme.basicText,
-                    }}
-                    key={friend?.friend_id}
-                    friendName={friend?.friend_nickname}
-                    nickName={friend?.nickName}
-                    onPress={() => {
-                      setIsFriendselected(!isFriendselected);
-                      isFriendselected ? addFriendList() : emptyFriendList();
-                    }}
-                  /> */}
-                  <TempCircle frName={'유수민'} />
-                  <TempCircle frName={'유수민'} />
-                </ScrollView>
-              </ModalInnerView>
-            </View>
             <Button
               title="새 콜렉션 만들기"
               onPress={() => _madeCollection()}
             />
+            <View style={{marginBottom: 20}} />
           </KeyboardAwareScrollView>
         </ModalView>
       </Modal>
@@ -537,15 +566,11 @@ const Main = ({navigation, route}) => {
                 height: 300,
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {/* collection rendering */}
                 {collections.error
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
-                        imageStyle={{
-                          opacity: isEditing ? 0.5 : 1,
-                          position: 'absolute',
-                        }}
+                        
                         titleStyle={{
                           color: isEditing ? theme.subText : theme.basicText,
                         }}
@@ -554,26 +579,17 @@ const Main = ({navigation, route}) => {
                         collectionTitle={collection?.title}
                         nickName={collection?.nickname}
                         onPress={() =>
-                          isEditing
-                            ? _pressTargetCollection(collection?.collectionId)
-                            : navigation.navigate('Collection', {
-                                collectionId: collection?.collectionId,
-                                collectionName: collection?.title,
-                                nickName: collection?.nickname,
-                              })
+                          _pressTargetCollection(
+                            collection?.collectionId,
+                            collection?.title,
+                            collection?.nickname,
+                          )
                         }
                         onLongPress={() => {
                           _longPressCollection();
                         }}
-                        onPress2={() =>
-                          isEditing
-                            ? _getCollections()
-                            : navigation.navigate('Collection', {
-                                collectionId: collection?.collectionId,
-                                collectionName: collection?.title,
-                                nickName: collection?.nickname,
-                              })
-                        }
+                        isCollectionEditing={isCollectionEditing}
+                        isEditing={isEditing}
                       />
                     ))}
 
@@ -629,11 +645,15 @@ const Main = ({navigation, route}) => {
                 </SubTitle>
               </View>
               <Row>
-                <SearchIcon style={{opacity: isEditing ? 0 : 1}} />
+                <SearchIcon
+                  style={{
+                    display: isEditing || isCollectionEditing ? 'none' : 'flex',
+                  }}
+                />
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
-                  name={isEditing ? 'x' : 'edit-2'}
+                  name={isEditing || isCollectionEditing ? 'x' : 'edit-2'}
                 />
               </Row>
             </SpackBetweenRow>
@@ -644,6 +664,9 @@ const Main = ({navigation, route}) => {
               ? null
               : items.map(item => (
                   <ItemBox
+                    onLongPress={() => {
+                      _pressEditButton();
+                    }}
                     imageStyle={{
                       opacity: isEditing ? 0.1 : 1,
                     }}
@@ -703,3 +726,4 @@ const Main = ({navigation, route}) => {
 };
 
 export default Main;
+

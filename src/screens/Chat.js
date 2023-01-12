@@ -110,13 +110,13 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const Chat = (props) => {
   const insets = useSafeAreaInsets();
-  const [frName, setFrName] = useState('기윤');
+  const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
 
-  console.log('passed from main param name check',nickName);
+  console.log('chat screen nickname check!!!!!!!',nickName);
 
   // const nickName = props.route.params; 이 상황이면 아래와같음
   // console.log('passed from main param',nickName);
@@ -150,7 +150,7 @@ const Chat = (props) => {
           // console.log('errorcheck!!response addfriend: ', response);
           if (!response.ok) {
             // throw new Error(`${response.status} 에러발생`);
-            throw new Error('이미 등록된 친구입니다 :)');
+            throw new Error('이미 등록된 친구이거나 없는 사용자입니다 :)');
           }
           return response.json();
         })
@@ -202,7 +202,7 @@ const Chat = (props) => {
       })
       })
         .then(response => {
-          // console.log('errorcheck!!response: ', response);
+          console.log('errorcheck!!response: ', response);
           if (!response.ok) {
             // throw new Error(`${response.status} 에러발생`);
             throw new Error('등록되지 않은 친구입니다 :)');
@@ -275,8 +275,7 @@ const Chat = (props) => {
           <Column>
             <Title style={{marginTop: 30}}>
               <Title style={{fontSize: 27, color: theme.tintColorPink}}>
-                {/* {nickName + ' '} */}
-                기윤
+                {nickName + ' '}
               </Title>
               님의 친구 목록
             </Title>

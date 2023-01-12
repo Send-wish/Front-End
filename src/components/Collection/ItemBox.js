@@ -159,6 +159,7 @@ const ItemBox = ({
       </TouchableHighlight>
 
       <TouchableHighlight
+
         onLongPress={onLongPress}
         onPress={_pressCheckButton}
         style={{display: isEditing ? 'flex' : 'none'}}>
