@@ -3,14 +3,14 @@ import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  ItemBox,
-  CollectionCircle,
   AddCollectionCircle,
-  SearchIcon,
+  Button,
   EditIcon,
   Input,
-  Button,
-} from '../components/Main';
+  ItemBox,
+  SearchIcon,
+  TempCircle,
+} from '../components/Shared';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
@@ -19,9 +19,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {useIsFocused} from '@react-navigation/native';
 
-import ShareMenu from 'react-native-share-menu';
 
-import TempCircle from '../components/Shared/TempCircle';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -102,7 +100,7 @@ const ModalInnerView = styled.View`
   /* height: 15%; */
   background-color: ${({theme}) => theme.subBackground};
   border-radius: 20px;
-  margin-top:-100px;
+  margin-top: -100px;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -115,11 +113,10 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Main = ({navigation, route}) => {
-  const nickName = route.params.nickName;
-  // console.log('route=',route);
-  // console.log('params=',route.params);
-  // console.log('nickName', route.params.nickName);
+const Shared = (props) => {
+
+  const nickName = props.route.params.params.nickName;
+  console.log('shared screen name check',nickName);
 
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -135,6 +132,9 @@ const Main = ({navigation, route}) => {
   const [addToCollection, setAddToCollection] = useState([]);
   const [targetCollectionId, setTargetCollectionId] = useState('');
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
+  // 공유 컬렉션 친구 추가
+  const [isFriendselected, setIsFriendselected] = useState(false);
+  const [addFriendList, setAddFriendList] = useState([]);
 
   // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
@@ -297,57 +297,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  // Shared item
-
-  // Handle share
-  const handleShare = useCallback(item => {
-    console.log('===== item is : ', item);
-
-    if (!item) {
-      console.log('===== item is null!');
-      return;
-    }
-
-    if (!item.data || item.data.lenth < 1) {
-      console.log('===== item.data is null!');
-
-      return;
-    }
-
-    var {mimeType, data, extraData} = item;
-
-    if (data === undefined) {
-      return;
-    }
-    if (data.length < 1 || data === '' || !data) {
-      console.log('===== data is null!!!!!!!');
-      return;
-    }
-
-    if (data) {
-      console.log('===== data is : ', data);
-      setSharedUrl(data[0].data);
-    } else {
-      return;
-    }
-  }, []);
-
-  // Share Init
-  useEffect(() => {
-    ShareMenu.getInitialShare(handleShare);
-  }, []);
-
-  useEffect(() => {
-    _addItem();
-  }, [sharedUrl]);
-
-  // Share Listener, remove
-  useEffect(() => {
-    const listener = ShareMenu.addNewShareListener(handleShare);
-    return () => {
-      listener.remove();
-    };
-  }, []);
+ 
 
   _pressEditButton = () => {
     isEditing ? setIsEditing(false) : setIsEditing(true);
@@ -470,14 +420,33 @@ const Main = ({navigation, route}) => {
               placeholder="새 콜렉션 이름"
               returnKeyType="done"
             />
-            <View style={{position:'relative'}}>
-            <ModalInnerView>
-            <ScrollView horizontal style={{height:100}}>
-            <TempCircle frName={"유수민"} />
-            <TempCircle frName={"유수민"} />
-            <TempCircle frName={"유수민"} />
-            </ScrollView>
-            </ModalInnerView>
+            <View style={{position: 'relative'}}>
+              <ModalInnerView>
+                <ScrollView horizontal style={{height: 100}}>
+                  {/* 임시 */}
+                  <TempCircle
+                    frName={'유수민'}
+                    imageStyle={{
+                      opacity: isFriendselected ? 1 : 0.5,
+                      position: 'absolute',
+                    }}
+                    titleStyle={{
+                      color: isFriendselected ? theme.subText : theme.basicText,
+                    }}
+                    // key={friend?.friend_id}
+                    // friendName={friend?.friend_nickname}
+                    // nickName={friend?.nickName}
+                    onPress={() => {
+                      setIsFriendselected(!isFriendselected);
+                      console.log('선택확인',isFriendselected);
+                      // isFriendselected ? addFriendList() : emptyFriendList();
+                    }}
+                    isClicked={isFriendselected}
+                  />
+                  <TempCircle frName={'유수민'} />
+                  <TempCircle frName={'유수민'} />
+                </ScrollView>
+              </ModalInnerView>
             </View>
             <Button
               title="새 콜렉션 만들기"
@@ -503,7 +472,7 @@ const Main = ({navigation, route}) => {
                 }}>
                 {nickName + ' '}
               </Title>
-              님이 담은 아이템
+              님의 공유 컬렉션
             </Title>
           </Column>
         </Row>
@@ -518,7 +487,7 @@ const Main = ({navigation, route}) => {
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {/* collection rendering */}
-                {collections.error
+                {/* {collections.error
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
@@ -555,7 +524,7 @@ const Main = ({navigation, route}) => {
                               })
                         }
                       />
-                    ))}
+                    ))} */}
 
                 <Ionicons
                   name="ellipsis-vertical"
@@ -682,4 +651,4 @@ const Main = ({navigation, route}) => {
   );
 };
 
-export default Main;
+export default Shared;

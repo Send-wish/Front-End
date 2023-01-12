@@ -1,6 +1,12 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, Pressable, Image, StyleSheet} from 'react-native';
 import {ShareMenuReactView} from 'react-native-share-menu';
+import SharedGroupPreferences from 'react-native-shared-group-preferences';
+import {ThemeProvider} from 'styled-components';
+import {theme} from './src/theme';
+import Feather from 'react-native-vector-icons/Feather';
+import styled from 'styled-components';
+import {EditIcon} from './src/components/Main';
 
 const Button = ({onPress, title, style}) => (
   <Pressable onPress={onPress}>
@@ -8,8 +14,111 @@ const Button = ({onPress, title, style}) => (
   </Pressable>
 );
 
+const Container = styled.View`
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const BottomContainer = styled.View`
+  padding-left: 20px;
+  padding-right: 20px;
+  /* justify-content: center; */
+  align-items: center;
+  height: 30%;
+  width: 100%;
+  background-color: ${({theme}) => theme.componentBackground};
+  flex-wrap: wrap;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+`;
+
+const Row = styled.View`
+  flex: 1;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+`;
+
+const SaveStatus = styled.View`
+  justify-content: center;
+  align-items: flex-start;
+  height: 20%;
+  width: 100%;
+  background-color: red;
+`;
+
+const CollectionList = styled.View`
+  justify-content: center;
+  align-items: flex-start;
+  height: 50%;
+  width: 100%;
+  background-color: blue;
+`;
+const DividingLine = styled.View`
+  justify-content: center;
+  align-items: center;
+  height: 10%;
+  width: 100%;
+  background-color: ${({theme}) => theme.basicText};
+  border-bottom-color: ${({theme}) => theme.mainBackground};
+`;
+
+const LineIcon = styled.View`
+  justify-content: center;
+  align-items: center;
+  height: 1%;
+  width: 10%;
+  background-color: ${({theme}) => theme.basicText};
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+`;
+
+const DeleteButton = () => {
+  return (
+    <View style={{height: 20, width: 20, backgroundColor: 'black'}}></View>
+  );
+};
+
+const EditButton = () => {
+  return (
+    <View style={{height: 20, width: 20, backgroundColor: 'black'}}></View>
+  );
+};
+
+const MainTitle = styled.Text`
+  font-size: 25px;
+  font-weight: bold;
+  color: ${({theme}) => theme.mainBackground};
+`;
+
 const Share = () => {
   const [sending, setSending] = useState(false);
+
+  const appGroupIdentifier = 'group.app.sendwish.jungle';
+
+  const loadUsernameFromSharedStorage = async () => {
+    try {
+      const value = await SharedGroupPreferences.getItem(
+        'nickNameData',
+        appGroupIdentifier,
+      );
+      // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
+      // console.log('share check data==in share', value);
+      nickName = value;
+      // console.log('nickName check in share', nickName);
+      // this.setState({username:value.name})
+    } catch (errorCode) {
+      // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
+      // errorCode 1 = there is no value for that key
+      console.log(errorCode);
+    }
+  };
+  loadUsernameFromSharedStorage();
 
   useEffect(() => {
     ShareMenuReactView.data()
@@ -35,14 +144,15 @@ const Share = () => {
         console.log(error.config);
       });
   }, []);
+
   const postItem = url => {
     try {
       fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
-          url: url, // url 아직 못받음 임시변수
-          nickname: '브리도',
+          url: url,
+          nickname: nickName,
         }),
       })
         .then(response => {
@@ -55,6 +165,7 @@ const Share = () => {
         })
         .then()
         .catch(error => {
+          console.log('아이템저장서버통신에러');
           console.error(error);
         });
     } catch (e) {
@@ -62,56 +173,44 @@ const Share = () => {
       console.log('send url fail');
     }
   };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Button
-          title="돌아가기"
-          onPress={() => {
-            ShareMenuReactView.dismissExtension();
-          }}
-          style={styles.destructive}
-        />
-      </View>
-      <View style={styles.buttonGroup}>
-        <Button
-          title={sending ? '아이템 저장 완료' : '아이템 저장 중..'}
-          disabled={sending}
-          style={sending ? styles.sending : styles.send}></Button>
-      </View>
-    </View>
+    <ThemeProvider theme={theme}>
+      <Container>
+        <BottomContainer>
+          <LineIcon />
+          <SaveStatus>
+            <Row>
+              <MainTitle>
+                {sending ? '저장 완료!' : '아이템 저장 중'}{' '}
+              </MainTitle>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '15%',
+                  flexWrap: 'wrap',
+                }}>
+                <EditButton />
+                <DeleteButton />
+              </View>
+            </Row>
+          </SaveStatus>
+          <DividingLine />
+          <CollectionList></CollectionList>
+        </BottomContainer>
+      </Container>
+    </ThemeProvider>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 150,
-    backgroundColor: 'white',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  destructive: {
-    color: 'red',
-  },
-  send: {
-    color: 'blue',
-  },
-  sending: {
-    color: 'grey',
-  },
-  image: {
-    width: '100%',
-    height: 100,
-  },
-  buttonGroup: {
-    alignItems: 'center',
-  },
-});
-
 export default Share;
+
+// <Text style={{fontSize: 25, fontWeight: 'bold'}}>
+// {sending ? '저장 완료!' : '아이템 저장 중'}
+
+//           <Button>
+//   title={sending ? '아이템 저장 완료' : '아이템 저장 중..'}
+//   disabled={sending}
+//   style={sending ? styles.sending : styles.send}
+// </Button>

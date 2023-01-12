@@ -8,7 +8,13 @@ import React, {
   useCallback,
   useReducer,
 } from 'react';
-import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -30,6 +36,21 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 
 import {useIsFocused} from '@react-navigation/native';
+
+const channels = [];
+for (let i = 0; i < 100; i++) {
+  channels.push({
+    id: i,
+    title: `title: ${i}`,
+    description: `desc : ${i}`,
+    createdAt: i,
+  });
+}
+
+const Item = ({item: {id, title, description, createdAt}, onPress}) => {
+  console.log(id);
+  return <ListFriend friendName={title} />;
+};
 
 const Container = styled.View`
   flex: 1;
@@ -108,15 +129,15 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Chat = (props) => {
+const Chat = props => {
   const insets = useSafeAreaInsets();
-  const [frName, setFrName] = useState('기윤');
+  const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
 
-  console.log('passed from main param name check',nickName);
+  console.log('chat screen nickname check!!!!!!!', nickName);
 
   // const nickName = props.route.params; 이 상황이면 아래와같음
   // console.log('passed from main param',nickName);
@@ -134,7 +155,7 @@ const Chat = (props) => {
   // 친구 추가하기 > 친구리스트 리랜더링
 
   const _addFriends = async () => {
-    setVisibleModal(false)
+    setVisibleModal(false);
     console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
@@ -150,7 +171,7 @@ const Chat = (props) => {
           // console.log('errorcheck!!response addfriend: ', response);
           if (!response.ok) {
             // throw new Error(`${response.status} 에러발생`);
-            throw new Error('이미 등록된 친구입니다 :)');
+            throw new Error('이미 등록된 친구이거나 없는 사용자입니다 :)');
           }
           return response.json();
         })
@@ -198,24 +219,26 @@ const Chat = (props) => {
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
           nickname: nickName,
-          friendNickname:frName,
-      })
+          friendNickname: frName,
+        }),
       })
         .then(response => {
-          // console.log('errorcheck!!response: ', response);
+          console.log('errorcheck!!response: ', response);
           if (!response.ok) {
             // throw new Error(`${response.status} 에러발생`);
             throw new Error('등록되지 않은 친구입니다 :)');
           }
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
           _getFriends();
-        });
+          return 
+          // return response.json();
+        })
+        // .then(data => {
+        //   console.log(data);
+        // })
+        // .then(result => {
+        //   console.log('result', result);
+        //   _getFriends();
+        // });
     } catch (e) {
       console.log('friend delete fail', e);
     }
@@ -275,8 +298,7 @@ const Chat = (props) => {
           <Column>
             <Title style={{marginTop: 30}}>
               <Title style={{fontSize: 27, color: theme.tintColorPink}}>
-                {/* {nickName + ' '} */}
-                기윤
+                {nickName + ' '}
               </Title>
               님의 친구 목록
             </Title>
@@ -289,7 +311,7 @@ const Chat = (props) => {
                 <CollectionCircle
                   key={friend?.friend_id}
                   frName={friend?.friend_nickname}
-                  onLongPress={() =>  _deleteFriend()}
+                  onLongPress={() => _deleteFriend()}
                   activeOpacity={0.6}
                 />
               ))}
@@ -318,7 +340,14 @@ const Chat = (props) => {
               </View>
             </SpackBetweenRow>
           </Column>
-          <ListFriend friendName={'채팅창'} />
+
+          <ListFriend friendName="리스트" />
+          <FlatList
+            data={channels}
+            renderItem={({item}) => <Item item={item} />}
+            keyExtractor={item => item['id'].toString()}
+          />
+
           <FlexRow></FlexRow>
         </ScrollView>
       </BottomContainer>

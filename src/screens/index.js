@@ -6,7 +6,8 @@ import Shared from './Shared';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Start from './Start';
-import { Button } from '../components/Chat';
+import SharedCollection from './SharedCollection';
+import {Button} from '../components/Chat';
 import CollectionCircle from '../components/Chat';
 import AddCollectionCircle from '../components/Chat';
 
@@ -22,4 +23,5 @@ export {
   Button,
   CollectionCircle,
   AddCollectionCircle,
+  SharedCollection,
 };

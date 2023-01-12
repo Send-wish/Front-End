@@ -58,14 +58,13 @@ const Title = styled.Text`
 
 const CollectionCircle = ({
   onPress,
-  collectionTitle,
-  imageStyle,
-  imageStyle2,
+  shareCollectionName,
+  // isClicked,
   titleStyle,
   nickName,
-  collectionId,
+  shareCollectionId,
   onLongPress,
-  isCollectionEditing,
+  isShareCollectionEditing,
   isEditing,
 }) => {
   const [items, setItems] = useState([]);
@@ -73,13 +72,18 @@ const CollectionCircle = ({
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
   useEffect(() => {
+    if (isFocused) console.log('Focused');
+    _getItemsFromShareCollection();
+  }, [isFocused]);
+
+  useEffect(() => {
     _setImageUrl();
   }, [items]);
 
-  const _getItemsFromCollection = async () => {
+  const _getItemsFromShareCollection = async () => {
     try {
       fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
         {
           method: 'GET',
           headers: {'Content-Type': 'application/json'},
@@ -107,10 +111,10 @@ const CollectionCircle = ({
     }
   };
 
-  const _onPress = () => {
-    onPress();
-    _getItemsFromCollection();
-    _setImageUrl();
+  const _onPress = async () => {
+    onPress()
+    _getItemsFromShareCollection()
+    _setImageUrl()
   };
 
   return (
@@ -122,11 +126,11 @@ const CollectionCircle = ({
         <View>
           <CollectionImage
             source={{uri: imageUrl}}
-            style={{display: isCollectionEditing ? 'none' : 'flex'}}
+            style={{display: isShareCollectionEditing ? 'none' : 'flex'}}
           />
           <View
             style={{
-              display: isCollectionEditing ? 'flex' : 'none',
+              display: isShareCollectionEditing ? 'flex' : 'none',
             }}>
             <CollectionView>
               <CollectionImage
@@ -147,7 +151,7 @@ const CollectionCircle = ({
             </View>
           </View>
           <Row>
-            <Title style={titleStyle}>{collectionTitle}</Title>
+            <Title style={titleStyle}>{shareCollectionName}</Title>
           </Row>
         </View>
       </TouchableHighlight>
