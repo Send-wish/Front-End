@@ -19,6 +19,12 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {useIsFocused} from '@react-navigation/native';
 
+
+
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// import {useIsFocused} from '@react-navigation/native';
+
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -128,8 +134,6 @@ const Shared = (props) => {
   // 공유 컬렉션 친구 추가
   const [isFriendselected, setIsFriendselected] = useState(false);
   const [addFriendList, setAddFriendList] = useState([]);
-  const [friends, setFriends] = useState([]);
-
 
 
   // 화면이동시마다 랜더링 건들지 말것
@@ -137,7 +141,6 @@ const Shared = (props) => {
     if (isFocused) console.log('Focused');
     _getShareCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
-    _getFriends();
   }, [isFocused]);
 
   // collection add
@@ -267,7 +270,7 @@ const Shared = (props) => {
       : setIsShareCollectionEditing(true);
   };
 
-  const _addItemToShareList = itemId => {
+  _addItemToShareList = itemId => {
     if (addToShareCollection.includes(itemId)) {
       tempArray = addToShareCollection;
       for (let i = 0; i < tempArray.length; i++) {
@@ -284,27 +287,7 @@ const Shared = (props) => {
     }
   };
 
-  const _getFriends = async () => {
-    try {
-      // API 아직 안열림
-      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': `application/json`},
-      })
-        .then(response => {
-          console.log('errorcheck!!response Get  friend: ', response);
-          return response.json();
-        })
-        .then(data => {
-          setFriends(data);
-          console.log('get friends', data);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const _addFriendList  = (friendId) => {
+  _addFriendList  = friendId => {
     if (addFriendList.includes(friendId)) {
       friendArray = addFriendList;
       for (let i = 0; i < friendArray.length; i++) {
@@ -314,17 +297,15 @@ const Shared = (props) => {
         }
       }
       setAddFriendList(friendArray);
-      console.log('friendArraycheck out', addFriendList);
     } else {
       friendArray = addFriendList;
       friendArray.push(friendId);
       setAddFriendList(friendArray);
-      console.log('friendArraycheck ADDDD', addFriendList);
     }
   };
 
 
-  const _pressTargetCollection = async collectionId => {
+  _pressTargetCollection = async collectionId => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -408,12 +389,12 @@ const Shared = (props) => {
             </View>
             <Input
               ref={refChangedColname}
-              value={shareCollectionName}
-              onChangeText={setShareCollectionName}
-              onBlur={() => setShareCollectionName(shareCollectionName)}
+              value={collectionName}
+              onChangeText={setCollectionName}
+              onBlur={() => setCollectionName(collectionName)}
               maxLength={20}
               onSubmitEditing={() => {
-                _madeShareCollection();
+                _madeCollection();
               }}
               placeholder="새 콜렉션 이름"
               returnKeyType="done"
@@ -421,34 +402,34 @@ const Shared = (props) => {
             <View style={{position: 'relative'}}>
               <ModalInnerView>
                 <ScrollView horizontal style={{height: 100}}>
-
                   {/* 임시 */}
-                  {friends.reverse().map(friend => (
-                   <TempCircle
-                   key={friend?.friend_id}
-                   friendId={friend?.friend_id}
-                   frName={friend?.friend_nickname}
-                   imageStyle={{
-                     opacity: isFriendselected ? 1 : 0.5,
-                     position: 'absolute',
-                   }}
-                   titleStyle={{
-                     color: isFriendselected ? theme.subText : theme.basicText,
-                   }}
-                   onPress={() => {
-                     setIsFriendselected(!isFriendselected);
-                     console.log('선택확인',isFriendselected);
-                     _addFriendList(friend?.friend_id);
-                   }}
-                   isClicked={isFriendselected}
+                  <TempCircle
+                    frName={'유수민'}
+                    imageStyle={{
+                      opacity: isFriendselected ? 1 : 0.5,
+                      position: 'absolute',
+                    }}
+                    titleStyle={{
+                      color: isFriendselected ? theme.subText : theme.basicText,
+                    }}
+                    // key={friend?.friend_id}
+                    // friendName={friend?.friend_nickname}
+                    // nickName={friend?.nickName}
+                    onPress={() => {
+                      setIsFriendselected(!isFriendselected);
+                      console.log('선택확인',isFriendselected);
+                       addFriendList();
+                    }}
+                    isClicked={isFriendselected}
                   />
-                  ))}
+                  <TempCircle frName={'유수민'} />
+                  <TempCircle frName={'유수민'} />
                 </ScrollView>
               </ModalInnerView>
             </View>
             <Button
               title="새 콜렉션 만들기"
-              onPress={() => _madeShareCollection()}
+              onPress={() => _madeCollection()}
             />
           </KeyboardAwareScrollView>
         </ModalView>
@@ -545,7 +526,7 @@ const Shared = (props) => {
                     color: isEditing ? theme.subText : theme.basicText,
                   }}
                   onPress={() => (isEditing ? {} : setVisibleModal(true))}
-                  title="공유 콜렉션 만들기"></AddCollectionCircle>
+                  title="새 콜렉션 추가"></AddCollectionCircle>
               </ScrollView>
             </View>
           </View>
