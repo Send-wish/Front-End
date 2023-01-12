@@ -17,6 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import SharedCollection from './SharedCollection';
 
 import {useIsFocused} from '@react-navigation/native';
 
@@ -108,10 +109,12 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Shared = props => {
+const Shared = ({route, navigation}) => {
   // Tab navigator route params check
-  const nickName = props.route.params.params.nickName;
-  console.log('shared screen name check', nickName);
+  const nickName = route.params.params.nickName;
+  console.log('Shared in nickName', nickName);
+
+  // console.log('shared screen name check', nickName);
 
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -223,15 +226,17 @@ const Shared = props => {
 
             throw new Error(`${response.status} 에러발생`);
           }
-          return response.json();
+          _getShareCollections()
+          return 
+          // return response.json();
         })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
-        })
-        .then(() => _getShareCollections());
+        // .then(data => {
+        //   console.log(data);
+        // })
+        // .then(result => {
+        //   console.log('result', result);
+        // })
+        // .then(() => _getShareCollections());
     } catch (e) {
       console.log('delete fail', e);
     }
@@ -388,16 +393,20 @@ const Shared = props => {
           if (!response.ok) {
             throw new Error(`${response.status} 에러발생`);
           }
-          return response.json();
+          _getItems();
+          setAddToShareCollection([])
+          return
+          // return response.json();
         })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
-        })
-        .then(_getItems)
-        .then(setAddToShareCollection([]));
+        // .then(data => {
+        //   console.log(data);
+        // })
+        // .then(result => {
+        //   console.log('result', result);
+        // })
+        // .then(_getItems)
+        // .then(setAddToShareCollection([]));
+        
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -414,7 +423,7 @@ const Shared = props => {
       if (isEditing) {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
-        navigation.navigate('ShareCollection', {
+        navigation.navigate('SharedCollection', {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
           shareCollectionName: shareCollectionName,

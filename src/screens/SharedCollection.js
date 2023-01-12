@@ -1,9 +1,11 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   View,
   TouchableOpacity,
   ScrollView,
   Modal,
+  TextInput,
+  Linking,
 } from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,10 +18,11 @@ import {
   EditIcon,
   Input,
   Button,
-} from '../components/Collection';
+} from '../components/Shared';
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
+import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -102,11 +105,130 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const SharedCollection = ({navigation}) => {
+const SharedCollection = ({route, navigation}) => {
+  console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
+  const {shareCollectionId, shareCollectionName, nickName} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const refChangedColname = useRef(null);
-  const [ChangedColName, setChangedColname] = useState('');
+  // const refCollectionName = useRef(null);
+  const [shareCollectionTitle, setShareCollectionTitle] = useState(shareCollectionName);
+  const [items, setItems] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [deleteList, setDeleteList] = useState([]);
+  const isFocused = useIsFocused(); // isFoucesd Define
+
+  // 화면 이동시 리랜더링  건들지 말것
+  useEffect(() => {
+    if (isFocused)
+      console.log('**********************Collection focused & re-rendered');
+    _getItemsFromShareCollection();
+    setIsEditing(false);
+  }, [isFocused]);
+
+  const _changeShareCollectionName = async () => {
+    setVisibleModal(false);
+    try {
+      await fetch('https://api.sendwish.link:8081/collection', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: shareCollectionId,
+          newTitle: shareCollectionTitle,
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      });
+      // .then(data => {
+      // })
+      // .then(result => {
+      // }); //for debug
+    } catch (e) {
+      console.log('change fail', e);
+    }
+  };
+
+  _addItemToList = itemId => {
+    if (deleteList.includes(itemId)) {
+      tempArray = deleteList;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setDeleteList(tempArray);
+    } else {
+      tempArray = deleteList;
+      tempArray.push(itemId);
+      setDeleteList(tempArray);
+    }
+    console.log('****************deleteList is : ', deleteList);
+  };
+
+  const _getItemsFromShareCollection = () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          data.dtos ? setItems(data.dtos) : setItems([]);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const _openUrl = url => {
+    Linking.openURL(url);
+  };
+
+  const _pressEditButton = () => {
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  console.log('**********************is Editing : ', isEditing);
+
+  const _deleteItemsFromShareCollection = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/collection/item`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          collectionId: shareCollectionId,
+          itemIdList: deleteList,
+          nickname: nickName,
+        }),
+      }).then(response => {
+        if (response.ok) {
+          _getItemsFromShareCollection();
+          setDeleteList([]);
+          return;
+        }
+        throw new Error(`${response.status} 에러발생`);
+      });
+    } catch (e) {
+      console.log('items delete fail', e);
+    }
+  };
 
   return (
     <Container insets={insets}>
@@ -116,22 +238,22 @@ const SharedCollection = ({navigation}) => {
         visible={visibleModal}
         style={{flex: 1}}>
         <ModalView insets={insets}>
-          <StyledTouchableOpacity onPress={() => setVisibleModal(false)}>
+          <StyledTouchableOpacity onPress={() => _changeShareCollectionName()}>
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
           <Input
-            ref={refChangedColname}
-            value={ChangedColName}
-            onChangeText={setChangedColname}
-            onBlur={() => setChangedColname(ChangedColName)}
+            // ref={refShareCollectionName}
+            value={shareCollectionTitle}
+            onChangeText={setShareCollectionTitle}
+            onBlur={() => setShareCollectionTitle(shareCollectionTitle)}
             maxLength={20}
             onSubmitEditing={() => {
-              setVisibleModal(false);
+              _changeShareCollectionName();
             }}
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => setVisibleModal(false)} />
+          <Button title="변경하기" onPress={() => _changeShareCollectionName()} />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -139,22 +261,43 @@ const SharedCollection = ({navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Shared');
+                passData = {nickName, shareCollectionId, shareCollectionTitle};
+                navigation.navigate('Shared', {
+                  passData: nickName,
+                  shareCollectionId,
+                  shareCollectionTitle,
+                });
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setVisibleModal(true)}>
               <WrapRow style={{marginTop: 30}}>
-                <Title style={{marginRight: 10}}>콜렉션 이름</Title>
+                <Title
+                  style={{
+                    marginRight: 10,
+                    color: isEditing ? theme.strongSubText : theme.basicText,
+                  }}>
+                  <Title
+                    style={{
+                      fontSize: 27,
+                      color: isEditing
+                        ? theme.tintcolorPalegreen
+                        : theme.tintColorGreen,
+                    }}>
+                    {shareCollectionTitle}
+                  </Title>
+                  콜렉션
+                </Title>
                 <Feather
                   name="edit-2"
                   size={20}
-                  color={theme.basicText}
-                  style={{marginTop: 3}}
+                  style={{
+                    marginTop: 3,
+                    color: isEditing ? theme.strongSubText : theme.basicText,
+                  }}
                 />
               </WrapRow>
             </TouchableOpacity>
-
             <WrapRow
               style={{
                 paddingTop: 20,
@@ -162,12 +305,17 @@ const SharedCollection = ({navigation}) => {
                 height: 60,
               }}>
               <ProfileImage />
-              <SubTitle style={{fontSize: 15}}>bulksup님이 담았어요!</SubTitle>
+              <SubTitle
+                style={{
+                  fontSize: 15,
+                  color: isEditing ? theme.strongSubText : theme.basicText,
+                }}>
+                {nickName}님이 담았어요!
+              </SubTitle>
             </WrapRow>
           </Column>
         </Row>
       </UpperContainer>
-
       <BottomContainer>
         <ScrollView>
           <Column>
@@ -176,45 +324,74 @@ const SharedCollection = ({navigation}) => {
                 <SubTitle>총 N개의 위시템</SubTitle>
               </View>
               <Row>
-                <SearchIcon />
+                <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} />
                 {/* <FilterIcon /> */}
-                <EditIcon />
+                <EditIcon
+                  onPress={() => _pressEditButton()}
+                  name={isEditing ? 'x' : 'edit-2'}
+                />
               </Row>
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
-
-            <ItemBox
-              title="안녕하세요as
-            gasdgsagdsadgsadgasdgasdgsag"
-              saleRate="60%"
-              price={(70000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              image={
-                'https://w7.pngwing.com/pngs/104/341/png-transparent-pokemon-let-s-go-pikachu-ash-ketchum-pokemon-pikachu-pikachu-let-s-go-ash-ketchum-pokemon-pikachu.png'
-              }
-            />
+            {items.error
+              ? null
+              : items.map(item => (
+                  <ItemBox
+                    imageStyle={{
+                      opacity: isEditing ? 0.1 : 1,
+                    }}
+                    titleStyle={{
+                      color: isEditing ? theme.subText : theme.basicText,
+                    }}
+                    priceStyle={{
+                      color: isEditing
+                        ? theme.tintcolorPalepink
+                        : theme.tintColorPink,
+                    }}
+                    key={item?.itemId}
+                    saleRate="가격"
+                    itemName={item?.name}
+                    itemPrice={new String(item?.price).replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ',',
+                    )}
+                    itemImage={item?.imgUrl}
+                    itemId={item?.itemId}
+                    onPress={() => {
+                      isEditing
+                        ? _addItemToList(item?.itemId)
+                        : _openUrl(item?.originUrl);
+                    }}
+                    onLongPress={_pressEditButton}
+                    isEditing={isEditing}
+                  />
+                ))}
           </FlexRow>
         </ScrollView>
       </BottomContainer>
+      <View
+        style={{
+          position: 'absolute',
+          top: '91%',
+          width: '100%',
+          height: '00%',
+          paddingLeft: 20,
+          paddingRight: 20,
+          display: isEditing ? 'flex' : 'none',
+        }}>
+        <Button
+          style={{
+            marginBottom: 0,
+            position: 'absolute',
+          }}
+          buttonStyle={{backgroundColor: theme.tintColorPink}}
+          title="삭제하기"
+          onPress={() => {
+            _deleteItemsFromShareCollection();
+          }}
+        />
+      </View>
     </Container>
   );
 };
