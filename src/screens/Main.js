@@ -546,7 +546,7 @@ const Main = ({navigation, route}) => {
                 }}>
                 {nickName + ' '}
               </Title>
-              님이 담은 아이템
+               님의 콜렉션
             </Title>
           </Column>
         </Row>

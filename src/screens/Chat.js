@@ -8,7 +8,13 @@ import React, {
   useCallback,
   useReducer,
 } from 'react';
-import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -30,6 +36,21 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 
 import {useIsFocused} from '@react-navigation/native';
+
+const channels = [];
+for (let i = 0; i < 100; i++) {
+  channels.push({
+    id: i,
+    title: `title: ${i}`,
+    description: `desc : ${i}`,
+    createdAt: i,
+  });
+}
+
+const Item = ({item: {id, title, description, createdAt}, onPress}) => {
+  console.log(id);
+  return <ListFriend friendName={title} />;
+};
 
 const Container = styled.View`
   flex: 1;
@@ -108,7 +129,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Chat = (props) => {
+const Chat = props => {
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
@@ -116,7 +137,7 @@ const Chat = (props) => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
 
-  console.log('chat screen nickname check!!!!!!!',nickName);
+  console.log('chat screen nickname check!!!!!!!', nickName);
 
   // const nickName = props.route.params; 이 상황이면 아래와같음
   // console.log('passed from main param',nickName);
@@ -134,7 +155,7 @@ const Chat = (props) => {
   // 친구 추가하기 > 친구리스트 리랜더링
 
   const _addFriends = async () => {
-    setVisibleModal(false)
+    setVisibleModal(false);
     console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
@@ -198,8 +219,8 @@ const Chat = (props) => {
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
           nickname: nickName,
-          friendNickname:frName,
-      })
+          friendNickname: frName,
+        }),
       })
         .then(response => {
           console.log('errorcheck!!response: ', response);
@@ -288,7 +309,7 @@ const Chat = (props) => {
                 <CollectionCircle
                   key={friend?.friend_id}
                   frName={friend?.friend_nickname}
-                  onLongPress={() =>  _deleteFriend()}
+                  onLongPress={() => _deleteFriend()}
                   activeOpacity={0.6}
                 />
               ))}
@@ -317,7 +338,14 @@ const Chat = (props) => {
               </View>
             </SpackBetweenRow>
           </Column>
-          <ListFriend friendName={'채팅창'} />
+
+          <ListFriend friendName="리스트" />
+          <FlatList
+            data={channels}
+            renderItem={({item}) => <Item item={item} />}
+            keyExtractor={item => item['id'].toString()}
+          />
+
           <FlexRow></FlexRow>
         </ScrollView>
       </BottomContainer>
