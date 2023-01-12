@@ -6,6 +6,7 @@ import ItemBox from './ItemBox';
 import SearchIcon from './SearchIcon';
 import TempCircle from './TempCircle';
 import CollectionCircle from './CollectionCircle';
+import ProfileImage from './ProfileImage';
 
 export {
     AddCollectionCircle,
@@ -16,4 +17,5 @@ export {
     SearchIcon,
     TempCircle,
     CollectionCircle,
+    ProfileImage,
 };

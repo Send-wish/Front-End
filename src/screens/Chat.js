@@ -207,15 +207,17 @@ const Chat = (props) => {
             // throw new Error(`${response.status} 에러발생`);
             throw new Error('등록되지 않은 친구입니다 :)');
           }
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
           _getFriends();
-        });
+          return 
+          // return response.json();
+        })
+        // .then(data => {
+        //   console.log(data);
+        // })
+        // .then(result => {
+        //   console.log('result', result);
+        //   _getFriends();
+        // });
     } catch (e) {
       console.log('friend delete fail', e);
     }
