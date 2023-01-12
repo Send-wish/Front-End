@@ -19,6 +19,7 @@ const Container = styled.View`
   justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
+  background-color: transparent;
 `;
 
 const BottomContainer = styled.View`
