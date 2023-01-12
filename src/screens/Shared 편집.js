@@ -3,14 +3,14 @@ import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  ItemBox,
-  CollectionCircle,
   AddCollectionCircle,
-  SearchIcon,
+  Button,
   EditIcon,
   Input,
-  Button,
-} from '../components/Main';
+  ItemBox,
+  SearchIcon,
+  TempCircle,
+} from '../components/Shared';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
@@ -19,9 +19,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {useIsFocused} from '@react-navigation/native';
 
-import ShareMenu from 'react-native-share-menu';
 
-import TempCircle from '../components/Shared/TempCircle';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -115,83 +113,84 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Main = ({navigation, route}) => {
-  const nickName = route.params.nickName;
-  // console.log('route=',route);
-  // console.log('params=',route.params);
-  // console.log('nickName', route.params.nickName);
+const Shared = (props) => {
+  // Tab navigator route params check
+  const nickName = props.route.params.params.nickName;
+  console.log('shared screen name check',nickName);
 
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [collections, setCollections] = useState([]); // 컬렉션 목록
+  const [shareCollections, setShareCollections] = useState([]); // 컬렉션 목록
   const [items, setItems] = useState([]); // 아이템 목록
-  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
+  const [shareCollectionName, setShareCollectionName] = useState(''); // 컬렉션 개별 이름
   const [itemId, setItemId] = useState(0); // 아이템별 아이디
   const refChangedColname = useRef(null);
   const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const [sharedUrl, setSharedUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [addToCollection, setAddToCollection] = useState([]);
-  const [targetCollectionId, setTargetCollectionId] = useState('');
-  const [isCollectionEditing, setIsCollectionEditing] = useState(false);
+  const [addToShareCollection, setAddToShareCollection] = useState([]);
+  const [targetShareCollectionId, setTargetShareCollectionId] = useState('');
+  const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
   // 공유 컬렉션 친구 추가
   const [isFriendselected, setIsFriendselected] = useState(false);
   const [addFriendList, setAddFriendList] = useState([]);
 
-  // const collectionId = 1; // 컬렉션별 아이디 테스트용
 
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
-    _getCollections(); // 컬렌션 목록 랜더링
+    _getShareCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
   }, [isFocused]);
 
   // collection add
-  const _madeCollection = async () => {
+  const _madeShareCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
-    console.log('collectionName', collectionName); // 컬렉션 이름 확인
+    console.log('shareCollectionName', shareCollectionName); // 공유 컬렉션 이름 확인
     setVisibleModal(false);
     try {
-      fetch('https://api.sendwish.link:8081/collection', {
+      fetch('https://api.sendwish.link:8081/collection/shared', {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
-          nickname: nickName,
-          title: collectionName,
+          memberIdList: addFriendList,
+          targetCollectionId: targetShareCollectionId,
+          title: shareCollectionName,
         }),
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
+            throw new Error(`${response.status} 공유 컬렉션 생성 에러발생`);
           }
           return response.json();
         })
         .then(json => console.log(json))
         .then(data => {
-          console.log('made collection', data);
+          console.log('공유 컬렉션 생성:', data);
         })
-        .then(() => _getCollections());
+        .then(() => _getShareCollections());
     } catch (e) {
-      console.log('collection made fail');
+      console.log('share collection made fail');
     }
   };
 
   // get collections
-  const _getCollections = async () => {
+  const _getShareCollections = async () => {
     setLoading(true);
     try {
-      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
+      fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {Content_Type: 'application/json'},
+        body: JSON.stringify({
+          nickName: nickName,
+        }),
       })
         .then(res => {
           return res.json();
         })
         .then(data => {
-          setCollections(data);
-          console.log('get collections', data);
+          setShareCollections(data);
+          console.log('get share collections', data);
           setLoading(false);
         })
         .catch(error => {
@@ -208,45 +207,6 @@ const Main = ({navigation, route}) => {
     Linking.openURL(url);
   };
 
-  useEffect(() => {
-    console.log('nickName from Sign In', nickName);
-  }, []);
-
-  // 자동 shred item 추가
-  const _addItem = async () => {
-    console.log('addItem start!');
-    if (sharedUrl === '' || sharedUrl === undefined || sharedUrl === null) {
-      return;
-    }
-    try {
-      await fetch('https://api.sendwish.link:8081/item/parsing', {
-        method: 'POST',
-        headers: {'Content-Type': `application/json`},
-        body: JSON.stringify({
-          url: sharedUrl, // url 아직 못받음 임시변수
-          nickname: nickName,
-        }),
-      })
-        .then(response => {
-          // if (!response.ok) {
-          //   console.log('===== add item fail');
-          //   throw new Error(`${response.status} 에러발생`);
-          // }
-          return response.json();
-        })
-        .then(json => console.log(json))
-        .then(data => {
-          console.log('send url', data);
-        })
-        .catch(error => {
-          console.error(error);
-        })
-        .then(() => setSharedUrl(''))
-        .then(() => _getItems());
-    } catch (e) {
-      console.log('send url fail');
-    }
-  };
 
   const _getItems = async () => {
     try {
@@ -259,8 +219,8 @@ const Main = ({navigation, route}) => {
         })
         .then(data => {
           setItems(data);
-          console.log('========in items :', data.imgUrl, data.name, data.price);
-          console.log('======= get items :', data);
+          console.log('========in share screen items :', data.imgUrl, data.name, data.price);
+          console.log('======= get share screen items :', data);
         });
     } catch (e) {
       console.log(e);
@@ -268,7 +228,7 @@ const Main = ({navigation, route}) => {
   };
 
   // collection 삭제
-  const _deleteCollection = async () => {
+  const _deleteShareCollection = async () => {
     try {
       fetch(
         `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
@@ -300,84 +260,50 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  // Shared item
-
-  // Handle share
-  const handleShare = useCallback(item => {
-    console.log('===== item is : ', item);
-
-    if (!item) {
-      console.log('===== item is null!');
-      return;
-    }
-
-    if (!item.data || item.data.lenth < 1) {
-      console.log('===== item.data is null!');
-
-      return;
-    }
-
-    var {mimeType, data, extraData} = item;
-
-    if (data === undefined) {
-      return;
-    }
-    if (data.length < 1 || data === '' || !data) {
-      console.log('===== data is null!!!!!!!');
-      return;
-    }
-
-    if (data) {
-      console.log('===== data is : ', data);
-      setSharedUrl(data[0].data);
-    } else {
-      return;
-    }
-  }, []);
-
-  // Share Init
-  useEffect(() => {
-    ShareMenu.getInitialShare(handleShare);
-  }, []);
-
-  useEffect(() => {
-    _addItem();
-  }, [sharedUrl]);
-
-  // Share Listener, remove
-  useEffect(() => {
-    const listener = ShareMenu.addNewShareListener(handleShare);
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
   _pressEditButton = () => {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   };
 
   _longPressCollection = () => {
-    isCollectionEditing
-      ? setIsCollectionEditing(false)
-      : setIsCollectionEditing(true);
+    isShareCollectionEditing
+      ? setIsShareCollectionEditing(false)
+      : setIsShareCollectionEditing(true);
   };
 
-  _addItemToList = itemId => {
-    if (addToCollection.includes(itemId)) {
-      tempArray = addToCollection;
+  _addItemToShareList = itemId => {
+    if (addToShareCollection.includes(itemId)) {
+      tempArray = addToShareCollection;
       for (let i = 0; i < tempArray.length; i++) {
         if (tempArray[i] === itemId) {
           tempArray.splice(i, 1);
           i--;
         }
       }
-      setAddToCollection(tempArray);
+      setAddToShareCollection(tempArray);
     } else {
       tempArray = addToCollection;
       tempArray.push(itemId);
-      setAddToCollection(tempArray);
+      setAddToShareCollection(tempArray);
     }
   };
+
+  _addFriendList  = friendId => {
+    if (addFriendList.includes(friendId)) {
+      friendArray = addFriendList;
+      for (let i = 0; i < friendArray.length; i++) {
+        if (friendArray[i] === friendId) {
+          friendArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddFriendList(friendArray);
+    } else {
+      friendArray = addFriendList;
+      friendArray.push(friendId);
+      setAddFriendList(friendArray);
+    }
+  };
+
 
   _pressTargetCollection = async collectionId => {
     setIsEditing(false);
@@ -492,7 +418,7 @@ const Main = ({navigation, route}) => {
                     onPress={() => {
                       setIsFriendselected(!isFriendselected);
                       console.log('선택확인',isFriendselected);
-                      // isFriendselected ? addFriendList() : emptyFriendList();
+                       addFriendList();
                     }}
                     isClicked={isFriendselected}
                   />
@@ -525,7 +451,7 @@ const Main = ({navigation, route}) => {
                 }}>
                 {nickName + ' '}
               </Title>
-              님이 담은 아이템
+              님의 공유 컬렉션
             </Title>
           </Column>
         </Row>
@@ -540,7 +466,7 @@ const Main = ({navigation, route}) => {
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {/* collection rendering */}
-                {collections.error
+                {/* {collections.error
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
@@ -577,7 +503,7 @@ const Main = ({navigation, route}) => {
                               })
                         }
                       />
-                    ))}
+                    ))} */}
 
                 <Ionicons
                   name="ellipsis-vertical"
@@ -668,7 +594,7 @@ const Main = ({navigation, route}) => {
                     itemId={item?.itemId}
                     onPress={() => {
                       isEditing
-                        ? _addItemToList(item?.itemId)
+                        ? _addItemToShareList(item?.itemId)
                         : _openUrl(item?.originUrl);
                     }}
                     isEditing={isEditing}
@@ -704,4 +630,4 @@ const Main = ({navigation, route}) => {
   );
 };
 
-export default Main;
+export default Shared;

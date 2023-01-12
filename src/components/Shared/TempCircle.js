@@ -60,6 +60,7 @@ const TempCircle = ({
                 backgroundColor: isClicked
                   ? theme.tintColorGreen
                   : theme.mainBackground,
+                  opacity: isClicked ? 0.5 : 1,
               }}
               source={{uri: image}}
               value={frName}
