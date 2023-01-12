@@ -477,7 +477,7 @@ const Main = ({navigation, route}) => {
               <ModalInnerView>
                 <ScrollView horizontal style={{height: 100}}>
                   {/* 임시 */}
-                  {/* <TempCircle
+                  <TempCircle
                     frName={'유수민'}
                     imageStyle={{
                       opacity: isFriendselected ? 1 : 0.5,
@@ -486,14 +486,16 @@ const Main = ({navigation, route}) => {
                     titleStyle={{
                       color: isFriendselected ? theme.subText : theme.basicText,
                     }}
-                    key={friend?.friend_id}
-                    friendName={friend?.friend_nickname}
-                    nickName={friend?.nickName}
+                    // key={friend?.friend_id}
+                    // friendName={friend?.friend_nickname}
+                    // nickName={friend?.nickName}
                     onPress={() => {
                       setIsFriendselected(!isFriendselected);
-                      isFriendselected ? addFriendList() : emptyFriendList();
+                      console.log('선택확인',isFriendselected);
+                      // isFriendselected ? addFriendList() : emptyFriendList();
                     }}
-                  /> */}
+                    isClicked={isFriendselected}
+                  />
                   <TempCircle frName={'유수민'} />
                   <TempCircle frName={'유수민'} />
                 </ScrollView>

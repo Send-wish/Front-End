@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
-import theme from '../../theme';
+import {theme} from '../../theme';
 
 const Container = styled.View`
   margin: 20px 10px 10px 10px;
@@ -42,15 +42,30 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const TempCircle = ({onLongPress, frName, image}) => {
+const TempCircle = ({
+  frName,
+  friendName,
+  titleStyle,
+  image,
+  onPress,
+  isClicked,
+}) => {
   return (
     <Container>
-      <TouchableHighlight onLongPress={onLongPress}>
+      <TouchableHighlight onPress={onPress}>
         <View>
-        <Row>
-        <CollectionImage source={{uri: image}} value={frName}/>
-        </Row>
-        <Title>{frName}</Title>
+          <Row>
+            <CollectionImage
+              style={{
+                backgroundColor: isClicked
+                  ? theme.tintColorGreen
+                  : theme.mainBackground,
+              }}
+              source={{uri: image}}
+              value={frName}
+            />
+          </Row>
+          <Title style={titleStyle}>{frName}</Title>
         </View>
       </TouchableHighlight>
     </Container>
