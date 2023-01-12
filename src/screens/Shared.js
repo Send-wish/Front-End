@@ -415,9 +415,9 @@ const Shared = props => {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
         navigation.navigate('ShareCollection', {
-          collectionId: shareCollectionId,
-          nickname: nickName,
-          collectionName: shareCollectionName,
+          shareCollectionId: shareCollectionId,
+          nickName: nickName,
+          shareCollectionName: shareCollectionName,
         });
       }
       // 콜렉션 수정 중일 때,
@@ -427,7 +427,6 @@ const Shared = props => {
   };
 
   return (
-
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
         <ModalView insets={insets}>
