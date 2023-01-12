@@ -58,14 +58,13 @@ const Title = styled.Text`
 
 const CollectionCircle = ({
   onPress,
-  onPress2,
   shareCollectionName,
   // isClicked,
   titleStyle,
   nickName,
   shareCollectionId,
   onLongPress,
-  isCollectionEditing,
+  isShareCollectionEditing,
   isEditing,
 }) => {
   const [items, setItems] = useState([]);
@@ -114,9 +113,8 @@ const CollectionCircle = ({
 
   const _onPress = async () => {
     onPress()
-      .then(_getItemsFromShareCollection())
-      .then(_setImageUrl())
-      .then(onPress2());
+    _getItemsFromShareCollection()
+    _setImageUrl()
   };
 
   return (
@@ -128,11 +126,11 @@ const CollectionCircle = ({
         <View>
           <CollectionImage
             source={{uri: imageUrl}}
-            style={{display: isCollectionEditing ? 'none' : 'flex'}}
+            style={{display: isShareCollectionEditing ? 'none' : 'flex'}}
           />
           <View
             style={{
-              display: isCollectionEditing ? 'flex' : 'none',
+              display: isShareCollectionEditing ? 'flex' : 'none',
             }}>
             <CollectionView>
               <CollectionImage
