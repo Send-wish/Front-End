@@ -161,7 +161,7 @@ const ItemBox = ({
       </TouchableHighlight>
 
       <TouchableHighlight
-        onPress={_pressCheckBrutton}
+        onPress={_pressCheckButton}
         style={{display: isEditing ? 'flex' : 'none'}}
         >
         <Container>
