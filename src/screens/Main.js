@@ -27,7 +27,7 @@ import {useIsFocused} from '@react-navigation/native';
 
 import ShareMenu from 'react-native-share-menu';
 
-import SharedGroupPreferences from 'react-native-shared-group-preferences'
+import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import {useIsFocused} from '@react-navigation/native';
@@ -126,38 +126,47 @@ const Main = ({navigation, route}) => {
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
 
-  const appGroupIdentifier = "group.app.sendwish.jungle"
+  const appGroupIdentifier = 'group.app.sendwish.jungle';
 
-  const saveUserDataToSharedStorage = async (nickName) => {
-    try{
-      await SharedGroupPreferences.setItem("nickNameData", nickName,appGroupIdentifier)
+  const saveUserDataToSharedStorage = async nickName => {
+    try {
+      await SharedGroupPreferences.setItem(
+        'nickNameData',
+        nickName,
+        appGroupIdentifier,
+      );
       // this.loadUsernameFromSharedStorage()
-      console.log('share data saved==========', nickName);
-    } catch(errorCode) {
+      // console.log('share data saved==========', nickName);
+    } catch (errorCode) {
       // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
       // errorCode 1 = there is no value for that key
-      console.log(errorCode)
+      console.log(errorCode);
     }
-  }
+  };
   saveUserDataToSharedStorage(nickName);
 
   const loadUsernameFromSharedStorage = async () => {
     try {
-    const value = await SharedGroupPreferences.getItem("nickNameData", appGroupIdentifier) 
-    // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
-    console.log('share check data==', value);
-    // this.setState({username:value.name})
-  } catch(errorCode) {
-    // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
-    // errorCode 1 = there is no value for that key
-    console.log(errorCode)
-  }
-  }
+      const value = await SharedGroupPreferences.getItem(
+        'nickNameData',
+        appGroupIdentifier,
+      );
+      // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
+      // console.log('share check data==', value);
+      // this.setState({username:value.name})
+    } catch (errorCode) {
+      // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
+      // errorCode 1 = there is no value for that key
+      console.log(errorCode);
+    }
+  };
   loadUsernameFromSharedStorage();
-  
+
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
+    setIsEditing(false);
+    setIsCollectionEditing(false);
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
     // setSharedUrl()
@@ -182,11 +191,11 @@ const Main = ({navigation, route}) => {
             throw new Error(`${response.status} 에러발생`);
           }
           return response.json();
-        })
-        .then(json => console.log(json))
-        .then(data => {
-          console.log('made collection', data);
-        })
+        }).then(setCollectionName(''))
+        // .then(json => console.log(json))
+        // .then(data => {
+        //   console.log('made collection', data);
+        // })
         .then(() => _getCollections());
     } catch (e) {
       console.log('collection made fail');
@@ -206,11 +215,7 @@ const Main = ({navigation, route}) => {
         })
         .then(data => {
           setCollections(data);
-          console.log('get collections', data);
           setLoading(false);
-        })
-        .catch(error => {
-          console.log(error);
         });
     } catch (e) {
       console.log(e);
@@ -219,13 +224,8 @@ const Main = ({navigation, route}) => {
 
   // item link
   const _openUrl = url => {
-    console.log('url', url);
     Linking.openURL(url);
   };
-
-  useEffect(() => {
-    console.log('nickName from Sign In', nickName);
-  }, []);
 
   // 자동 shred item 추가
   const _addItem = async () => {
@@ -250,12 +250,9 @@ const Main = ({navigation, route}) => {
           return response.json();
         })
         .then(json => console.log(json))
-        .then(data => {
-          console.log('send url', data);
-        })
-        .catch(error => {
-          console.error(error);
-        })
+        // .then(data => {
+        //   console.log('send url', data);
+        // })
         .then(() => setSharedUrl(''))
         .then(() => _getItems());
     } catch (e) {
@@ -274,8 +271,6 @@ const Main = ({navigation, route}) => {
         })
         .then(data => {
           setItems(data);
-          console.log('========in items :', data.imgUrl, data.name, data.price);
-          console.log('======= get items :', data);
         });
     } catch (e) {
       console.log(e);
@@ -304,12 +299,12 @@ const Main = ({navigation, route}) => {
           }
           return response.json();
         })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
-        })
+        // .then(data => {
+        //   console.log(data);
+        // })
+        // .then(result => {
+        //   console.log('result', result);
+        // })
         .then(() => _getCollections());
     } catch (e) {
       console.log('delete fail', e);
@@ -323,13 +318,10 @@ const Main = ({navigation, route}) => {
     console.log('===== item is : ', item);
 
     if (!item) {
-      console.log('===== item is null!');
       return;
     }
 
     if (!item.data || item.data.lenth < 1) {
-      console.log('===== item.data is null!');
-
       return;
     }
 
@@ -339,12 +331,10 @@ const Main = ({navigation, route}) => {
       return;
     }
     if (data.length < 1 || data === '' || !data) {
-      console.log('===== data is null!!!!!!!');
       return;
     }
 
     if (data) {
-      console.log('===== data is : ', data);
       setSharedUrl(data[0].data);
     } else {
       return;
@@ -368,7 +358,9 @@ const Main = ({navigation, route}) => {
     };
   }, []);
 
-  const _pressEditButton = () => {
+
+ const _pressEditButton = () => {
+
     if (isCollectionEditing) {
       setIsCollectionEditing(false);
     } else {
@@ -409,12 +401,6 @@ const Main = ({navigation, route}) => {
   };
 
   const _addItemToCollection = async (collectionId, nickName) => {
-    console.log(
-      '_addItemToCollection is called!!!!!!!!!!!!!!!! : ',
-      collectionId,
-      nickName,
-      addToCollection,
-    );
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -425,16 +411,15 @@ const Main = ({navigation, route}) => {
           collectionId: collectionId,
           itemIdList: addToCollection,
         }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('@@@@@@@@@@@@@@@@@@@!!!!@@@@@@@@@@@@data is : ', data);
-        });
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      });
+      // .then(data => {
+      //   console.log('@@@@@@@@@@@@@@@@@@@!!!!@@@@@@@@@@@@data is : ', data);
+      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }
@@ -447,6 +432,13 @@ const Main = ({navigation, route}) => {
       if (isEditing) {
         _addItemToCollection(collectionId, nickName);
       } else {
+        setIsEditing(false);
+        console.log(
+          '*****************go to collection :',
+          collectionId,
+          collectionName,
+          nickName,
+        );
         navigation.navigate('Collection', {
           collectionId: collectionId,
           collectionName: collectionName,
@@ -478,13 +470,14 @@ const Main = ({navigation, route}) => {
           return response.json();
         })
         .then(data => {
-          console.log(data);
+          // console.log(data);
         })
         .then(result => {
-          console.log('result', result);
+          // console.log('result', result);
         })
         .then(_getItems)
-        .then(setAddToCollection([]));
+        .then(setAddToCollection([]))
+        .then(setIsEditing(false));
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -571,7 +564,6 @@ const Main = ({navigation, route}) => {
                   ? null
                   : collections.map(collection => (
                       <CollectionCircle
-                        
                         titleStyle={{
                           color: isEditing ? theme.subText : theme.basicText,
                         }}
@@ -727,4 +719,3 @@ const Main = ({navigation, route}) => {
 };
 
 export default Main;
-

@@ -427,6 +427,7 @@ const Shared = props => {
   };
 
   return (
+
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
         <ModalView insets={insets}>

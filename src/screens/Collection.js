@@ -5,7 +5,7 @@ import {
   ScrollView,
   Modal,
   TextInput,
-  Linking
+  Linking,
 } from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -23,7 +23,6 @@ import {
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
-import {get} from 'react-native/Libraries/Utilities/PixelRatio';
 
 const Container = styled.View`
   flex: 1;
@@ -112,20 +111,21 @@ const Collection = ({route, navigation}) => {
   const [visibleModal, setVisibleModal] = useState(false);
   const refCollectionName = useRef(null);
   const [collectionTitle, setCollectionTitle] = useState(collectionName);
-  const [isChanged, setIsChanged] = useState(false);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // isFoucesd Define
+
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused) console.log('Collection focused & re-rendered');
+    if (isFocused)
+      console.log('**********************Collection focused & re-rendered');
     _getItemsFromCollection();
+    setIsEditing(false);
   }, [isFocused]);
 
   const _changeCollectionName = async () => {
     setVisibleModal(false);
-    console.log(nickName, collectionId, collectionName);
     try {
       await fetch('https://api.sendwish.link:8081/collection', {
         method: 'PATCH',
@@ -137,30 +137,40 @@ const Collection = ({route, navigation}) => {
           collectionId: collectionId,
           newTitle: collectionTitle,
         }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-
-          setIsChanged(true);
-
-          console.log('chagned true?', isChanged);
-          console.log('change_check!!', collectionTitle);
-        })
-        .then(result => {
-          console.log('result', result);
-        }); //for debug
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      });
+      // .then(data => {
+      // })
+      // .then(result => {
+      // }); //for debug
     } catch (e) {
       console.log('change fail', e);
     }
   };
 
-  const _getItemsFromCollection = async () => {
+  _addItemToList = itemId => {
+    if (deleteList.includes(itemId)) {
+      tempArray = deleteList;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setDeleteList(tempArray);
+    } else {
+      tempArray = deleteList;
+      tempArray.push(itemId);
+      setDeleteList(tempArray);
+    }
+    console.log('****************deleteList is : ', deleteList);
+  };
+
+  const _getItemsFromCollection = () => {
     try {
       fetch(
         `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
@@ -181,38 +191,42 @@ const Collection = ({route, navigation}) => {
   };
 
   const _openUrl = url => {
-    console.log('url', url);
     Linking.openURL(url);
   };
 
-  _pressEditButton = () => {
-    isEditing ? setIsEditing(false) : setIsEditing(true);
+  const _pressEditButton = () => {
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
   };
 
+  console.log('**********************is Editing : ', isEditing);
+
   const _deleteItemsFromCollection = async () => {
+    console.log('****************deleteList is : ', deleteList);
+    console.log('****************collectionId is : ', collectionId);
+    console.log('****************nickName is : ', nickName);
     try {
-      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+      fetch(`https://api.sendwish.link:8081/collection/item`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          collectionId: collectionId,
+          itemIdList: deleteList,
           nickname: nickName,
-          listItemId: addToCollection,
         }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-        })
-        .then(result => {
-          console.log('result', result);
-        });
+      }).then(response => {
+        if (response.ok) {
+          _getItemsFromCollection();
+          setDeleteList([]);
+          return;
+        }
+        throw new Error(`${response.status} 에러발생`);
+      });
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -250,8 +264,6 @@ const Collection = ({route, navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 passData = {nickName, collectionId, collectionTitle};
-                console.log('check colleciton to main Data 전달', passData);
-                // console.log(params);
                 navigation.navigate('Main', {
                   params: collectionId,
                   collectionTitle,
@@ -288,7 +300,6 @@ const Collection = ({route, navigation}) => {
                 />
               </WrapRow>
             </TouchableOpacity>
-
             <WrapRow
               style={{
                 paddingTop: 20,
@@ -307,7 +318,6 @@ const Collection = ({route, navigation}) => {
           </Column>
         </Row>
       </UpperContainer>
-
       <BottomContainer>
         <ScrollView>
           <Column>
@@ -316,7 +326,7 @@ const Collection = ({route, navigation}) => {
                 <SubTitle>총 N개의 위시템</SubTitle>
               </View>
               <Row>
-                <SearchIcon />
+                <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} />
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
@@ -355,6 +365,7 @@ const Collection = ({route, navigation}) => {
                         ? _addItemToList(item?.itemId)
                         : _openUrl(item?.originUrl);
                     }}
+                    onLongPress={_pressEditButton}
                     isEditing={isEditing}
                   />
                 ))}
@@ -364,7 +375,7 @@ const Collection = ({route, navigation}) => {
       <View
         style={{
           position: 'absolute',
-          top: '86%',
+          top: '91%',
           width: '100%',
           height: '00%',
           paddingLeft: 20,
