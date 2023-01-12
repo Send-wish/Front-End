@@ -58,7 +58,6 @@ const Title = styled.Text`
 
 const CollectionCircle = ({
   onPress,
-  onPress2,
   collectionTitle,
   imageStyle,
   imageStyle2,
@@ -72,11 +71,6 @@ const CollectionCircle = ({
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-
-  useEffect(() => {
-    if (isFocused) console.log('Focused');
-    _getItemsFromCollection();
-  }, [isFocused]);
 
   useEffect(() => {
     _setImageUrl();
@@ -113,11 +107,10 @@ const CollectionCircle = ({
     }
   };
 
-  const _onPress = async () => {
-    onPress()
-      .then(_getItemsFromCollection())
-      .then(_setImageUrl())
-      .then(onPress2());
+  const _onPress = () => {
+    onPress();
+    _getItemsFromCollection();
+    _setImageUrl();
   };
 
   return (

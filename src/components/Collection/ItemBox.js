@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
+import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
   padding: 10px;
@@ -99,8 +100,6 @@ const ItemBox = ({
   imageStyle,
   priceStyle,
   isEditing,
-  itemId,
-  itemUrl,
 }) => {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
@@ -141,14 +140,13 @@ const ItemBox = ({
     onPress();
   };
 
-  console.log('=======isChecked is ', isChecked);
-
   const [isChecked, setIsChecked] = useState(false);
 
   return (
     <View>
       <TouchableHighlight
-        onPress={onLongPress}
+        onLongPress={onLongPress}
+        onPress={onPress}
         style={{display: isEditing ? 'none' : 'flex'}}>
         <Container>
           <ItemImage source={{uri: itemImage}} style={imageStyle} />
@@ -161,9 +159,9 @@ const ItemBox = ({
       </TouchableHighlight>
 
       <TouchableHighlight
-        onPress={_pressCheckBrutton}
-        style={{display: isEditing ? 'flex' : 'none'}}
-        >
+        onLongPress={onLongPress}
+        onPress={_pressCheckButton}
+        style={{display: isEditing ? 'flex' : 'none'}}>
         <Container>
           <ItemView
             style={{

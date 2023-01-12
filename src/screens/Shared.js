@@ -19,7 +19,7 @@ const Shared = () => {
     height: 70px;
   `;
   return (
-    <View>
+    <View style={{opacity: 0.1}}>
       <SafeAreaView style={{backgroundColor: 'white'}}>
         <View
           style={{
