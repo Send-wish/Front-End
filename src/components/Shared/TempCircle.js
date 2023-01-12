@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {useState} from 'react';
 import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
 import {theme} from '../../theme';
 
@@ -48,11 +48,19 @@ const TempCircle = ({
   titleStyle,
   image,
   onPress,
-  isClicked,
 }) => {
+  const _pressClickButton = () => {
+    setIsClicked(!isClicked);
+    onPress();
+  };
+
+  console.log('공유 컬렉션 친구선택 ', isClicked);
+
+  const [isClicked, setIsClicked] = useState(false);
+
   return (
     <Container>
-      <TouchableHighlight onPress={onPress}>
+      <TouchableHighlight onPress={_pressClickButton}>
         <View>
           <Row>
             <CollectionImage
@@ -60,7 +68,7 @@ const TempCircle = ({
                 backgroundColor: isClicked
                   ? theme.tintColorGreen
                   : theme.mainBackground,
-                  opacity: isClicked ? 0.5 : 1,
+                opacity: isClicked ? 0.5 : 1,
               }}
               source={{uri: image}}
               value={frName}
