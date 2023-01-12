@@ -160,6 +160,7 @@ const Main = ({navigation, route}) => {
     if (isFocused) console.log('Focused');
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
+    // setSharedUrl()
   }, [isFocused]);
 
   // collection add
@@ -367,7 +368,7 @@ const Main = ({navigation, route}) => {
     };
   }, []);
 
-  _pressEditButton = () => {
+  const _pressEditButton = () => {
     if (isCollectionEditing) {
       setIsCollectionEditing(false);
     } else {
@@ -379,7 +380,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  _longPressCollection = () => {
+  const _longPressCollection = () => {
     if (isEditing) {
       return;
     } else {
@@ -389,7 +390,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  _addItemToList = itemId => {
+  const _addItemToList = itemId => {
     if (addToCollection.includes(itemId)) {
       tempArray = addToCollection;
       for (let i = 0; i < tempArray.length; i++) {

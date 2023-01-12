@@ -10,6 +10,7 @@ import {
   ItemBox,
   SearchIcon,
   TempCircle,
+  CollectionCircle,
 } from '../components/Shared';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -127,11 +128,10 @@ const Shared = (props) => {
   const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
   // 공유 컬렉션 친구 추가
   const [isFriendselected, setIsFriendselected] = useState(false);
-  const [addFriendList, setAddFriendList] = useState([]);
+  const [addFriendList, setAddFriendList] = useState([nickName]);
   const [friends, setFriends] = useState([]);
 
-
-
+  console.log('친구목록확인',addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -177,10 +177,10 @@ const Shared = (props) => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
         method: 'GET',
-        headers: {Content_Type: 'application/json'},
-        body: JSON.stringify({
-          nickName: nickName,
-        }),
+        // headers: {Content_Type: 'application/json'},
+        // body: JSON.stringify({
+        //   nickName: nickName,
+        // }),
       })
         .then(res => {
           return res.json();
@@ -257,11 +257,11 @@ const Shared = (props) => {
     }
   };
 
-  _pressEditButton = () => {
+ const _pressEditButton = () => {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   };
 
-  _longPressCollection = () => {
+  const _longPressCollection = () => {
     isShareCollectionEditing
       ? setIsShareCollectionEditing(false)
       : setIsShareCollectionEditing(true);
@@ -304,11 +304,11 @@ const Shared = (props) => {
     }
   };
 
-  const _addFriendList  = (friendId) => {
-    if (addFriendList.includes(friendId)) {
+  const _addFriendList  = (frName) => {
+    if (addFriendList.includes(frName)) {
       friendArray = addFriendList;
       for (let i = 0; i < friendArray.length; i++) {
-        if (friendArray[i] === friendId) {
+        if (friendArray[i] === frName) {
           friendArray.splice(i, 1);
           i--;
         }
@@ -317,14 +317,14 @@ const Shared = (props) => {
       console.log('friendArraycheck out', addFriendList);
     } else {
       friendArray = addFriendList;
-      friendArray.push(friendId);
+      friendArray.push(frName);
       setAddFriendList(friendArray);
       console.log('friendArraycheck ADDDD', addFriendList);
     }
   };
 
 
-  const _pressTargetCollection = async collectionId => {
+  const _addItemToShareCollection = async collectionId => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -423,7 +423,7 @@ const Shared = (props) => {
                 <ScrollView horizontal style={{height: 100}}>
 
                   {/* 임시 */}
-                  {friends.reverse().map(friend => (
+                  {friends.map(friend => (
                    <TempCircle
                    key={friend?.friend_id}
                    friendId={friend?.friend_id}
@@ -436,9 +436,7 @@ const Shared = (props) => {
                      color: isFriendselected ? theme.subText : theme.basicText,
                    }}
                    onPress={() => {
-                     setIsFriendselected(!isFriendselected);
-                     console.log('선택확인',isFriendselected);
-                     _addFriendList(friend?.friend_id);
+                     _addFriendList(friend?.friend_nickname);
                    }}
                    isClicked={isFriendselected}
                   />
@@ -485,9 +483,9 @@ const Shared = (props) => {
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {/* collection rendering */}
-                {/* {collections.error
+                {shareCollections.error
                   ? null
-                  : collections.map(collection => (
+                  : shareCollections.map(shareCollection => (
                       <CollectionCircle
                         imageStyle={{
                           opacity: isEditing ? 0.5 : 1,
@@ -496,17 +494,17 @@ const Shared = (props) => {
                         titleStyle={{
                           color: isEditing ? theme.subText : theme.basicText,
                         }}
-                        key={collection?.collectionId}
-                        collectionId={collection?.collectionId}
-                        collectionTitle={collection?.title}
-                        nickName={collection?.nickname}
+                        key={shareCollection?.collectionId}
+                        shareCollectionId={shareCollection?.collectionId}
+                        shareCollectionName={shareCollection?.title}
+                        nickName={shareCollectionName?.nickname}
                         onPress={() =>
                           isEditing
-                            ? _pressTargetCollection(collection?.collectionId)
+                            ? _pressTargetCollection(shareCollectionName?.collectionId)
                             : navigation.navigate('Collection', {
-                                collectionId: collection?.collectionId,
-                                collectionName: collection?.title,
-                                nickName: collection?.nickname,
+                                collectionId: shareCollectionName?.collectionId,
+                                collectionName: shareCollectionName?.title,
+                                nickName: shareCollectionName?.nickname,
                               })
                         }
                         onLongPress={() => {
@@ -522,7 +520,7 @@ const Shared = (props) => {
                               })
                         }
                       />
-                    ))} */}
+                    ))}
 
                 <Ionicons
                   name="ellipsis-vertical"

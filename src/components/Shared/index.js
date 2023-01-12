@@ -5,6 +5,7 @@ import Input from './Input';
 import ItemBox from './ItemBox';
 import SearchIcon from './SearchIcon';
 import TempCircle from './TempCircle';
+import CollectionCircle from './CollectionCircle';
 
 export {
     AddCollectionCircle,
@@ -14,4 +15,5 @@ export {
     ItemBox,
     SearchIcon,
     TempCircle,
+    CollectionCircle,
 };
