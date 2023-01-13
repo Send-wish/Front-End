@@ -107,7 +107,8 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const SharedCollection = ({route, navigation}) => {
   console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
-  const {shareCollectionId, shareCollectionName, nickName} = route.params;
+  console.log('friendlsit check', route.params.friendList)
+  const {shareCollectionId, shareCollectionName, nickName, friendList} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   // const refCollectionName = useRef(null);
@@ -310,7 +311,7 @@ const SharedCollection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {nickName}님이 담았어요!
+                {friendList}님이 담았어요!
               </SubTitle>
             </WrapRow>
           </Column>

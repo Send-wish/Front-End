@@ -427,6 +427,7 @@ const Shared = ({route, navigation}) => {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
           shareCollectionName: shareCollectionName,
+          friendList:addFriendList,
         });
       }
       // 콜렉션 수정 중일 때,
