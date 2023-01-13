@@ -38,7 +38,7 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 
 const channels = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 20; i++) {
   channels.push({
     id: i,
     title: `title: ${i}`,
@@ -221,24 +221,23 @@ const Chat = props => {
           nickname: nickName,
           friendNickname: frName,
         }),
-      })
-        .then(response => {
-          console.log('errorcheck!!response: ', response);
-          if (!response.ok) {
-            // throw new Error(`${response.status} 에러발생`);
-            throw new Error('등록되지 않은 친구입니다 :)');
-          }
-          _getFriends();
-          return 
-          // return response.json();
-        })
-        // .then(data => {
-        //   console.log(data);
-        // })
-        // .then(result => {
-        //   console.log('result', result);
-        //   _getFriends();
-        // });
+      }).then(response => {
+        console.log('errorcheck!!response: ', response);
+        if (!response.ok) {
+          // throw new Error(`${response.status} 에러발생`);
+          throw new Error('등록되지 않은 친구입니다 :)');
+        }
+        _getFriends();
+        return;
+        // return response.json();
+      });
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .then(result => {
+      //   console.log('result', result);
+      //   _getFriends();
+      // });
     } catch (e) {
       console.log('friend delete fail', e);
     }

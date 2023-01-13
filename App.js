@@ -2,7 +2,15 @@
 import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
 
 // Screens
-import {Chat, Collection, Main, Shared, SignIn, SignUp, SharedCollection} from './src/screens';
+import {
+  Chat,
+  Collection,
+  Main,
+  Shared,
+  SignIn,
+  SignUp,
+  SharedCollection,
+} from './src/screens';
 import Share from './Share';
 
 // color theme
@@ -95,6 +103,8 @@ const App = () => {
           <Stack.Screen name="Navigation" component={Navigation} />
           <Stack.Screen name="Collection" component={Collection} />
           <Stack.Screen name="SharedCollection" component={SharedCollection} />
+          <Stack.Screen name="Share" component={Share} />
+
           {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}
         </Stack.Navigator>
       </NavigationContainer>

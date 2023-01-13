@@ -22,15 +22,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 import {useIsFocused} from '@react-navigation/native';
-
 import ShareMenu from 'react-native-share-menu';
-
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -143,6 +138,7 @@ const Main = ({navigation, route}) => {
       console.log(errorCode);
     }
   };
+
   saveUserDataToSharedStorage(nickName);
 
   const loadUsernameFromSharedStorage = async () => {
@@ -169,7 +165,7 @@ const Main = ({navigation, route}) => {
     setIsCollectionEditing(false);
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
-    // setSharedUrl()
+    _setInterval();
   }, [isFocused]);
 
   // collection add
@@ -191,11 +187,8 @@ const Main = ({navigation, route}) => {
             throw new Error(`${response.status} 에러발생`);
           }
           return response.json();
-        }).then(setCollectionName(''))
-        // .then(json => console.log(json))
-        // .then(data => {
-        //   console.log('made collection', data);
-        // })
+        })
+        .then(setCollectionName(''))
         .then(() => _getCollections());
     } catch (e) {
       console.log('collection made fail');
@@ -238,23 +231,17 @@ const Main = ({navigation, route}) => {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
-          url: sharedUrl, // url 아직 못받음 임시변수
+          url: sharedUrl,
           nickname: nickName,
         }),
-      })
-        .then(response => {
-          // if (!response.ok) {
-          //   console.log('===== add item fail');
-          //   throw new Error(`${response.status} 에러발생`);
-          // }
-          return response.json();
-        })
-        .then(json => console.log(json))
-        // .then(data => {
-        //   console.log('send url', data);
-        // })
-        .then(() => setSharedUrl(''))
-        .then(() => _getItems());
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        setSharedUrl('');
+        _getItems();
+        return response.json();
+      });
     } catch (e) {
       console.log('send url fail');
     }
@@ -271,6 +258,7 @@ const Main = ({navigation, route}) => {
         })
         .then(data => {
           setItems(data);
+          console.log('__________get_____________');
         });
     } catch (e) {
       console.log(e);
@@ -299,12 +287,6 @@ const Main = ({navigation, route}) => {
           }
           return response.json();
         })
-        // .then(data => {
-        //   console.log(data);
-        // })
-        // .then(result => {
-        //   console.log('result', result);
-        // })
         .then(() => _getCollections());
     } catch (e) {
       console.log('delete fail', e);
@@ -358,9 +340,7 @@ const Main = ({navigation, route}) => {
     };
   }, []);
 
-
- const _pressEditButton = () => {
-
+  const _pressEditButton = () => {
     if (isCollectionEditing) {
       setIsCollectionEditing(false);
     } else {
@@ -415,11 +395,9 @@ const Main = ({navigation, route}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
+        _getCollections();
         return response.json();
       });
-      // .then(data => {
-      //   console.log('@@@@@@@@@@@@@@@@@@@!!!!@@@@@@@@@@@@data is : ', data);
-      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }
@@ -481,6 +459,10 @@ const Main = ({navigation, route}) => {
     } catch (e) {
       console.log('items delete fail', e);
     }
+  };
+
+  const _setInterval = () => {
+    setInterval(_getItems, 5000);
   };
 
   return (
@@ -546,7 +528,7 @@ const Main = ({navigation, route}) => {
                 }}>
                 {nickName + ' '}
               </Title>
-               님의 콜렉션
+              님의 콜렉션
             </Title>
           </Column>
         </Row>
