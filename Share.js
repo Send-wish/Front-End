@@ -63,7 +63,7 @@ const SaveStatus = styled.View`
 const CollectionList = styled.View`
   align-items: flex-start;
   flex-direction: row;
-  height: 63%;
+  height: 62%;
   width: 100%;
   background-color: ${({theme}) => theme.basicText};
 `;
@@ -360,12 +360,3 @@ const Share = () => {
 };
 
 export default Share;
-
-{
-  /* <Button
-title="Continue In App With Extra Data"
-onPress={() => {
-  ShareMenuReactView.continueInApp({hello: 'from the other side'});
-}}
-/> */
-}
