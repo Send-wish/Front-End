@@ -162,6 +162,7 @@ const Main = ({navigation, route}) => {
   };
   loadUsernameFromSharedStorage();
 
+
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -314,49 +315,50 @@ const Main = ({navigation, route}) => {
   // Shared item
 
   // Handle share
-  const handleShare = useCallback(item => {
-    console.log('===== item is : ', item);
+  // const handleShare = useCallback(item => {
+  //   console.log('===== item is : ', item);
+  //   console.log('?>?>?>??>?>?>???>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?: ', item);
 
-    if (!item) {
-      return;
-    }
+  //   if (!item) {
+  //     return;
+  //   }
 
-    if (!item.data || item.data.lenth < 1) {
-      return;
-    }
+  //   if (!item.data || item.data.lenth < 1) {
+  //     return;
+  //   }
 
-    var {mimeType, data, extraData} = item;
+  //   var {mimeType, data, extraData} = item;
 
-    if (data === undefined) {
-      return;
-    }
-    if (data.length < 1 || data === '' || !data) {
-      return;
-    }
+  //   if (data === undefined) {
+  //     return;
+  //   }
+  //   if (data.length < 1 || data === '' || !data) {
+  //     return;
+  //   }
 
-    if (data) {
-      setSharedUrl(data[0].data);
-    } else {
-      return;
-    }
-  }, []);
+  //   if (data) {
+  //     setSharedUrl(data[0].data);
+  //   } else {
+  //     return;
+  //   }
+  // }, []);
 
-  // Share Init
-  useEffect(() => {
-    ShareMenu.getInitialShare(handleShare);
-  }, []);
+  // // Share Init
+  // useEffect(() => {
+  //   ShareMenu.getInitialShare(handleShare);
+  // }, []);
 
   useEffect(() => {
     _addItem();
   }, [sharedUrl]);
 
   // Share Listener, remove
-  useEffect(() => {
-    const listener = ShareMenu.addNewShareListener(handleShare);
-    return () => {
-      listener.remove();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const listener = ShareMenu.addNewShareListener(handleShare);
+  //   return () => {
+  //     listener.remove();
+  //   };
+  // }, []);
 
 
  const _pressEditButton = () => {

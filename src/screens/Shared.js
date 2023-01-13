@@ -293,13 +293,13 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setItems(data);
-          console.log(
-            'in share screen items :',
-            data.imgUrl,
-            data.name,
-            data.price,
-          );
-          console.log(' get share screen items :', data);
+          // console.log(
+          //   'in share screen items :',
+          //   data.imgUrl,
+          //   data.name,
+          //   data.price,
+          // );
+          // console.log(' get share screen items :', data);
         });
     } catch (e) {
       console.log(e);
