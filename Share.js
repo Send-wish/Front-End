@@ -1,12 +1,19 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, Pressable, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import {ShareMenuReactView} from 'react-native-share-menu';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {ThemeProvider} from 'styled-components';
 import {theme} from './src/theme';
-import Feather from 'react-native-vector-icons/Feather';
 import styled from 'styled-components';
-import {EditIcon} from './src/components/Main';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Button = ({onPress, title, style}) => (
   <Pressable onPress={onPress}>
@@ -27,10 +34,11 @@ const BottomContainer = styled.View`
   padding-right: 20px;
   /* justify-content: center; */
   align-items: center;
-  height: 30%;
+  height: 40%;
   width: 100%;
-  background-color: ${({theme}) => theme.componentBackground};
+  background-color: ${({theme}) => theme.basicText};
   flex-wrap: wrap;
+  border-color: ${({theme}) => theme.componentBackground};
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
 `;
@@ -49,45 +57,80 @@ const SaveStatus = styled.View`
   align-items: flex-start;
   height: 20%;
   width: 100%;
-  background-color: red;
+  background-color: ${({theme}) => theme.basicText};
 `;
 
 const CollectionList = styled.View`
-  justify-content: center;
   align-items: flex-start;
-  height: 50%;
+  flex-direction: row;
+  height: 63%;
   width: 100%;
-  background-color: blue;
+  background-color: ${({theme}) => theme.basicText};
 `;
 const DividingLine = styled.View`
   justify-content: center;
   align-items: center;
-  height: 10%;
-  width: 100%;
-  background-color: ${({theme}) => theme.basicText};
-  border-bottom-color: ${({theme}) => theme.mainBackground};
+  height: 0.2%;
+  width: 90%;
+  background-color: ${({theme}) => theme.componentBackground};
+  border-radius: 20px;
+  z-index: 1;
 `;
 
 const LineIcon = styled.View`
   justify-content: center;
   align-items: center;
   height: 1%;
-  width: 10%;
-  background-color: ${({theme}) => theme.basicText};
+  width: 15%;
+  background-color: ${({theme}) => theme.subText};
   border-radius: 20px;
   margin-top: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 `;
 
-const DeleteButton = () => {
+const ContinueButton = ({onPress}) => {
   return (
-    <View style={{height: 20, width: 20, backgroundColor: 'black'}}></View>
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={{
+          height: 33,
+          width: 100,
+          borderRadius: 10,
+          backgroundColor: theme.tintColorPink,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+        }}>
+        <Text
+          style={{color: theme.basicText, fontSize: 16, fontWeight: 'bold'}}>
+          쇼핑 계속하기
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
-const EditButton = () => {
+const ContiuneInApp = ({onPress}) => {
   return (
-    <View style={{height: 20, width: 20, backgroundColor: 'black'}}></View>
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={{
+          height: 33,
+          width: 120,
+          borderRadius: 10,
+          backgroundColor: theme.tintColorPink,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+        }}>
+        <Text
+          style={{color: theme.basicText, fontSize: 16, fontWeight: 'bold'}}>
+          어플로 이동하기
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -97,10 +140,65 @@ const MainTitle = styled.Text`
   color: ${({theme}) => theme.mainBackground};
 `;
 
+const CircleContainer = styled.View`
+  padding: 10px;
+  margin: 40px 10px 10px 10px;
+  width: 65px;
+  height: 65px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 75px;
+`;
+
+const CircleCollectionImage = styled.Image`
+  background-color: ${({theme}) => theme.componentBackground};
+  padding: 10px;
+  margin: 10px 10px 10px 10px;
+  width: 75px;
+  height: 75px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+  border-color: ${({theme}) => theme.line};
+`;
+
+const CircleRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CircleTitle = styled.Text`
+  font-size: 12px;
+  font-weight: bold;
+  color: ${({theme}) => theme.subText};
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 80px;
+  height: 30px;
+  margin-bottom: 15px;
+`;
+
+const CollectionCircle = ({onPress, title, image}) => {
+  return (
+    <CircleContainer>
+      <TouchableOpacity onPress={onPress}>
+        <CircleCollectionImage source={{uri: image}} />
+        <CircleRow>
+          <CircleTitle>{title}</CircleTitle>
+        </CircleRow>
+      </TouchableOpacity>
+    </CircleContainer>
+  );
+};
+
 const Share = () => {
   const [sending, setSending] = useState(false);
-
   const appGroupIdentifier = 'group.app.sendwish.jungle';
+  const [waitSecond, setWaitSecond] = useState(false);
+  const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
+  const [collections, setCollections] = useState([]); // 컬렉션 목록
 
   const loadUsernameFromSharedStorage = async () => {
     try {
@@ -123,9 +221,10 @@ const Share = () => {
 
   useEffect(() => {
     ShareMenuReactView.data()
-      .then(({data}) => {
-        console.log(data[0].data);
+    .then(({data}) => {
+        _getCollections()
         postItem(data[0].data);
+        _timeoutFunc();
       })
       .catch(error => {
         if (error.response) {
@@ -146,7 +245,26 @@ const Share = () => {
       });
   }, []);
 
-  const postItem = url => {
+  const _getCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
+        method: 'GET',
+        // headers: {Content_Type: 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setCollections(data);
+          setLoading(false);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const postItem = async url => {
     try {
       fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
@@ -159,12 +277,11 @@ const Share = () => {
         .then(response => {
           return response.json();
         })
-        .then(json => console.log(json))
+        // .then(json => console.log(json))
         .then(() => {
           console.log('아이템 등록 완료 [URL] : ', url);
           setSending(true);
         })
-        .then()
         .catch(error => {
           console.log('아이템저장서버통신에러');
           console.error(error);
@@ -175,30 +292,67 @@ const Share = () => {
     }
   };
 
+  // console.log('waitSecond', waitSecond);
+  // console.log('collections ', collections);
+
+  const _setWaitSecond = () => {
+    setWaitSecond(true);
+  };
+
+  const _timeoutFunc = () => {
+    setTimeout(_setWaitSecond, 1000);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
+        <TouchableOpacity
+          style={{width: '100%', height: '60%'}}
+          onPress={() => {
+            ShareMenuReactView.dismissExtension();
+          }}></TouchableOpacity>
+
         <BottomContainer>
           <LineIcon />
           <SaveStatus>
             <Row>
-              <MainTitle>
-                {sending ? '저장 완료!' : '아이템 저장 중'}{' '}
+              <MainTitle style={{marginLeft: 10}}>
+                {waitSecond ? '저장 완료!' : '아이템 저장 중'}
               </MainTitle>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  width: '15%',
+                  width: '39%',
                   flexWrap: 'wrap',
                 }}>
-                <EditButton />
-                <DeleteButton />
+                <ContiuneInApp
+                  onPress={() => {
+                    ShareMenuReactView.continueInApp();
+                  }}
+                />
               </View>
             </Row>
           </SaveStatus>
           <DividingLine />
-          <CollectionList></CollectionList>
+          <CollectionList>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {collections.error
+                ? null
+                : collections.map(collection => (
+                    <CollectionCircle
+                      titleStyle={{
+                        color: theme.basicText,
+                      }}
+                      key={collection?.collectionId}
+                      collectionId={collection?.collectionId}
+                      collectionTitle={collection?.title}
+                      nickName={collection?.nickname}
+                      title={collection?.title}
+                    />
+                  ))}
+            </ScrollView>
+          </CollectionList>
         </BottomContainer>
       </Container>
     </ThemeProvider>
@@ -207,11 +361,11 @@ const Share = () => {
 
 export default Share;
 
-// <Text style={{fontSize: 25, fontWeight: 'bold'}}>
-// {sending ? '저장 완료!' : '아이템 저장 중'}
-
-//           <Button>
-//   title={sending ? '아이템 저장 완료' : '아이템 저장 중..'}
-//   disabled={sending}
-//   style={sending ? styles.sending : styles.send}
-// </Button>
+{
+  /* <Button
+title="Continue In App With Extra Data"
+onPress={() => {
+  ShareMenuReactView.continueInApp({hello: 'from the other side'});
+}}
+/> */
+}
