@@ -144,6 +144,7 @@ const Shared = ({route, navigation}) => {
     _getShareCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
     _getFriends();
+    setIsEditing(false);
   }, [isFocused]);
 
   // share collection add
@@ -167,9 +168,9 @@ const Shared = ({route, navigation}) => {
           }
           return response.json();
         })
-        .then(json => console.log(json))
+        // .then(json => console.log(json))
         .then(data => {
-          console.log('공유 컬렉션 생성:', data);
+          // console.log('공유 컬렉션 생성:', data);
         })
         .then(() => _getShareCollections());
     } catch (e) {
@@ -193,7 +194,7 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setShareCollections(data);
-          console.log('get share collections', data);
+          // console.log('get share collections', data);
           setLoading(false);
         })
         .catch(error => {
@@ -250,12 +251,12 @@ const Shared = ({route, navigation}) => {
         headers: {'Content-Type': `application/json`},
       })
         .then(response => {
-          console.log('errorcheck!!response Get  friend: ', response);
+          // console.log('errorcheck!!response Get  friend: ', response);
           return response.json();
         })
         .then(data => {
           setFriends(data);
-          console.log('get friends', data);
+          // console.log('get friends', data);
         });
     } catch (e) {
       console.log(e);

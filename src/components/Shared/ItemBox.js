@@ -141,7 +141,7 @@ const ItemBox = ({
     onPress();
   };
 
-  console.log('=======isChecked is ', isChecked);
+  // console.log('=======isChecked is ', isChecked);
 
   const [isChecked, setIsChecked] = useState(false);
 
