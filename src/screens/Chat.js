@@ -1,18 +1,11 @@
-// 친구추가,삭제=Button /  친구목록 불러오기 / 랜더링 틀
-// nickName 랜더링시 받아오고 친구 목록 요청
-
 import React, {
   useState,
   useEffect,
-  useRef,
-  useCallback,
-  useReducer,
+
 } from 'react';
 import {
   View,
   ScrollView,
-  Linking,
-  TouchableOpacity,
   FlatList,
 } from 'react-native';
 import styled from 'styled-components/native';
@@ -20,11 +13,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Input,
-  ProfileImage,
   ListFriend,
-  AddIcon,
-  ShareIcon,
-  DeleteIcon,
   CollectionCircle,
   Button,
   AddCollectionCircle,
@@ -137,23 +126,12 @@ const Chat = props => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
 
-  console.log('chat screen nickname check!!!!!!!', nickName);
-
-  // const nickName = props.route.params; 이 상황이면 아래와같음
-  // console.log('passed from main param',nickName);
-  // {"params": {"nickName": "giyoun"}, "screen": "Main"}
-  // console.log('passed from main param',nickName.params);
-  // //{"nickName": "giyoun"}
-  // console.log('passed from main param',nickName.params.nickName);
-  // giyoun
-
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
   }, [isFocused]);
-  // 요청 서버통신 완료
-  // 친구 추가하기 > 친구리스트 리랜더링
 
+  // 친구 추가
   const _addFriends = async () => {
     setVisibleModal(false);
     console.log('nickname check!!!!', nickName);
@@ -188,6 +166,7 @@ const Chat = props => {
     }
   };
 
+  // 친구 목록 렌더링
   const _getFriends = async () => {
     try {
       // API 아직 안열림
@@ -208,8 +187,7 @@ const Chat = props => {
     }
   };
 
-  // 친구 삭제하기 통신 완료
-  // 친구 삭제하기 > 친구리스트 리랜더링
+  // 친구 삭제
   const _deleteFriend = async () => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
@@ -242,13 +220,7 @@ const Chat = props => {
       console.log('friend delete fail', e);
     }
   };
-  // console.log(nickName);
-  // const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
-  // 화면이동시마다 랜더링 건들지 말것
-  // useEffect(() => {
-  //   console.log('친구목록 랜더링 완료')
-  // }, [isFocused]);
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>

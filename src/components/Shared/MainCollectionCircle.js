@@ -24,12 +24,12 @@ const CollectionImage = styled.Image`
   justify-content: center;
   align-items: center;
   border-radius: 30px;
-  border-color: ${({theme}) => theme.tintColorGreen};;
+  border-color: ${({theme}) => theme.tintColorGreen};
   border-width: 1px;
 `;
 
 const CollectionView = styled.View`
-  background-color: ${({theme}) => theme.tintColorPink};
+  background-color: ${({theme}) => theme.tintColorGreen};
   padding: 10px;
   margin: 10px 10px 10px 10px;
   width: 75px;
@@ -113,44 +113,27 @@ const MainCollectionCircle = ({
   };
 
   const _onPress = async () => {
-    onPress()
-    _getItemsFromCollection()
-    _setImageUrl()
+    onPress();
+    _getItemsFromCollection();
+    setIsSelected(!isSelected);
+    _setImageUrl();
   };
+
+  const [isSelected, setIsSelected] = useState(false);
 
   return (
     <Container>
-      <TouchableHighlight
-        onPress={_onPress}
-        onLongPress={onLongPress}
-        style={{opacity: isEditing ? 0.5 : 1}}>
+      <TouchableHighlight onPress={_onPress} onLongPress={onLongPress}>
         <View>
+          <CollectionView>
           <CollectionImage
             source={{uri: imageUrl}}
-            style={{display: isCollectionEditing ? 'none' : 'flex'}}
-          />
-          <View
             style={{
-              display: isCollectionEditing ? 'flex' : 'none',
-            }}>
-            <CollectionView>
-              <CollectionImage
-                source={{uri: imageUrl}}
-                style={{opacity: 0.5}}
-              />
-            </CollectionView>
-            <View
-              style={{
-                borderRadius: 100,
-                position: 'absolute',
-                marginLeft: 55,
-                marginTop: 3,
-                backgroundColor: theme.mainBackground,
-                opacity: 0.7,
-              }}>
-              <Feather name="minus-circle" size={30} color="white" />
-            </View>
-          </View>
+              color: isSelected ? theme.tintColorGreen : theme.mainBackground,
+              opacity: isSelected ? 0.5 : 1,
+            }}
+          />
+          </CollectionView>
           <Row>
             <Title style={titleStyle}>{collectionTitle}</Title>
           </Row>
