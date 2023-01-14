@@ -67,61 +67,62 @@ const CollectionCircle = ({
   onLongPress,
   isCollectionEditing,
   isEditing,
+  imgUrl
 }) => {
   const [items, setItems] = useState([]);
-  const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
+  // const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
-  useEffect(() => {
-    _setImageUrl();
-  }, [items]);
+  // useEffect(() => {
+  //   _setImageUrl();
+  // }, [items]);
 
-  const _getItemsFromCollection = async () => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          if (!data.nickname) {
-            return;
-          }
-          setItems(data.dtos);
-          console.log(items);
-        })
-        .then(_setImageUrl);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const _getItemsFromCollection = async () => {
+  //   try {
+  //     fetch(
+  //       `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {'Content-Type': 'application/json'},
+  //       },
+  //     )
+  //       .then(res => {
+  //         return res.json();
+  //       })
+  //       .then(data => {
+  //         if (!data.nickname) {
+  //           return;
+  //         }
+  //         setItems(data.dtos);
+  //         console.log(items);
+  //       })
+  //       .then(_setImageUrl);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
-  const _setImageUrl = () => {
-    if (items.length > 0) {
-      setImageUrl(items[0].imgUrl);
-    }
-  };
+  // const _setImageUrl = () => {
+  //   if (items.length > 0) {
+  //     setImageUrl(items[0].imgUrl);
+  //   }
+  // };
 
-  const _onPress = () => {
-    onPress();
-    _getItemsFromCollection();
-    _setImageUrl();
-  };
+  // const _onPress = () => {
+  //   onPress();
+  //   _getItemsFromCollection();
+  //   _setImageUrl();
+  // };
 
   return (
     <Container>
       <TouchableHighlight
-        onPress={_onPress}
+        onPress={onPress}
         onLongPress={onLongPress}
         style={{opacity: isEditing ? 0.5 : 1}}>
         <View>
           <CollectionImage
-            source={{uri: imageUrl}}
+            source={{uri: imgUrl}}
             style={{display: isCollectionEditing ? 'none' : 'flex'}}
           />
           <View
@@ -130,7 +131,7 @@ const CollectionCircle = ({
             }}>
             <CollectionView>
               <CollectionImage
-                source={{uri: imageUrl}}
+                source={{uri : imgUrl}}
                 style={{opacity: 0.5}}
               />
             </CollectionView>

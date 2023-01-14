@@ -553,6 +553,7 @@ const Main = ({navigation, route}) => {
                         collectionId={collection?.collectionId}
                         collectionTitle={collection?.title}
                         nickName={collection?.nickname}
+                        imgUrl={collection?.defaultImage}
                         onPress={() =>
                           _pressTargetCollection(
                             collection?.collectionId,
