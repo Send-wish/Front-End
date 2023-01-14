@@ -8,6 +8,7 @@ import TempCircle from './TempCircle';
 import CollectionCircle from './CollectionCircle';
 import ProfileImage from './ProfileImage';
 import MainCollectionCircle from './MainCollectionCircle';
+import ChatButton from './ChatButton';
 
 export {
     AddCollectionCircle,
@@ -20,4 +21,5 @@ export {
     CollectionCircle,
     ProfileImage,
     MainCollectionCircle,
+    ChatButton,
 };

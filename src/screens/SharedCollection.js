@@ -17,6 +17,7 @@ import {
   EditIcon,
   Input,
   Button,
+  ChatButton,
 } from '../components/Shared';
 
 import {theme} from '../theme';
@@ -313,6 +314,15 @@ const SharedCollection = ({route, navigation}) => {
                 {/* {nickName}님이 담았어요! */}
                 {addFriendList}님이 담았어요!
               </SubTitle>
+              <ChatButton title={'채팅하기'} />
+              {/* <ChatButton title={'채팅하기'}    onPress={() => {
+                passData = {nickName, friendList, shareCollectionTitle};
+                navigation.navigate('Chatroom', {
+                  passData: nickName,
+                  friendLsit,
+                  shareCollectionTitle,
+                });
+              }} /> */}
             </WrapRow>
           </Column>
         </Row>
