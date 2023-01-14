@@ -295,6 +295,8 @@ const Share = () => {
   // console.log('waitSecond', waitSecond);
   // console.log('collections ', collections);
 
+  
+
   const _setWaitSecond = () => {
     setWaitSecond(true);
   };
