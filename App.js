@@ -10,6 +10,7 @@ import {
   SignIn,
   SignUp,
   SharedCollection,
+  ChatRoom,
 } from './src/screens';
 import Share from './Share';
 
@@ -104,8 +105,7 @@ const App = () => {
           <Stack.Screen name="Collection" component={Collection} />
           <Stack.Screen name="SharedCollection" component={SharedCollection} />
           <Stack.Screen name="Share" component={Share} />
-
-          {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}
+          <Stack.Screen name="ChatRoom" component={ChatRoom} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
