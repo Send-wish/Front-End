@@ -151,8 +151,8 @@ const Shared = ({route, navigation}) => {
 
   // 개인컬렉션
   const [collections, setCollections] = useState([]); // 컬렉션 목록
-  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
+  const [targetCollectionId, setTargetCollectionId] = useState(0);
 
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
@@ -176,7 +176,7 @@ const Shared = ({route, navigation}) => {
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
           memberIdList: addFriendList,
-          targetCollectionId: targetShareCollectionId,
+          targetCollectionId: targetCollectionId,
           title: shareCollectionName,
         }),
       })
@@ -318,6 +318,12 @@ const Shared = ({route, navigation}) => {
       setAddFriendList(friendArray);
       console.log('friendArraycheck ADDDD', addFriendList);
     }
+  };
+
+  const _pressTargetCollection = collectionId => {
+    setTargetCollectionId(collectionId);
+    setIsCollectionSelected(true);
+    console.log('target collection id', collectionId);
   };
 
   // 전체 아이템 불러오기
@@ -531,7 +537,7 @@ const Shared = ({route, navigation}) => {
                       onPress={() => {
                         _addFriendList(friend?.friend_nickname);
                       }}
-                      isClicked={isFriendselected}
+                      // isClicked={isFriendselected}
                     />
                   ))}
                 </ScrollView>
@@ -542,9 +548,9 @@ const Shared = ({route, navigation}) => {
                     ? null
                     : collections.map(collection => (
                         <MainCollectionCircle
-                          titleStyle={{
-                            color: isEditing ? theme.subText : theme.basicText,
-                          }}
+                          // titleStyle={{
+                          //   color: isEditing ? theme.subText : theme.basicText,
+                          // }}
                           key={collection?.collectionId}
                           collectionId={collection?.collectionId}
                           collectionTitle={collection?.title}
@@ -552,15 +558,13 @@ const Shared = ({route, navigation}) => {
                           onPress={() =>
                             _pressTargetCollection(
                               collection?.collectionId,
-                              collection?.title,
-                              collection?.nickname,
                             )
                           }
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          isCollectionEditing={isCollectionSelected}
-                          isEditing={isEditing}
+                          // isCollectionEditing={isCollectionSelected}
+                          // isEditing={isEditing}
                         />
                       ))}
                 </ScrollView>
