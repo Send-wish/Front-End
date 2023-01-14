@@ -19,7 +19,7 @@ import {
 } from '../components/Main';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Modal} from 'react-native';
+import {Modal, AppState} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
@@ -121,6 +121,25 @@ const Main = ({navigation, route}) => {
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
 
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      _getItems();
+      console.log('AppState', appState.current);
+    });
+  }, [appState]);
+
   const appGroupIdentifier = 'group.app.sendwish.jungle';
 
   const saveUserDataToSharedStorage = async nickName => {
@@ -158,6 +177,7 @@ const Main = ({navigation, route}) => {
   };
   loadUsernameFromSharedStorage();
 
+
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -165,7 +185,7 @@ const Main = ({navigation, route}) => {
     setIsCollectionEditing(false);
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
-    _setInterval();
+    // _setInterval();
   }, [isFocused]);
 
   // collection add
@@ -296,49 +316,50 @@ const Main = ({navigation, route}) => {
   // Shared item
 
   // Handle share
-  const handleShare = useCallback(item => {
-    console.log('===== item is : ', item);
+  // const handleShare = useCallback(item => {
+  //   console.log('===== item is : ', item);
+  //   console.log('?>?>?>??>?>?>???>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?: ', item);
 
-    if (!item) {
-      return;
-    }
+  //   if (!item) {
+  //     return;
+  //   }
 
-    if (!item.data || item.data.lenth < 1) {
-      return;
-    }
+  //   if (!item.data || item.data.lenth < 1) {
+  //     return;
+  //   }
 
-    var {mimeType, data, extraData} = item;
+  //   var {mimeType, data, extraData} = item;
 
-    if (data === undefined) {
-      return;
-    }
-    if (data.length < 1 || data === '' || !data) {
-      return;
-    }
+  //   if (data === undefined) {
+  //     return;
+  //   }
+  //   if (data.length < 1 || data === '' || !data) {
+  //     return;
+  //   }
 
-    if (data) {
-      setSharedUrl(data[0].data);
-    } else {
-      return;
-    }
-  }, []);
+  //   if (data) {
+  //     setSharedUrl(data[0].data);
+  //   } else {
+  //     return;
+  //   }
+  // }, []);
 
-  // Share Init
-  useEffect(() => {
-    ShareMenu.getInitialShare(handleShare);
-  }, []);
+  // // Share Init
+  // useEffect(() => {
+  //   ShareMenu.getInitialShare(handleShare);
+  // }, []);
 
   useEffect(() => {
     _addItem();
   }, [sharedUrl]);
 
   // Share Listener, remove
-  useEffect(() => {
-    const listener = ShareMenu.addNewShareListener(handleShare);
-    return () => {
-      listener.remove();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const listener = ShareMenu.addNewShareListener(handleShare);
+  //   return () => {
+  //     listener.remove();
+  //   };
+  // }, []);
 
   const _pressEditButton = () => {
     if (isCollectionEditing) {
@@ -461,9 +482,9 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  const _setInterval = () => {
-    setInterval(_getItems, 5000);
-  };
+  // const _setInterval = () => {
+  //   setInterval(_getItems, 5000);
+  // };
 
   return (
     <Container insets={insets}>
