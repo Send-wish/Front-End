@@ -19,7 +19,7 @@ import {
 } from '../components/Main';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Modal} from 'react-native';
+import {Modal, AppState} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
@@ -121,6 +121,25 @@ const Main = ({navigation, route}) => {
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
 
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      _getItems();
+      console.log('AppState', appState.current);
+    });
+  }, [appState]);
+
   const appGroupIdentifier = 'group.app.sendwish.jungle';
 
   const saveUserDataToSharedStorage = async nickName => {
@@ -166,7 +185,7 @@ const Main = ({navigation, route}) => {
     setIsCollectionEditing(false);
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
-    _setInterval();
+    // _setInterval();
   }, [isFocused]);
 
   // collection add
@@ -463,9 +482,9 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  const _setInterval = () => {
-    setInterval(_getItems, 5000);
-  };
+  // const _setInterval = () => {
+  //   setInterval(_getItems, 5000);
+  // };
 
   return (
     <Container insets={insets}>
