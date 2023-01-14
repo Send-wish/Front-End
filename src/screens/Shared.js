@@ -124,10 +124,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 const Shared = ({route, navigation}) => {
   // Tab navigator route params check
   const nickName = route.params.params.nickName;
-  console.log('Shared in nickName', nickName);
-
-  // console.log('shared screen name check', nickName);
-
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [shareCollections, setShareCollections] = useState([]); // 컬렉션 목록
@@ -138,12 +134,9 @@ const Shared = ({route, navigation}) => {
   const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [isEditing, setIsEditing] = useState(false);
-  // const [sharedUrl, setSharedUrl] = useState('');
   const [addToShareCollection, setAddToShareCollection] = useState([]);
   const [isShareCollectionEditing, setIsShareCollectionEditing] =
     useState(false);
-
-  const [targetShareCollectionId, setTargetShareCollectionId] = useState('');
   // 공유 컬렉션 친구 추가
   const [isFriendselected, setIsFriendselected] = useState(false);
   const [addFriendList, setAddFriendList] = useState([nickName]);
@@ -151,21 +144,21 @@ const Shared = ({route, navigation}) => {
 
   // 개인컬렉션
   const [collections, setCollections] = useState([]); // 컬렉션 목록
-  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
+  const [targetCollectionId, setTargetCollectionId] = useState(0);
 
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
     _getShareCollections(); // 컬렌션 목록 랜더링
-    _getItems(); // 아이템 목록 랜더링
+    // _getItems(); // 아이템 목록 랜더링
     _getFriends();
     _getCollections();
     setIsEditing(false);
   }, [isFocused]);
 
-  // share collection add
+  // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
     console.log('shareCollectionName', shareCollectionName); // 공유 컬렉션 이름 확인
@@ -176,7 +169,7 @@ const Shared = ({route, navigation}) => {
         headers: {'Content-Type': `application/json`},
         body: JSON.stringify({
           memberIdList: addFriendList,
-          targetCollectionId: targetShareCollectionId,
+          targetCollectionId: targetCollectionId,
           title: shareCollectionName,
         }),
       })
@@ -196,7 +189,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  // get share collections
+  // 공유 컬렉션 렌더링
   const _getShareCollections = async () => {
     setLoading(true);
     try {
@@ -222,7 +215,8 @@ const Shared = ({route, navigation}) => {
       console.log(e);
     }
   };
-  // share collection 삭제
+
+  // 공유 컬렉션 삭제
   const _deleteShareCollection = async (shareCollectionId, nickName) => {
     try {
       fetch(
@@ -260,8 +254,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  // 개인 컬렉션 불러오기
-
+  // 개인 컬렉션 렌더링 
   const _getCollections = async () => {
     setLoading(true);
     try {
@@ -281,46 +274,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  // 친구 목록 불러오기
-  const _getFriends = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': `application/json`},
-      })
-        .then(response => {
-          // console.log('errorcheck!!response Get  friend: ', response);
-          return response.json();
-        })
-        .then(data => {
-          setFriends(data);
-          // console.log('get friends', data);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  // 공유 컬렉션 만들 친구 추가하기
-  const _addFriendList = frName => {
-    if (addFriendList.includes(frName)) {
-      friendArray = addFriendList;
-      for (let i = 0; i < friendArray.length; i++) {
-        if (friendArray[i] === frName) {
-          friendArray.splice(i, 1);
-          i--;
-        }
-      }
-      setAddFriendList(friendArray);
-      console.log('friendArraycheck out', addFriendList);
-    } else {
-      friendArray = addFriendList;
-      friendArray.push(frName);
-      setAddFriendList(friendArray);
-      console.log('friendArraycheck ADDDD', addFriendList);
-    }
-  };
-
-  // 전체 아이템 불러오기
+  // 전체 아이템 렌더링
   const _getItems = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
@@ -345,77 +299,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  // item link
-  const _openUrl = url => {
-    console.log('url', url);
-    Linking.openURL(url);
-  };
-
-  const _pressEditButton = () => {
-    if (isShareCollectionEditing) {
-      setIsShareCollectionEditing(false);
-    } else {
-      if (isEditing) {
-        setIsEditing(false);
-      } else {
-        setIsEditing(true);
-      }
-    }
-  };
-
-  const _longPressCollection = () => {
-    if (isEditing) {
-      return;
-    } else {
-      isShareCollectionEditing
-        ? setIsShareCollectionEditing(false)
-        : setIsShareCollectionEditing(true);
-    }
-  };
-
-  const _addItemToShareList = itemId => {
-    if (addToShareCollection.includes(itemId)) {
-      tempArray = addToShareCollection;
-      for (let i = 0; i < tempArray.length; i++) {
-        if (tempArray[i] === itemId) {
-          tempArray.splice(i, 1);
-          i--;
-        }
-      }
-      setAddToShareCollection(tempArray);
-    } else {
-      tempArray = addToShareCollection;
-      tempArray.push(itemId);
-      setAddToShareCollection(tempArray);
-    }
-    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
-  };
-
-  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
-    setIsEditing(false);
-    try {
-      fetch('https://api.sendwish.link:8081/item/enrollment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          nickname: nickName,
-          collectionId: shareCollectionId,
-          itemIdList: addToShareCollection,
-        }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        return response.json();
-      });
-      // .then(data => {
-      //   console.log('data is : ', data);
-      // });
-    } catch (e) {
-      console.log('adding item to collection failed');
-    }
-  };
-
+  // 아이템 삭제
   const _deleteItems = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/items`, {
@@ -449,6 +333,126 @@ const Shared = ({route, navigation}) => {
     }
   };
 
+  // 친구 목록 렌더링
+  const _getFriends = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': `application/json`},
+      })
+        .then(response => {
+          // console.log('errorcheck!!response Get  friend: ', response);
+          return response.json();
+        })
+        .then(data => {
+          setFriends(data);
+          // console.log('get friends', data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // 공유 컬렉션 만들 친구 추가하기
+  const _addFriendList = frName => {
+    if (addFriendList.includes(frName)) {
+      friendArray = addFriendList;
+      for (let i = 0; i < friendArray.length; i++) {
+        if (friendArray[i] === frName) {
+          friendArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddFriendList(friendArray);
+      console.log('friendArraycheck out', addFriendList);
+    } else {
+      friendArray = addFriendList;
+      friendArray.push(frName);
+      setAddFriendList(friendArray);
+      console.log('friendArraycheck ADDDD', addFriendList);
+    }
+  };
+
+  // 공유 컬렉션 생성시 추가할 개인 컬렉션
+  const _pressTargetCollection = collectionId => {
+    setTargetCollectionId(collectionId);
+    setIsCollectionSelected(true);
+    // console.log('target collection id', collectionId);
+  };
+
+  // 아이템 개별 링크
+  const _openUrl = url => {
+    console.log('url', url);
+    Linking.openURL(url);
+  };
+
+  const _pressEditButton = () => {
+    if (isShareCollectionEditing) {
+      setIsShareCollectionEditing(false);
+    } else {
+      if (isEditing) {
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    }
+  };
+
+  const _longPressCollection = () => {
+    if (isEditing) {
+      return;
+    } else {
+      isShareCollectionEditing
+        ? setIsShareCollectionEditing(false)
+        : setIsShareCollectionEditing(true);
+    }
+  };
+
+  // 공유 컬렉션에 추가할 아이템 선택
+  const _addItemToShareList = itemId => {
+    if (addToShareCollection.includes(itemId)) {
+      tempArray = addToShareCollection;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddToShareCollection(tempArray);
+    } else {
+      tempArray = addToShareCollection;
+      tempArray.push(itemId);
+      setAddToShareCollection(tempArray);
+    }
+    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
+  };
+
+  // 공유 컬렉션에 아이템 추가
+  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
+    setIsEditing(false);
+    try {
+      fetch('https://api.sendwish.link:8081/item/enrollment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: shareCollectionId,
+          itemIdList: addToShareCollection,
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        return response.json();
+      });
+      // .then(data => {
+      //   console.log('data is : ', data);
+      // });
+    } catch (e) {
+      console.log('adding item to collection failed');
+    }
+  };
+
   const _pressTargetShareCollection = (
     shareCollectionId,
     nickName,
@@ -464,6 +468,7 @@ const Shared = ({route, navigation}) => {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
           shareCollectionName: shareCollectionName,
+          addFriendList: addFriendList,
         });
       }
       // 콜렉션 수정 중일 때,
@@ -531,7 +536,7 @@ const Shared = ({route, navigation}) => {
                       onPress={() => {
                         _addFriendList(friend?.friend_nickname);
                       }}
-                      isClicked={isFriendselected}
+                      // isClicked={isFriendselected}
                     />
                   ))}
                 </ScrollView>
@@ -542,9 +547,9 @@ const Shared = ({route, navigation}) => {
                     ? null
                     : collections.map(collection => (
                         <MainCollectionCircle
-                          titleStyle={{
-                            color: isEditing ? theme.subText : theme.basicText,
-                          }}
+                          // titleStyle={{
+                          //   color: isEditing ? theme.subText : theme.basicText,
+                          // }}
                           key={collection?.collectionId}
                           collectionId={collection?.collectionId}
                           collectionTitle={collection?.title}
@@ -552,15 +557,13 @@ const Shared = ({route, navigation}) => {
                           onPress={() =>
                             _pressTargetCollection(
                               collection?.collectionId,
-                              collection?.title,
-                              collection?.nickname,
                             )
                           }
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          isCollectionEditing={isCollectionSelected}
-                          isEditing={isEditing}
+                          // isCollectionEditing={isCollectionSelected}
+                          // isEditing={isEditing}
                         />
                       ))}
                 </ScrollView>
