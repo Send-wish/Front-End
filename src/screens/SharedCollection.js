@@ -20,6 +20,8 @@ import {
   ChatButton,
 } from '../components/Shared';
 
+import ChatRoom from './Chatroom';
+
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
@@ -114,12 +116,14 @@ const SharedCollection = ({route, navigation}) => {
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
-  const isFocused = useIsFocused(); // isFoucesd Define
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+  
+  const [friendList, setFriendList] = useState(addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
-      console.log('**********************Collection focused & re-rendered');
+      // console.log('**********************Collection focused & re-rendered');
     _getItemsFromShareCollection();
     setIsEditing(false);
   }, [isFocused]);
@@ -168,7 +172,7 @@ const SharedCollection = ({route, navigation}) => {
       tempArray.push(itemId);
       setDeleteList(tempArray);
     }
-    console.log('****************deleteList is : ', deleteList);
+    // console.log('****************deleteList is : ', deleteList);
   };
 
   // 공유컬렉션 아이템 렌더링
@@ -314,15 +318,15 @@ const SharedCollection = ({route, navigation}) => {
                 {/* {nickName}님이 담았어요! */}
                 {addFriendList}님이 담았어요!
               </SubTitle>
-              <ChatButton title={'채팅하기'} />
-              {/* <ChatButton title={'채팅하기'}    onPress={() => {
+              {/* <ChatButton title={'채팅하기'} /> */}
+              <ChatButton title={'채팅하기'}    onPress={() => {
                 passData = {nickName, friendList, shareCollectionTitle};
-                navigation.navigate('Chatroom', {
+                navigation.navigate('ChatRoom', {
                   passData: nickName,
-                  friendLsit,
+                  friendList,
                   shareCollectionTitle,
                 });
-              }} /> */}
+              }} />
             </WrapRow>
           </Column>
         </Row>
