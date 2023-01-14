@@ -30,9 +30,8 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import {back} from 'react-native/Libraries/Animated/Easing';
 
 import SockJS from 'sockjs-client';
-import {Client, Message, Stomp} from '@stomp/stompjs';
+import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
-import StompWS from 'react-native-stomp-websocket';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -132,7 +131,7 @@ const webSocket = () => {
         body: JSON.stringify({
           roomId: 1,
           sender: 'hcs4125',
-          message: '하이',
+          message: '',
           type: 'ENTER',
         }),
       });
