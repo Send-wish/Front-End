@@ -11,6 +11,7 @@ import {
   SearchIcon,
   TempCircle,
   CollectionCircle,
+  MainCollectionCircle,
 } from '../components/Shared';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -102,6 +103,17 @@ const ModalInnerView = styled.View`
   align-items: center;
 `;
 
+const ModalCollectionView = styled.View`
+  width: 100%;
+  background-color: ${({theme}) => theme.subBackground};
+  border-radius: 20px;
+  margin-top: 10px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  height: 170px;
+`;
+
 const StyledTouchableOpacity = styled.TouchableOpacity`
   width: 100%;
   flex-direction: row;
@@ -137,6 +149,11 @@ const Shared = ({route, navigation}) => {
   const [addFriendList, setAddFriendList] = useState([nickName]);
   const [friends, setFriends] = useState([]);
 
+  // 개인컬렉션
+  const [collections, setCollections] = useState([]); // 컬렉션 목록
+  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
+  const [isCollectionSelected, setIsCollectionSelected] = useState(false);
+
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
@@ -144,6 +161,7 @@ const Shared = ({route, navigation}) => {
     _getShareCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
     _getFriends();
+    _getCollections();
     setIsEditing(false);
   }, [isFocused]);
 
@@ -219,27 +237,47 @@ const Shared = ({route, navigation}) => {
             collectionId: shareCollectionId,
           }),
         },
-      )
-        .then(response => {
-          if (!response.ok) {
-            console.log("delete nickname chekc!!!!!",nickName)
-            console.log("delete ㅑ야야e chekc!!!!!",shareCollectionId)
+      ).then(response => {
+        if (!response.ok) {
+          console.log('delete nickname chekc!!!!!', nickName);
+          console.log('delete ㅑ야야e chekc!!!!!', shareCollectionId);
 
-            throw new Error(`${response.status} 에러발생`);
-          }
-          _getShareCollections()
-          return 
-          // return response.json();
-        })
-        // .then(data => {
-        //   console.log(data);
-        // })
-        // .then(result => {
-        //   console.log('result', result);
-        // })
-        // .then(() => _getShareCollections());
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getShareCollections();
+        return;
+        // return response.json();
+      });
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .then(result => {
+      //   console.log('result', result);
+      // })
+      // .then(() => _getShareCollections());
     } catch (e) {
       console.log('delete fail', e);
+    }
+  };
+
+  // 개인 컬렉션 불러오기
+
+  const _getCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
+        method: 'GET',
+        // headers: {Content_Type: 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setCollections(data);
+          setLoading(false);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -389,25 +427,23 @@ const Shared = ({route, navigation}) => {
           nickname: nickName,
           itemIdList: addToShareCollection,
         }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          _getItems();
-          setAddToShareCollection([])
-          return
-          // return response.json();
-        })
-        // .then(data => {
-        //   console.log(data);
-        // })
-        // .then(result => {
-        //   console.log('result', result);
-        // })
-        // .then(_getItems)
-        // .then(setAddToShareCollection([]));
-        
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getItems();
+        setAddToShareCollection([]);
+        return;
+        // return response.json();
+      });
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .then(result => {
+      //   console.log('result', result);
+      // })
+      // .then(_getItems)
+      // .then(setAddToShareCollection([]));
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -500,6 +536,35 @@ const Shared = ({route, navigation}) => {
                   ))}
                 </ScrollView>
               </ModalInnerView>
+              <ModalCollectionView>
+                <ScrollView horizontal style={{height: 100}}>
+                  {collections.error
+                    ? null
+                    : collections.map(collection => (
+                        <MainCollectionCircle
+                          titleStyle={{
+                            color: isEditing ? theme.subText : theme.basicText,
+                          }}
+                          key={collection?.collectionId}
+                          collectionId={collection?.collectionId}
+                          collectionTitle={collection?.title}
+                          nickName={collection?.nickname}
+                          onPress={() =>
+                            _pressTargetCollection(
+                              collection?.collectionId,
+                              collection?.title,
+                              collection?.nickname,
+                            )
+                          }
+                          onLongPress={() => {
+                            _longPressCollection();
+                          }}
+                          isCollectionEditing={isCollectionSelected}
+                          isEditing={isEditing}
+                        />
+                      ))}
+                </ScrollView>
+              </ModalCollectionView>
             </View>
             <Button
               title="새 콜렉션 만들기"
@@ -559,7 +624,7 @@ const Shared = ({route, navigation}) => {
                           _pressTargetShareCollection(
                             shareCollection?.collectionId,
                             nickName,
-                            shareCollection?.title
+                            shareCollection?.title,
                           )
                         }
                         onLongPress={() => {
