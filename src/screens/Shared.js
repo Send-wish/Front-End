@@ -152,7 +152,7 @@ const Shared = ({route, navigation}) => {
   useEffect(() => {
     if (isFocused) console.log('Focused');
     _getShareCollections(); // 컬렌션 목록 랜더링
-    // _getItems(); // 아이템 목록 랜더링
+    _getItems(); // 아이템 목록 랜더링
     _getFriends();
     _getCollections();
     setIsEditing(false);
@@ -452,6 +452,7 @@ const Shared = ({route, navigation}) => {
       console.log('adding item to collection failed');
     }
   };
+
 
   const _pressTargetShareCollection = (
     shareCollectionId,
