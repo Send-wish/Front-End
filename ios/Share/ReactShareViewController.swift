@@ -29,7 +29,7 @@ class ReactShareViewController: ShareViewController, RCTBridgeDelegate, ReactSha
       initialProperties: nil
     )
 
-    rootView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    rootView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
     backgroundColorSetup: if let backgroundColorConfig = Bundle.main.infoDictionary?[REACT_SHARE_VIEW_BACKGROUND_COLOR_KEY] as? [String:Any] {
       if let transparent = backgroundColorConfig[COLOR_TRANSPARENT_KEY] as? Bool, transparent {
         rootView.backgroundColor = nil

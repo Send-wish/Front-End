@@ -1,10 +1,9 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   TouchableOpacity,
   ScrollView,
   Modal,
-  TextInput,
   Linking,
 } from 'react-native';
 import styled from 'styled-components/native';
@@ -119,11 +118,11 @@ const Collection = ({route, navigation}) => {
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
-      console.log('**********************Collection focused & re-rendered');
     _getItemsFromCollection();
     setIsEditing(false);
   }, [isFocused]);
 
+  // 컬렉션 네임 수정
   const _changeCollectionName = async () => {
     setVisibleModal(false);
     try {
@@ -170,6 +169,7 @@ const Collection = ({route, navigation}) => {
     console.log('****************deleteList is : ', deleteList);
   };
 
+  // 아이템 렌더링
   const _getItemsFromCollection = () => {
     try {
       fetch(
@@ -190,6 +190,7 @@ const Collection = ({route, navigation}) => {
     }
   };
 
+  // 아이템 개별 링크
   const _openUrl = url => {
     Linking.openURL(url);
   };
@@ -201,13 +202,9 @@ const Collection = ({route, navigation}) => {
       setIsEditing(true);
     }
   };
-
-  console.log('**********************is Editing : ', isEditing);
-
+  
+  // 아이템 삭제
   const _deleteItemsFromCollection = async () => {
-    console.log('****************deleteList is : ', deleteList);
-    console.log('****************collectionId is : ', collectionId);
-    console.log('****************nickName is : ', nickName);
     try {
       fetch(`https://api.sendwish.link:8081/collection/item`, {
         method: 'DELETE',

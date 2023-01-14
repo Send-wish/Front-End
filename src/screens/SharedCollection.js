@@ -1,10 +1,9 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TouchableOpacity,
   ScrollView,
   Modal,
-  TextInput,
   Linking,
 } from 'react-native';
 import styled from 'styled-components/native';
@@ -18,6 +17,7 @@ import {
   EditIcon,
   Input,
   Button,
+  ChatButton,
 } from '../components/Shared';
 
 import {theme} from '../theme';
@@ -107,11 +107,9 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const SharedCollection = ({route, navigation}) => {
   console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
-  console.log('friendlsit check', route.params.friendList)
-  const {shareCollectionId, shareCollectionName, nickName, friendList} = route.params;
+  const {shareCollectionId, shareCollectionName, nickName, addFriendList} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  // const refCollectionName = useRef(null);
   const [shareCollectionTitle, setShareCollectionTitle] = useState(shareCollectionName);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -126,6 +124,7 @@ const SharedCollection = ({route, navigation}) => {
     setIsEditing(false);
   }, [isFocused]);
 
+  // 공유 컬렉션 이름 수정
   const _changeShareCollectionName = async () => {
     setVisibleModal(false);
     try {
@@ -172,6 +171,7 @@ const SharedCollection = ({route, navigation}) => {
     console.log('****************deleteList is : ', deleteList);
   };
 
+  // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
     try {
       fetch(
@@ -192,6 +192,7 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
+  // 아이템 개별 링크
   const _openUrl = url => {
     Linking.openURL(url);
   };
@@ -204,8 +205,7 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
-  console.log('**********************is Editing : ', isEditing);
-
+  // 아이템 삭제
   const _deleteItemsFromShareCollection = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/collection/item`, {
@@ -311,8 +311,18 @@ const SharedCollection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {friendList}님이 담았어요!
+                {/* {nickName}님이 담았어요! */}
+                {addFriendList}님이 담았어요!
               </SubTitle>
+              <ChatButton title={'채팅하기'} />
+              {/* <ChatButton title={'채팅하기'}    onPress={() => {
+                passData = {nickName, friendList, shareCollectionTitle};
+                navigation.navigate('Chatroom', {
+                  passData: nickName,
+                  friendLsit,
+                  shareCollectionTitle,
+                });
+              }} /> */}
             </WrapRow>
           </Column>
         </Row>
