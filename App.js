@@ -29,6 +29,11 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {back} from 'react-native/Libraries/Animated/Easing';
 
+import SockJS from 'sockjs-client';
+import {Client, Message, Stomp} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
+import StompWS from 'react-native-stomp-websocket';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -86,8 +91,65 @@ const Navigation = props => {
     </Tab.Navigator>
   );
 };
+const stompConfig = {
+  brokerURL: 'ws://localhost:8080/ws/chat',
+  debug: str => {
+    console.log('STMOP: ' + str);
+  },
+  onConnect: frame => {
+    console.log('connected');
+    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
+      console.log(JSON.parse(msg.body));
+    });
+  },
+  onStompError: frame => {
+    console.log('error occur' + frame.body);
+  },
+};
+let stompClient = null;
+let roomId = 1;
 
+const webSocket = () => {
+  stompClient = new Client({
+    brokerURL: 'ws://localhost:8080/ws',
+    connectHeaders: {},
+    webSocketFactory: () => {
+      return SockJS('http://localhost:8080/ws');
+    },
+    debug: str => {
+      console.log('STOMP: ' + str);
+    },
+    onConnect: function (frame) {
+      console.log('connected');
+      stompClient.subscribe('/sub/chat/' + roomId, msg => {
+        console.log(JSON.parse(msg.body));
+      });
+      if (!stompClient.connected) {
+        return;
+      }
+      stompClient.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          roomId: 1,
+          sender: 'hcs4125',
+          message: '하이',
+          type: 'ENTER',
+        }),
+      });
+    },
+    onStompError: frame => {
+      console.log('error occur' + frame.body);
+    },
+  });
+  stompClient.activate();
+
+  return stompClient;
+};
 const App = () => {
+  useEffect(() => {
+    webSocket();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>
@@ -103,8 +165,6 @@ const App = () => {
           <Stack.Screen name="Navigation" component={Navigation} />
           <Stack.Screen name="Collection" component={Collection} />
           <Stack.Screen name="SharedCollection" component={SharedCollection} />
-          <Stack.Screen name="Share" component={Share} />
-
           {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}
         </Stack.Navigator>
       </NavigationContainer>

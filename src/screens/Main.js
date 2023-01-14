@@ -165,7 +165,7 @@ const Main = ({navigation, route}) => {
     setIsCollectionEditing(false);
     _getCollections(); // 컬렌션 목록 랜더링
     _getItems(); // 아이템 목록 랜더링
-    _setInterval();
+    //_setInterval();
   }, [isFocused]);
 
   // collection add
@@ -461,9 +461,9 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  const _setInterval = () => {
-    setInterval(_getItems, 5000);
-  };
+  // const _setInterval = () => {
+  //   setInterval(_getItems, 5000);
+  // };
 
   return (
     <Container insets={insets}>
