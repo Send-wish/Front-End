@@ -1,11 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Linking,
-} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Modal, Linking} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -19,9 +13,6 @@ import {
   Button,
   ChatButton,
 } from '../components/Shared';
-
-import ChatRoom from './Chatroom';
-
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
@@ -108,23 +99,25 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const SharedCollection = ({route, navigation}) => {
-  console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
-  const {shareCollectionId, shareCollectionName, nickName, addFriendList} = route.params;
+  console.log('datac hke~!!!!!!!!!!!!!!!!!!!!!!!', route.params);
+  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+    route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [shareCollectionTitle, setShareCollectionTitle] = useState(shareCollectionName);
+  const [shareCollectionTitle, setShareCollectionTitle] =
+    useState(shareCollectionName);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  
+
   const [friendList, setFriendList] = useState(addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
       // console.log('**********************Collection focused & re-rendered');
-    _getItemsFromShareCollection();
+      _getItemsFromShareCollection();
     setIsEditing(false);
   }, [isFocused]);
 
@@ -258,7 +251,10 @@ const SharedCollection = ({route, navigation}) => {
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeShareCollectionName()} />
+          <Button
+            title="변경하기"
+            onPress={() => _changeShareCollectionName()}
+          />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -319,14 +315,17 @@ const SharedCollection = ({route, navigation}) => {
                 {addFriendList}님이 담았어요!
               </SubTitle>
               {/* <ChatButton title={'채팅하기'} /> */}
-              <ChatButton title={'채팅하기'}    onPress={() => {
-                passData = {nickName, friendList, shareCollectionTitle};
-                navigation.navigate('ChatRoom', {
-                  passData: nickName,
-                  friendList,
-                  shareCollectionTitle,
-                });
-              }} />
+              <ChatButton
+                title={'채팅하기'}
+                onPress={() => {
+                  passData = {nickName, friendList, shareCollectionTitle};
+                  navigation.navigate('ChatRoom', {
+                    passData: nickName,
+                    friendList,
+                    shareCollectionTitle,
+                  });
+                }}
+              />
             </WrapRow>
           </Column>
         </Row>
