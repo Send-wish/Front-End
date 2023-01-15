@@ -9,6 +9,9 @@ import {Input, MySaying, OthersSaying} from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
 
 const Container = styled.View`
   flex: 1;
@@ -86,12 +89,68 @@ const SendIcon = styled.View`
   border-radius: 50px;
 `;
 
+const stompConfig = {
+  brokerURL: 'ws://localhost:8080/ws/chat',
+  debug: str => {
+    console.log('STMOP: ' + str);
+  },
+  onConnect: frame => {
+    console.log('connected');
+    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
+      console.log(JSON.parse(msg.body));
+    });
+  },
+  onStompError: frame => {
+    console.log('error occur' + frame.body);
+  },
+};
+let stompClient = null;
+
+const webSocket = roomId => {
+  console.log(roomId);
+  stompClient = new Client({
+    brokerURL: 'wss://api.sendwish.link:8081/ws',
+    connectHeaders: {},
+    webSocketFactory: () => {
+      return SockJS('https://api.sendwish.link:8081/ws');
+    },
+    debug: str => {
+      console.log('STOMP: ' + str);
+    },
+    onConnect: function (frame) {
+      console.log('connected');
+      stompClient.subscribe('/sub/chat/' + roomId, msg => {
+        console.log(JSON.parse(msg.body));
+      });
+      if (!stompClient.connected) {
+        return;
+      }
+      stompClient.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          roomId: roomId,
+          sender: 'hcs4125',
+          message: 'test',
+          type: 'TALK',
+        }),
+      });
+    },
+    onStompError: frame => {
+      console.log('error occur' + frame.body);
+    },
+  });
+  stompClient.activate();
+
+  return stompClient;
+};
+
+
 const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   console.log('params are', route.params);
-  const {friendsList, nickName, ShareCollectionTitle} = route.params;
-
+  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+    route.params;
 
   return (
     <Container insets={insets}>
