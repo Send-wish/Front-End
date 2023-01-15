@@ -30,6 +30,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {back} from 'react-native/Libraries/Animated/Easing';
 
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -87,8 +91,90 @@ const Navigation = props => {
     </Tab.Navigator>
   );
 };
+const stompConfig = {
+  brokerURL: 'ws://localhost:8080/ws/chat',
+  debug: str => {
+    console.log('STMOP: ' + str);
+  },
+  onConnect: frame => {
+    console.log('connected');
+    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
+      console.log(JSON.parse(msg.body));
+    });
+  },
+  onStompError: frame => {
+    console.log('error occur' + frame.body);
+  },
+};
+let stompClient = null;
+
+const webSocket = roomId => {
+  console.log(roomId);
+  stompClient = new Client({
+    brokerURL: 'wss://api.sendwish.link:8081/ws',
+    connectHeaders: {},
+    webSocketFactory: () => {
+      return SockJS('https://api.sendwish.link:8081/ws');
+    },
+    debug: str => {
+      console.log('STOMP: ' + str);
+    },
+    onConnect: function (frame) {
+      console.log('connected');
+      stompClient.subscribe('/sub/chat/' + roomId, msg => {
+        console.log(JSON.parse(msg.body));
+      });
+      if (!stompClient.connected) {
+        return;
+      }
+      stompClient.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          roomId: roomId,
+          sender: 'hcs4125',
+          message: 'test',
+          type: 'TALK',
+        }),
+      });
+    },
+    onStompError: frame => {
+      console.log('error occur' + frame.body);
+    },
+  });
+  stompClient.activate();
+
+  return stompClient;
+};
 
 const App = () => {
+  const nickname = 'hcs4125';
+  const chatRoomTitle = 'Test!';
+  const [roomId, setRoomId] = useState(0);
+
+  const createRoom = () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chat/room`, {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickname,
+          title: chatRoomTitle,
+        }),
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          webSocket(res.chatRoomId);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    createRoom();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>

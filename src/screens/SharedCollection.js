@@ -1,11 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Linking,
-} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Modal, Linking} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -25,6 +19,10 @@ import ChatRoom from './ChatRoom';
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
+
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
 
 const Container = styled.View`
   flex: 1;
@@ -107,24 +105,107 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
+const stompConfig = {
+  brokerURL: 'ws://localhost:8080/ws/chat',
+  debug: str => {
+    console.log('STMOP: ' + str);
+  },
+  onConnect: frame => {
+    console.log('connected');
+    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
+      console.log(JSON.parse(msg.body));
+    });
+  },
+  onStompError: frame => {
+    console.log('error occur' + frame.body);
+  },
+};
+let stompClient = null;
+
+const webSocket = roomId => {
+  console.log(roomId);
+  stompClient = new Client({
+    brokerURL: 'wss://api.sendwish.link:8081/ws',
+    connectHeaders: {},
+    webSocketFactory: () => {
+      return SockJS('https://api.sendwish.link:8081/ws');
+    },
+    debug: str => {
+      console.log('STOMP: ' + str);
+    },
+    onConnect: function (frame) {
+      console.log('connected');
+      stompClient.subscribe('/sub/chat/' + roomId, msg => {
+        console.log(JSON.parse(msg.body));
+      });
+      if (!stompClient.connected) {
+        return;
+      }
+      stompClient.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          roomId: roomId,
+          sender: 'hcs4125',
+          message: 'test',
+          type: 'TALK',
+        }),
+      });
+    },
+    onStompError: frame => {
+      console.log('error occur' + frame.body);
+    },
+  });
+  stompClient.activate();
+
+  return stompClient;
+};
+
 const SharedCollection = ({route, navigation}) => {
-  console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
-  const {shareCollectionId, shareCollectionName, nickName, addFriendList} = route.params;
+  console.log('***route.parmas are : ', route.params);
+  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+    route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [shareCollectionTitle, setShareCollectionTitle] = useState(shareCollectionName);
+  const [shareCollectionTitle, setShareCollectionTitle] =
+    useState(shareCollectionName);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  
   const [friendList, setFriendList] = useState(addFriendList);
+  const [roomId, setRoomId] = useState(0);
+
+  const createRoom = () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chat/room`, {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickName,
+          title: shareCollectionName,
+        }),
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          webSocket(res.chatRoomId);
+          setRoomId(res.chatRoomId);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  console.log('********roomId is ', roomId);
+
+  console.log('친구목록확인', addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
       // console.log('**********************Collection focused & re-rendered');
-    _getItemsFromShareCollection();
+      _getItemsFromShareCollection();
     setIsEditing(false);
   }, [isFocused]);
 
@@ -235,6 +316,14 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
+  const _pressChatButton = () => {
+    createRoom();
+    passData = {nickName, friendList, shareCollectionTitle};
+    navigation.navigate('ChatRoom', {
+      passData: shareCollectionId, shareCollectionName, nickName, addFriendList,
+    });
+  };
+
   return (
     <Container insets={insets}>
       <Modal
@@ -258,7 +347,10 @@ const SharedCollection = ({route, navigation}) => {
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeShareCollectionName()} />
+          <Button
+            title="변경하기"
+            onPress={() => _changeShareCollectionName()}
+          />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -318,15 +410,7 @@ const SharedCollection = ({route, navigation}) => {
                 {/* {nickName}님이 담았어요! */}
                 {addFriendList}님이 담았어요!
               </SubTitle>
-              {/* <ChatButton title={'채팅하기'} /> */}
-              <ChatButton title={'채팅하기'}    onPress={() => {
-                passData = {nickName, friendList, shareCollectionTitle};
-                navigation.navigate('ChatRoom', {
-                  passData: nickName,
-                  friendList,
-                  shareCollectionTitle,
-                });
-              }} />
+              <ChatButton title={'채팅하기'} onPress={_pressChatButton} />
             </WrapRow>
           </Column>
         </Row>

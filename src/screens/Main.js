@@ -437,7 +437,6 @@ const Main = ({navigation, route}) => {
       _deleteCollection(collectionId, nickName);
     }
   };
-
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
