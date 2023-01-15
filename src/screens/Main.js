@@ -132,13 +132,13 @@ const Main = ({navigation, route}) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('App has come to the foreground!');
+        // console.log('App has come to the foreground!');
       }
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
       _getItems();
-      console.log('AppState', appState.current);
+      // console.log('AppState', appState.current);
     });
   }, [appState]);
 
@@ -198,7 +198,7 @@ const Main = ({navigation, route}) => {
   // 컬렉션 생성
   const _madeCollection = async () => {
     console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
-    console.log('collectionName', collectionName); // 컬렉션 이름 확인
+    // console.log('collectionName', collectionName); // 컬렉션 이름 확인
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection', {
@@ -277,7 +277,7 @@ const Main = ({navigation, route}) => {
 
   // 아이템 추가 (Extension에서 공유된 URL)
   const _addItem = async () => {
-    console.log('addItem start!');
+    // console.log('addItem start!');
     if (sharedUrl === '' || sharedUrl === undefined || sharedUrl === null) {
       return;
     }
@@ -391,7 +391,7 @@ const Main = ({navigation, route}) => {
       tempArray.push(itemId);
       setAddToCollection(tempArray);
     }
-    console.log('****************addToCollection is : ', addToCollection);
+    // console.log('****************addToCollection is : ', addToCollection);
   };
 
   // 컬렌션에 아이템 추가
