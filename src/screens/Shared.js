@@ -15,7 +15,7 @@ import {
 } from '../components/Shared';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Modal} from 'react-native';
+import {Modal, AppState} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import SharedCollection from './SharedCollection';
@@ -204,6 +204,26 @@ const Shared = ({route, navigation}) => {
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
   const [targetCollectionId, setTargetCollectionId] = useState(0);
   const [roomId, setRoomId] = useState(0);
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  // 아이템 추가 자동 렌더링
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      _getItems();
+      console.log('AppState', appState.current);
+    });
+  }, [appState]);
 
   const createRoom = () => {
     try {
