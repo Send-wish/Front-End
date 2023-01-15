@@ -254,7 +254,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  // 개인 컬렉션 렌더링 
+  // 개인 컬렉션 렌더링
   const _getCollections = async () => {
     setLoading(true);
     try {
@@ -453,7 +453,6 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-
   const _pressTargetShareCollection = (
     shareCollectionId,
     nickName,
@@ -465,6 +464,7 @@ const Shared = ({route, navigation}) => {
       if (isEditing) {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
+        navigation.navigate('SharedCollection');
         navigation.navigate('SharedCollection', {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
@@ -520,26 +520,28 @@ const Shared = ({route, navigation}) => {
               <ModalInnerView>
                 <ScrollView horizontal style={{height: 100}}>
                   {/* 임시 */}
-                  {friends.map(friend => (
-                    <TempCircle
-                      key={friend?.friend_id}
-                      friendId={friend?.friend_id}
-                      frName={friend?.friend_nickname}
-                      imageStyle={{
-                        opacity: isFriendselected ? 1 : 0.5,
-                        position: 'absolute',
-                      }}
-                      titleStyle={{
-                        color: isFriendselected
-                          ? theme.subText
-                          : theme.basicText,
-                      }}
-                      onPress={() => {
-                        _addFriendList(friend?.friend_nickname);
-                      }}
-                      // isClicked={isFriendselected}
-                    />
-                  ))}
+                  {friends.error
+                    ? null
+                    : friends.map(friend => (
+                        <TempCircle
+                          key={friend?.friend_id}
+                          friendId={friend?.friend_id}
+                          frName={friend?.friend_nickname}
+                          imageStyle={{
+                            opacity: isFriendselected ? 1 : 0.5,
+                            position: 'absolute',
+                          }}
+                          titleStyle={{
+                            color: isFriendselected
+                              ? theme.subText
+                              : theme.basicText,
+                          }}
+                          onPress={() => {
+                            _addFriendList(friend?.friend_nickname);
+                          }}
+                          // isClicked={isFriendselected}
+                        />
+                      ))}
                 </ScrollView>
               </ModalInnerView>
               <ModalCollectionView>
@@ -556,9 +558,7 @@ const Shared = ({route, navigation}) => {
                           collectionTitle={collection?.title}
                           nickName={collection?.nickname}
                           onPress={() =>
-                            _pressTargetCollection(
-                              collection?.collectionId,
-                            )
+                            _pressTargetCollection(collection?.collectionId)
                           }
                           onLongPress={() => {
                             _longPressCollection();
