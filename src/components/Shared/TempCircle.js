@@ -54,8 +54,6 @@ const TempCircle = ({
     onPress();
   };
 
-  console.log('공유 컬렉션 친구선택 ', isClicked);
-
   const [isClicked, setIsClicked] = useState(false);
 
   return (

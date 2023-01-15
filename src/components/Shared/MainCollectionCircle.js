@@ -99,7 +99,7 @@ const MainCollectionCircle = ({
             return;
           }
           setItems(data.dtos);
-          console.log(items);
+          // console.log(items); 
         })
         .then(_setImageUrl);
     } catch (e) {
