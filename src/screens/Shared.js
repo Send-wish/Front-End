@@ -20,9 +20,6 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import SharedCollection from './SharedCollection';
 import {useIsFocused} from '@react-navigation/native';
-import SockJS from 'sockjs-client';
-import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
 
 const Container = styled.View`
   flex: 1;
@@ -147,7 +144,7 @@ const Shared = ({route, navigation}) => {
   // 개인컬렉션
   const [collections, setCollections] = useState([]); // 컬렉션 목록
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
-  const [targetCollectionId, setTargetCollectionId] = useState(0);
+  const [targetCollectionId, setTargetCollectionId] = useState();
   const [roomId, setRoomId] = useState(0);
 
   const appState = useRef(AppState.currentState);
@@ -183,7 +180,9 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    console.log('************nickName is', nickName); // 로그인 화면에서 받아온 닉네임 확인
+    console.log('************nickName is', nickName);
+    console.log('************nickName is', addFriendList);
+
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -203,7 +202,7 @@ const Shared = ({route, navigation}) => {
         })
         // .then(json => console.log(json))
         .then(data => {
-          // console.log('공유 컬렉션 생성:', data);
+          console.log('*********공유 컬렉션 생성:', data);
         })
         .then(() => _getShareCollections());
     } catch (e) {
@@ -282,7 +281,7 @@ const Shared = ({route, navigation}) => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {'Content-Type': 'application/json'},
       })
         .then(res => {
           return res.json();

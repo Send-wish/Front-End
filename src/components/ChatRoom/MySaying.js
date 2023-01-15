@@ -80,20 +80,16 @@ const EmptyPart = styled.View`
   width: 25%;
 `;
 
-const MySaying = ({}) => {
+const MySaying = ({sender, createAt, message}) => {
   return (
     <Container>
       <PartContainer>
         <EmptyPart />
         <SayingPart>
-          <Name>벌크섭</Name>
-          <Time>23:07</Time>
+          <Name>{sender}</Name>
+          <Time>{createAt}</Time>
           <SayingBalloon>
-            <Saying>
-              내가 할말sagsag absolutea absolutea
-              absoluteaasfafㄴㅁㅇㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㅁㄴㅎㅁㄴaaㄴㄴㅁㅇㅎㅁㄴㅎㄴㅁㅎㅁㄴㅎㄴㅁㅎㅁㅎㅁ
-              asgasgasg asgasgasg sagsagsag sagsagasgas
-            </Saying>
+            <Saying>{message}</Saying>
           </SayingBalloon>
         </SayingPart>
         <ProfilePart>

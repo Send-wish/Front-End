@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView, Linking, Text} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Linking,
+  Text,
+  TouchableHighlight,
+  FlatList,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
@@ -24,9 +31,9 @@ const Container = styled.View`
 `;
 
 const UpperContainer = styled.View`
-  flex : 0.8
-  width: 100%
-  align-items : flex-start;
+  flex: 0.8;
+  width: 100%;
+  align-items: flex-start;
   justify-content: space-between;
   flex-direction: row;
   padding-left: 10px;
@@ -35,7 +42,7 @@ const UpperContainer = styled.View`
 
 const CollectionContainer = styled.View`
   flex: 1.7;
-  width : 92%;
+  width: 92%;
   align-items: center;
   justify-content: space-between;
   padding-top: 10px;
@@ -107,71 +114,95 @@ const LineIcon = styled.View`
   margin-top: 5px;
 `;
 
-const stompConfig = {
-  brokerURL: 'ws://localhost:8080/ws/chat',
-  debug: str => {
-    console.log('STMOP: ' + str);
-  },
-  onConnect: frame => {
-    console.log('connected');
-    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
-      console.log(JSON.parse(msg.body));
-    });
-  },
-  onStompError: frame => {
-    console.log('error occur' + frame.body);
-  },
-};
-let stompClient = null;
-
-const webSocket = roomId => {
-  console.log(roomId);
-  stompClient = new Client({
-    brokerURL: 'wss://api.sendwish.link:8081/ws',
-    connectHeaders: {},
-    webSocketFactory: () => {
-      return SockJS('https://api.sendwish.link:8081/ws');
-    },
-    debug: str => {
-      console.log('STOMP: ' + str);
-    },
-    onConnect: function (frame) {
-      console.log('connected');
-      stompClient.subscribe('/sub/chat/' + roomId, msg => {
-        console.log(JSON.parse(msg.body));
-      });
-      if (!stompClient.connected) {
-        return;
-      }
-      stompClient.publish({
-        destination: '/pub/chat',
-        body: JSON.stringify({
-          roomId: roomId,
-          sender: 'hcs4125',
-          message: 'test',
-          type: 'TALK',
-        }),
-      });
-    },
-    onStompError: frame => {
-      console.log('error occur' + frame.body);
-    },
-  });
-  stompClient.activate();
-
-  return stompClient;
+const Item = ({item: {chatRoomId, createAt, message, sender}}) => {
+  console.log(message);
+  return <MySaying sender={sender} message={message} createAt={createAt} />;
 };
 
 const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
-  console.log('params are', route.params);
-  const {friendList, nickName, shareCollectionId, shareCollectionTitle} =
-    route.params;
+  const {
+    friendList,
+    nickName,
+    shareCollectionId,
+    shareCollectionTitle,
+    chatRoomId,
+  } = route.params;
 
+  console.log('friendList is : ', friendList);
+
+  const client = useRef({});
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+  const [message, setMessage] = useState('');
+  const [chatList, setChatList] = useState([]);
+
+  const _connect = roomId => {
+    client.current = new Client({
+      brokerURL: 'wss://api.sendwish.link:8081/ws',
+      connectHeaders: {},
+      webSocketFactory: () => {
+        return SockJS('https://api.sendwish.link:8081/ws');
+      },
+      debug: str => {
+        console.log('STOMP: ' + str);
+      },
+      onConnect: () => {
+        _subscribe(roomId);
+      },
+      onStompError: frame => {
+        console.log('error occur' + frame.body);
+      },
+    });
+    client.current.activate();
+  };
+
+  const _disconnect = () => {
+    console.log('here is disconnect!');
+    client.current.deactivate();
+  };
+
+  const _subscribe = roomId => {
+    console.log('connected!');
+    client.current.subscribe('/sub/chat/' + roomId, msg => {
+      //msg.body 정보를 사용한다!!
+      console.log(JSON.parse(msg.body));
+      tempArray = chatList;
+      tempArray.push(msg.body);
+      setChatList(tempArray);
+    });
+    client.current.publish({
+      destination: '/pub/chat',
+      body: JSON.stringify({
+        roomId: roomId,
+        sender: nickName,
+        message: '',
+        type: 'ENTER',
+      }),
+    });
+  };
+
+  const _publish = roomId => {
+    console.log('here is publish');
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/chat',
+      body: JSON.stringify({
+        roomId: roomId,
+        sender: nickName,
+        message: message,
+        type: 'TALK',
+      }),
+    });
+  };
+
+  useEffect(() => {
+    _connect(chatRoomId);
+  }, []);
 
   const _openUrl = url => {
     Linking.openURL(url);
@@ -182,13 +213,10 @@ const ChatRoom = ({navigation, route}) => {
     setIsEditing(false);
   }, [isFocused]);
 
-  console.log(
-    'check!!',
-    friendList,
-    nickName,
-    shareCollectionId,
-    shareCollectionTitle,
-  );
+  _pressEnter = () => {
+    _publish(chatRoomId);
+    setMessage('');
+  };
 
   // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
@@ -234,7 +262,7 @@ const ChatRoom = ({navigation, route}) => {
           }}>
           <MainTitle>{shareCollectionTitle}</MainTitle>
           <MainTitle style={{color: theme.basicText, fontSize: 15}}>
-            ({friendList.map(friend => ' ' + friend + ' ')})
+            {/* ({friendList.map(friend => ' ' + friend + ' ')}) */}
           </MainTitle>
         </View>
         <Feather
@@ -289,19 +317,26 @@ const ChatRoom = ({navigation, route}) => {
       <MiddleContainer>
         <MySaying />
         <OthersSaying />
+        <FlatList
+          data={chatList}
+          renderItem={({item}) => <Item item={item} />}
+          keyExtractor={item => item['createAt'].toString()}
+        />
       </MiddleContainer>
       <BottomContainer>
         <InputContainer>
-          <Input />
-          <SendIcon>
-            <Feather
-              name="arrow-up"
-              size={30}
-              style={{
-                color: theme.mainBackground,
-              }}
-            />
-          </SendIcon>
+          <Input onChangeText={text => setMessage(text)} value={message} />
+          <TouchableHighlight onPress={() => _pressEnter()}>
+            <SendIcon>
+              <Feather
+                name="arrow-up"
+                size={30}
+                style={{
+                  color: theme.mainBackground,
+                }}
+              />
+            </SendIcon>
+          </TouchableHighlight>
         </InputContainer>
       </BottomContainer>
     </Container>
