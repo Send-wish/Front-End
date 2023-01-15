@@ -147,7 +147,7 @@ const Shared = ({route, navigation}) => {
   // 개인컬렉션
   const [collections, setCollections] = useState([]); // 컬렉션 목록
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
-  const [targetCollectionId, setTargetCollectionId] = useState(0);
+  const [targetCollectionId, setTargetCollectionId] = useState();
   const [roomId, setRoomId] = useState(0);
 
   const appState = useRef(AppState.currentState);
@@ -397,9 +397,10 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성시 추가할 개인 컬렉션
   const _pressTargetCollection = collectionId => {
+    
+    setIsCollectionSelected(!isCollectionSelected);
     setTargetCollectionId(collectionId);
-    setIsCollectionSelected(true);
-    // console.log('target collection id', collectionId);
+    console.log('targetCollectionId', targetCollectionId);
   };
 
   // 아이템 개별 링크
@@ -584,8 +585,10 @@ const Shared = ({route, navigation}) => {
                             _longPressCollection();
                           }}
                           imgUrl={collection?.defaultImage}
-                          // isCollectionEditing={isCollectionSelected}
-                          // isEditing={isEditing}
+
+                          isCollectionEditing={isCollectionSelected}
+                          isEditing={isEditing}
+
                         />
                       ))}
                 </ScrollView>

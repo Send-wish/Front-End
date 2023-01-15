@@ -83,30 +83,32 @@ const MainCollectionCircle = ({
   //   _setImageUrl();
   // }, [items]);
 
-  // const _getItemsFromCollection = async () => {
-  //   try {
-  //     fetch(
-  //       `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-  //       {
-  //         method: 'GET',
-  //         headers: {'Content-Type': 'application/json'},
-  //       },
-  //     )
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(data => {
-  //         if (!data.nickname) {
-  //           return;
-  //         }
-  //         setItems(data.dtos);
-  //         console.log(items);
-  //       })
-  //       .then(_setImageUrl);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+
+  const _getItemsFromCollection = async () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if (!data.nickname) {
+            return;
+          }
+          setItems(data.dtos);
+          // console.log(items); 
+        })
+        .then(_setImageUrl);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
 
   // const _setImageUrl = () => {
   //   if (items.length > 0) {

@@ -37,7 +37,7 @@ for (let i = 0; i < 20; i++) {
 }
 
 const Item = ({item: {id, title, description, createdAt}, onPress}) => {
-  console.log(id);
+  // console.log(id);
   return <ListFriend friendName={title} />;
 };
 
@@ -180,7 +180,7 @@ const Chat = props => {
         })
         .then(data => {
           setFriends(data);
-          console.log('get friends', data);
+          // console.log('get friends', data);
         });
     } catch (e) {
       console.log(e);
@@ -200,7 +200,7 @@ const Chat = props => {
           friendNickname: frName,
         }),
       }).then(response => {
-        console.log('errorcheck!!response: ', response);
+        // console.log('errorcheck!!response: ', response);
         if (!response.ok) {
           // throw new Error(`${response.status} 에러발생`);
           throw new Error('등록되지 않은 친구입니다 :)');
