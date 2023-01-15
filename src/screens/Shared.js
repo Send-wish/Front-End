@@ -123,61 +123,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const stompConfig = {
-  brokerURL: 'ws://localhost:8080/ws/chat',
-  debug: str => {
-    console.log('STMOP: ' + str);
-  },
-  onConnect: frame => {
-    console.log('connected');
-    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
-      console.log(JSON.parse(msg.body));
-    });
-  },
-  onStompError: frame => {
-    console.log('error occur' + frame.body);
-  },
-};
-let stompClient = null;
-
-const webSocket = roomId => {
-  console.log(roomId);
-  stompClient = new Client({
-    brokerURL: 'wss://api.sendwish.link:8081/ws',
-    connectHeaders: {},
-    webSocketFactory: () => {
-      return SockJS('https://api.sendwish.link:8081/ws');
-    },
-    debug: str => {
-      console.log('STOMP: ' + str);
-    },
-    onConnect: function (frame) {
-      console.log('connected');
-      stompClient.subscribe('/sub/chat/' + roomId, msg => {
-        console.log(JSON.parse(msg.body));
-      });
-      if (!stompClient.connected) {
-        return;
-      }
-      stompClient.publish({
-        destination: '/pub/chat',
-        body: JSON.stringify({
-          roomId: roomId,
-          sender: 'hcs4125',
-          message: 'test',
-          type: 'TALK',
-        }),
-      });
-    },
-    onStompError: frame => {
-      console.log('error occur' + frame.body);
-    },
-  });
-  stompClient.activate();
-
-  return stompClient;
-};
-
 const Shared = ({route, navigation}) => {
   // Tab navigator route params check
   const nickName = route.params.params.nickName;
@@ -225,33 +170,6 @@ const Shared = ({route, navigation}) => {
     });
   }, [appState]);
 
-  const createRoom = () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/chat/room`, {
-        method: 'POST',
-        headers: {'Content-Type': `application/json`},
-        body: JSON.stringify({
-          nickname: nickname,
-          title: chatRoomTitle,
-        }),
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(res => {
-          webSocket(res.chatRoomId);
-          setRoomId(res.chatRoomId);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  useEffect(() => {
-    createRoom();
-  }, []);
-
-  console.log('********roomId is ', roomId);
-
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
@@ -265,8 +183,7 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
-    console.log('shareCollectionName', shareCollectionName); // 공유 컬렉션 이름 확인
+    console.log('************nickName is', nickName); // 로그인 화면에서 받아온 닉네임 확인
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -300,7 +217,7 @@ const Shared = ({route, navigation}) => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {'Content-Type': 'application/json'},
         // body: JSON.stringify({
         //   nickName: nickName,
         // }),
@@ -310,7 +227,7 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setShareCollections(data);
-          // console.log('get share collections', data);
+          console.log('get share collections', data);
           setLoading(false);
         })
         .catch(error => {
@@ -569,7 +486,6 @@ const Shared = ({route, navigation}) => {
       if (isEditing) {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
-        // navigation.navigate('SharedCollection');
         navigation.navigate('SharedCollection', {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
@@ -741,6 +657,7 @@ const Shared = ({route, navigation}) => {
                         }}
                         isShareCollectionEditing={isShareCollectionEditing}
                         isEditing={isEditing}
+                        imgUrl = {shareCollection?.defaultImage}
                       />
                     ))}
 
