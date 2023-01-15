@@ -106,14 +106,14 @@ const stompConfig = {
   },
 };
 let stompClient = null;
-let roomId = 1;
 
-const webSocket = () => {
+const webSocket = roomId => {
+  console.log(roomId);
   stompClient = new Client({
-    brokerURL: 'ws://localhost:8080/ws',
+    brokerURL: 'wss://api.sendwish.link:8081/ws',
     connectHeaders: {},
     webSocketFactory: () => {
-      return SockJS('http://localhost:8080/ws');
+      return SockJS('https://api.sendwish.link:8081/ws');
     },
     debug: str => {
       console.log('STOMP: ' + str);
@@ -129,10 +129,10 @@ const webSocket = () => {
       stompClient.publish({
         destination: '/pub/chat',
         body: JSON.stringify({
-          roomId: 1,
+          roomId: roomId,
           sender: 'hcs4125',
-          message: '',
-          type: 'ENTER',
+          message: 'test',
+          type: 'TALK',
         }),
       });
     },
@@ -144,9 +144,34 @@ const webSocket = () => {
 
   return stompClient;
 };
+
 const App = () => {
+  const nickname = 'hcs4125';
+  const chatRoomTitle = 'Test!';
+  const [roomId, setRoomId] = useState(0);
+
+  const createRoom = () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chat/room`, {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickname,
+          title: chatRoomTitle,
+        }),
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          webSocket(res.chatRoomId);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
-    webSocket();
+    createRoom();
   }, []);
 
   return (
