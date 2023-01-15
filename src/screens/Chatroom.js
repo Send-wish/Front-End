@@ -144,13 +144,13 @@ const webSocket = roomId => {
   return stompClient;
 };
 
-
 const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   console.log('params are', route.params);
-  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+  const {shareCollectionId, shareCollectionName, nickName, friendList} =
     route.params;
+    /* console.log('공유 컬렉션별 친구 목록',friendList) */
 
   return (
     <Container insets={insets}>
