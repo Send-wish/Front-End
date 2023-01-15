@@ -400,6 +400,9 @@ const Shared = ({route, navigation}) => {
     
     setIsCollectionSelected(!isCollectionSelected);
     setTargetCollectionId(collectionId);
+    if (isCollectionSelected &&targetCollectionId === targetCollectionId){
+    setTargetCollectionId();
+    }
     console.log('targetCollectionId', targetCollectionId);
   };
 
@@ -571,9 +574,9 @@ const Shared = ({route, navigation}) => {
                     ? null
                     : collections.map(collection => (
                         <MainCollectionCircle
-                          // titleStyle={{
-                          //   color: isEditing ? theme.subText : theme.basicText,
-                          // }}
+                          titleStyle={{
+                            color: isEditing ? theme.subText : theme.basicText,
+                          }}
                           key={collection?.collectionId}
                           collectionId={collection?.collectionId}
                           collectionTitle={collection?.title}
@@ -586,7 +589,7 @@ const Shared = ({route, navigation}) => {
                           }}
                           imgUrl={collection?.defaultImage}
 
-                          isCollectionEditing={isCollectionSelected}
+                          // isCollectionEditing={isCollectionSelected}
                           isEditing={isEditing}
 
                         />
