@@ -20,7 +20,7 @@ import {
   ChatButton,
 } from '../components/Shared';
 
-import ChatRoom from './Chatroom';
+import ChatRoom from './ChatRoom';
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
