@@ -68,6 +68,7 @@ const MainCollectionCircle = ({
   isCollectionEditing,
   isEditing,
   imgUrl
+
 }) => {
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');

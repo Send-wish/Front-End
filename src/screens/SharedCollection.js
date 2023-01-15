@@ -105,60 +105,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const stompConfig = {
-  brokerURL: 'ws://localhost:8080/ws/chat',
-  debug: str => {
-    // console.log('STMOP: ' + str);
-  },
-  onConnect: frame => {
-    console.log('connected');
-    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
-      console.log(JSON.parse(msg.body));
-    });
-  },
-  onStompError: frame => {
-    // console.log('error occur' + frame.body);
-  },
-};
-let stompClient = null;
-
-const webSocket = roomId => {
-  // console.log(roomId);
-  stompClient = new Client({
-    brokerURL: 'wss://api.sendwish.link:8081/ws',
-    connectHeaders: {},
-    webSocketFactory: () => {
-      return SockJS('https://api.sendwish.link:8081/ws');
-    },
-    debug: str => {
-      // console.log('STOMP: ' + str);
-    },
-    onConnect: function (frame) {
-      // console.log('connected');
-      stompClient.subscribe('/sub/chat/' + roomId, msg => {
-        // console.log(JSON.parse(msg.body));
-      });
-      if (!stompClient.connected) {
-        return;
-      }
-      stompClient.publish({
-        destination: '/pub/chat',
-        body: JSON.stringify({
-          roomId: roomId,
-          sender: 'hcs4125',
-          message: 'test',
-          type: 'TALK',
-        }),
-      });
-    },
-    onStompError: frame => {
-      // console.log('error occur' + frame.body);
-    },
-  });
-  stompClient.activate();
-
-  return stompClient;
-};
 
 const SharedCollection = ({route, navigation}) => {
   // console.log('***route.parmas are : ', route.params);
@@ -202,10 +148,12 @@ const SharedCollection = ({route, navigation}) => {
     _getFriends();
   }, [isFocused]);
 
+      
+
+
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
-      // console.log('**********************Collection focused & re-rendered');
       _getItemsFromShareCollection();
     setIsEditing(false);
     // _getFriends();
@@ -255,7 +203,6 @@ const SharedCollection = ({route, navigation}) => {
       tempArray.push(itemId);
       setDeleteList(tempArray);
     }
-    // console.log('****************deleteList is : ', deleteList);
   };
 
   // 공유컬렉션 아이템 렌더링
@@ -319,7 +266,6 @@ const SharedCollection = ({route, navigation}) => {
   };
 
   const _pressChatButton = () => {
-    console.log(shareCollectionId, shareCollectionTitle, nickName, friendList)
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,

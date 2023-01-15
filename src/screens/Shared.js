@@ -160,13 +160,13 @@ const Shared = ({route, navigation}) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('App has come to the foreground!');
+        // console.log('App has come to the foreground!');
       }
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
       _getItems();
-      console.log('AppState', appState.current);
+      // console.log('AppState', appState.current);
     });
   }, [appState]);
 
@@ -183,7 +183,6 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    console.log('************nickName is', nickName); // 로그인 화면에서 받아온 닉네임 확인
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -465,6 +464,7 @@ const Shared = ({route, navigation}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
+        _getShareCollections();
         return response.json();
       });
       // .then(data => {
@@ -583,7 +583,7 @@ const Shared = ({route, navigation}) => {
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          imgUrl={collection?.defaultImage}
+                          // imgUrl={collection?.defaultImage}
                           // isCollectionEditing={isCollectionSelected}
                           // isEditing={isEditing}
                         />
@@ -633,7 +633,7 @@ const Shared = ({route, navigation}) => {
                 {shareCollections.error
                   ? null
                   : shareCollections.map(shareCollection => (
-                      <CollectionCircle
+                    <CollectionCircle
                         imageStyle={{
                           opacity: isEditing ? 0.5 : 1,
                           position: 'absolute',
@@ -644,7 +644,7 @@ const Shared = ({route, navigation}) => {
                         key={shareCollection?.collectionId}
                         shareCollectionId={shareCollection?.collectionId}
                         shareCollectionName={shareCollection?.title}
-                        nickName={shareCollectionName?.nickname}
+                        nickName={shareCollection?.nickname}
                         onPress={() =>
                           _pressTargetShareCollection(
                             shareCollection?.collectionId,
@@ -658,7 +658,7 @@ const Shared = ({route, navigation}) => {
                         isShareCollectionEditing={isShareCollectionEditing}
                         isEditing={isEditing}
                         imgUrl = {shareCollection?.defaultImage}
-                      />
+
                     ))}
 
                 <Ionicons
