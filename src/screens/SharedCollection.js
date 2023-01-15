@@ -108,8 +108,8 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const SharedCollection = ({route, navigation}) => {
   // console.log('***route.parmas are : ', route.params);
-  const {shareCollectionId, shareCollectionName, nickName} =
-    route.params;
+  const {shareCollectionId, shareCollectionName, nickName} = route.params;
+  console.log('shareCollectionId is :', shareCollectionId);
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [shareCollectionTitle, setShareCollectionTitle] =
@@ -123,30 +123,33 @@ const SharedCollection = ({route, navigation}) => {
 
   const _getFriends = async () => {
     try {
-        // API 아직 안열림
-        fetch(`https://api.sendwish.link:8081/collection/shared/${shareCollectionId}`, {
-        method: 'GET',
-        headers: {'Content-Type': `application/json`},
-        })
+      // API 아직 안열림
+      fetch(
+        `https://api.sendwish.link:8081/collection/shared/${shareCollectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': `application/json`},
+        },
+      )
         .then(response => {
-            // console.log('공유 컬렉션별 친구 목록 불러오기error: ', response);
-            return response.json();
+          // console.log('공유 컬렉션별 친구 목록 불러오기error: ', response);
+          return response.json();
         })
         .then(data => {
-            setFriendList(data.memberList);
-            // console.log('공유컬렉션별 친구 목록 확인', data);
-            console.log('공유컬렉션별 친구 목록!', friendList);
+          setFriendList(data.memberList);
+          // console.log('공유컬렉션별 친구 목록 확인', data);
+          console.log('공유컬렉션별 친구 목록!', friendList);
         });
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
-}
+  };
   useEffect(() => {
-  _getFriends();
+    _getFriends();
   }, [isFocused]);
 
+      
 
-  // console.log('친구목록확인', addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
@@ -263,9 +266,11 @@ const SharedCollection = ({route, navigation}) => {
   };
 
   const _pressChatButton = () => {
-    passData = {nickName, friendList, shareCollectionTitle};
     navigation.navigate('ChatRoom', {
-      passData: shareCollectionId, shareCollectionName, nickName, friendList,
+      shareCollectionId,
+      shareCollectionTitle,
+      nickName,
+      friendList,
     });
   };
 

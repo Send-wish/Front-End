@@ -5,7 +5,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
-import {Input, MySaying, OthersSaying} from '../components/ChatRoom';
+import {Input, MySaying, OthersSaying, ItemBox} from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
@@ -19,23 +19,39 @@ const Container = styled.View`
   padding-top: ${({insets: {top}}) => top}px;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  width: 100%;
 `;
 
 const UpperContainer = styled.View`
-  flex : 1
-  align-items:center;
+  flex : 0.8
+  width: 100%
+  align-items : flex-start;
   justify-content: space-between;
   flex-direction: row;
   padding-left: 10px;
   padding-right: 10px;
-  z-index: 10
+`;
+
+const CollectionContainer = styled.View`
+  flex: 1.7;
+  width : 92%;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  z-index: 10;
+  background-color: ${({theme}) => theme.lightBackground};
+  margin-left: 5px;
+  margin-right: 5px;
+  border-radius: 25px;
 `;
 
 const MiddleContainer = styled.View`
   flex: 7;
-  width: 100%;
   background-color: ${({theme}) => theme.mainBackground};
   flex-wrap: wrap;
+  width: 100%;
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
@@ -44,7 +60,6 @@ const MiddleContainer = styled.View`
 
 const BottomContainer = styled.View`
   flex: 1;
-  width: 100%;
   padding-top: 10px;
   padding-bottom: 1px;
   padding-left: 10px;
@@ -52,14 +67,7 @@ const BottomContainer = styled.View`
   background-color: ${({theme}) => theme.strongBackground};
   flex-wrap: wrap;
   align-items: center;
-`;
-
-const Temp = styled.View`
-  height: 93%;
-  width : 100%
-  background-color: ${({theme}) => theme.strongBackground};
-  flex-wrap: wrap;
-  align-items: center;
+  width: 100%;
 `;
 
 const MainTitle = styled.Text`
@@ -76,8 +84,8 @@ const InputContainer = styled.View`
   padding-left: 10px;
   padding-right: 6px;
   border-radius: 50px;
-  height: 60%;
   width: 100%;
+  height: 60%;
 `;
 
 const SendIcon = styled.View`
@@ -87,6 +95,16 @@ const SendIcon = styled.View`
   align-items: center;
   justify-content: center;
   border-radius: 50px;
+`;
+
+const LineIcon = styled.View`
+  justify-content: center;
+  align-items: center;
+  height: 3%;
+  width: 15%;
+  background-color: ${({theme}) => theme.strongBackground};
+  border-radius: 20px;
+  margin-top: 5px;
 `;
 
 const stompConfig = {
@@ -148,21 +166,76 @@ const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   console.log('params are', route.params);
-  const {shareCollectionId, shareCollectionName, nickName, friendList} =
+  const {friendList, nickName, shareCollectionId, shareCollectionTitle} =
     route.params;
-    /* console.log('공유 컬렉션별 친구 목록',friendList) */
+
+  const [items, setItems] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+
+  const _openUrl = url => {
+    Linking.openURL(url);
+  };
+
+  useEffect(() => {
+    if (isFocused) _getItemsFromShareCollection();
+    setIsEditing(false);
+  }, [isFocused]);
+
+  console.log(
+    'check!!',
+    friendList,
+    nickName,
+    shareCollectionId,
+    shareCollectionTitle,
+  );
+
+  // 공유컬렉션 아이템 렌더링
+  const _getItemsFromShareCollection = () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          data.dtos ? setItems(data.dtos) : setItems([]);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container insets={insets}>
       <UpperContainer>
-        <Ionic name="chevron-back" size={25} color={theme.basicText} />
+        <Ionic
+          name="chevron-back"
+          size={25}
+          color={theme.basicText}
+          onPress={() =>
+            navigation.navigate('SharedCollection', {
+              shareCollectionId: shareCollectionId,
+              nickName: nickName,
+              shareCollectionName: shareCollectionTitle,
+            })
+          }
+        />
         <View
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            width: '40%',
+            width: '70%',
           }}>
-          <MainTitle>bulksup</MainTitle>
+          <MainTitle>{shareCollectionTitle}</MainTitle>
+          <MainTitle style={{color: theme.basicText, fontSize: 15}}>
+            ({friendList.map(friend => ' ' + friend + ' ')})
+          </MainTitle>
         </View>
         <Feather
           name="menu"
@@ -172,26 +245,65 @@ const ChatRoom = ({navigation, route}) => {
           }}
         />
       </UpperContainer>
-      <Temp>
-        <MiddleContainer>
-          <MySaying />
-          <OthersSaying />
-        </MiddleContainer>
-        <BottomContainer>
-          <InputContainer>
-            <Input />
-            <SendIcon>
-              <Feather
-                name="arrow-up"
-                size={30}
-                style={{
-                  color: theme.mainBackground,
-                }}
-              />
-            </SendIcon>
-          </InputContainer>
-        </BottomContainer>
-      </Temp>
+      <CollectionContainer>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{width: '95%'}}>
+          {items.error
+            ? null
+            : items.map(item => (
+                <ItemBox
+                  imageStyle={{
+                    opacity: isEditing ? 0.1 : 1,
+                  }}
+                  titleStyle={{
+                    color: isEditing ? theme.subText : theme.strongText,
+                  }}
+                  priceStyle={{
+                    color: isEditing
+                      ? theme.tintcolorPalepink
+                      : theme.tintColorPink,
+                  }}
+                  key={item?.itemId}
+                  saleRate="가격"
+                  itemName={item?.name}
+                  itemPrice={new String(item?.price).replace(
+                    /\B(?=(\d{3})+(?!\d))/g,
+                    ',',
+                  )}
+                  itemImage={item?.imgUrl}
+                  itemId={item?.itemId}
+                  onPress={() => {
+                    isEditing
+                      ? _addItemToList(item?.itemId)
+                      : _openUrl(item?.originUrl);
+                  }}
+                  onLongPress={{}}
+                  isEditing={isEditing}
+                />
+              ))}
+        </ScrollView>
+        <LineIcon />
+      </CollectionContainer>
+      <MiddleContainer>
+        <MySaying />
+        <OthersSaying />
+      </MiddleContainer>
+      <BottomContainer>
+        <InputContainer>
+          <Input />
+          <SendIcon>
+            <Feather
+              name="arrow-up"
+              size={30}
+              style={{
+                color: theme.mainBackground,
+              }}
+            />
+          </SendIcon>
+        </InputContainer>
+      </BottomContainer>
     </Container>
   );
 };

@@ -67,64 +67,65 @@ const MainCollectionCircle = ({
   onLongPress,
   isCollectionEditing,
   isEditing,
-  imgUrl,
+  imgUrl
+
 }) => {
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
 
-  useEffect(() => {
-    if (isFocused) console.log('Focused');
-    _getItemsFromCollection();
-  }, [isFocused]);
+  // useEffect(() => {
+  //   if (isFocused) console.log('Focused');
+  //   _getItemsFromCollection();
+  // }, [isFocused]);
 
-  useEffect(() => {
-    _setImageUrl();
-  }, [items]);
+  // useEffect(() => {
+  //   _setImageUrl();
+  // }, [items]);
 
-  const _getItemsFromCollection = async () => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          if (!data.nickname) {
-            return;
-          }
-          setItems(data.dtos);
-          console.log(items);
-        })
-        .then(_setImageUrl);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const _getItemsFromCollection = async () => {
+  //   try {
+  //     fetch(
+  //       `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {'Content-Type': 'application/json'},
+  //       },
+  //     )
+  //       .then(res => {
+  //         return res.json();
+  //       })
+  //       .then(data => {
+  //         if (!data.nickname) {
+  //           return;
+  //         }
+  //         setItems(data.dtos);
+  //         console.log(items);
+  //       })
+  //       .then(_setImageUrl);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
-  const _setImageUrl = () => {
-    if (items.length > 0) {
-      setImageUrl(items[0].imgUrl);
-    }
-  };
+  // const _setImageUrl = () => {
+  //   if (items.length > 0) {
+  //     setImageUrl(items[0].imgUrl);
+  //   }
+  // };
 
-  const _onPress = async () => {
-    onPress();
-    _getItemsFromCollection();
-    setIsSelected(!isSelected);
-    _setImageUrl();
-  };
+  // const _onPress = async () => {
+  //   onPress();
+  //   _getItemsFromCollection();
+  //   setIsSelected(!isSelected);
+  //   _setImageUrl();
+  // };
 
   const [isSelected, setIsSelected] = useState(false);
 
   return (
     <Container>
-      <TouchableHighlight onPress={_onPress} onLongPress={onLongPress}>
+      <TouchableHighlight onPress={onPress} onLongPress={onLongPress}>
         <View>
           <CollectionView>
           <CollectionImage

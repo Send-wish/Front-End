@@ -11,7 +11,7 @@ import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
-  margin-top: 16px;
+  margin-top: 10px;
   padding: 10px;
   width: 95px;
   height: 100px;
