@@ -11,7 +11,7 @@ const StyledInput = styled.TextInput.attrs(({theme}) => ({
   placeholderTextColor: theme.placeholder,
 }))`
   color: ${({theme}) => theme.basicText};
-  padding: 18px 10px;
+  padding: 0;
   font-size: 19px;
   border-left-width: 0;
   border-right-width: 0;

@@ -20,10 +20,6 @@ import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 
-import SockJS from 'sockjs-client';
-import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
-
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -105,7 +101,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-
 const SharedCollection = ({route, navigation}) => {
   // console.log('***route.parmas are : ', route.params);
   const {shareCollectionId, shareCollectionName, nickName} = route.params;
@@ -119,7 +114,7 @@ const SharedCollection = ({route, navigation}) => {
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [friendList, setFriendList] = useState([]);
-  const [roomId, setRoomId] = useState(0);
+  const [chatRoomId, setChatRoomId] = useState(0);
 
   const _getFriends = async () => {
     try {
@@ -136,9 +131,9 @@ const SharedCollection = ({route, navigation}) => {
           return response.json();
         })
         .then(data => {
+          console.log('******** get data!!!! : ', data);
           setFriendList(data.memberList);
           // console.log('공유컬렉션별 친구 목록 확인', data);
-          console.log('공유컬렉션별 친구 목록!', friendList);
         });
     } catch (e) {
       console.log(e);
@@ -148,13 +143,11 @@ const SharedCollection = ({route, navigation}) => {
     _getFriends();
   }, [isFocused]);
 
-      
-
+  console.log('공유컬렉션별 친구 목록!', friendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused)
-      _getItemsFromShareCollection();
+    if (isFocused) _getItemsFromShareCollection();
     setIsEditing(false);
     // _getFriends();
   }, [isFocused]);
@@ -265,12 +258,36 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
+  // 공유컬렉션 아이템 렌더링
+  const _getChatRoomId = () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/roomId/${shareCollectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('#########@@@@@@@@data is : ', data);
+          setChatRoomId(data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const _pressChatButton = () => {
+    _getChatRoomId();
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,
       nickName,
       friendList,
+      chatRoomId,
     });
   };
 
