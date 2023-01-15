@@ -86,36 +86,12 @@ const SendIcon = styled.View`
   border-radius: 50px;
 `;
 
-const ChatRoom = () => {
+const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
+  console.log('params are', route.params);
+  const {friendsList, nickName, ShareCollectionTitle} = route.params;
 
-  useEffect(() => {
-    setChat([
-      ...chat,
-      {
-        id: 1,
-        nicName: '벌크섭',
-        text: '안녕하세요',
-        isMe: true,
-        time: '2021-05-01 12:00:00',
-      },
-      {
-        id: 2,
-        nickName: '기윤',
-        text: '안녕하세요~~',
-        isMe: false,
-        time: '2021-05-01 12:00:01',
-      },
-      {
-        id: 3,
-        nickName: '기윤',
-        text: '반갑습니다',
-        isMe: true,
-        time: '2021-05-01 12:00:02',
-      },
-    ]);
-  }, []);
 
   return (
     <Container insets={insets}>
