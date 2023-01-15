@@ -549,12 +549,11 @@ const Shared = ({route, navigation}) => {
       if (isEditing) {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
-        navigation.navigate('SharedCollection');
+        // navigation.navigate('SharedCollection');
         navigation.navigate('SharedCollection', {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
           shareCollectionName: shareCollectionName,
-          addFriendList: addFriendList,
         });
       }
       // 콜렉션 수정 중일 때,

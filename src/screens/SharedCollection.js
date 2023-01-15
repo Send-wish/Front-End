@@ -108,7 +108,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 const stompConfig = {
   brokerURL: 'ws://localhost:8080/ws/chat',
   debug: str => {
-    console.log('STMOP: ' + str);
+    // console.log('STMOP: ' + str);
   },
   onConnect: frame => {
     console.log('connected');
@@ -117,13 +117,13 @@ const stompConfig = {
     });
   },
   onStompError: frame => {
-    console.log('error occur' + frame.body);
+    // console.log('error occur' + frame.body);
   },
 };
 let stompClient = null;
 
 const webSocket = roomId => {
-  console.log(roomId);
+  // console.log(roomId);
   stompClient = new Client({
     brokerURL: 'wss://api.sendwish.link:8081/ws',
     connectHeaders: {},
@@ -131,12 +131,12 @@ const webSocket = roomId => {
       return SockJS('https://api.sendwish.link:8081/ws');
     },
     debug: str => {
-      console.log('STOMP: ' + str);
+      // console.log('STOMP: ' + str);
     },
     onConnect: function (frame) {
-      console.log('connected');
+      // console.log('connected');
       stompClient.subscribe('/sub/chat/' + roomId, msg => {
-        console.log(JSON.parse(msg.body));
+        // console.log(JSON.parse(msg.body));
       });
       if (!stompClient.connected) {
         return;
@@ -152,7 +152,7 @@ const webSocket = roomId => {
       });
     },
     onStompError: frame => {
-      console.log('error occur' + frame.body);
+      // console.log('error occur' + frame.body);
     },
   });
   stompClient.activate();
@@ -161,8 +161,8 @@ const webSocket = roomId => {
 };
 
 const SharedCollection = ({route, navigation}) => {
-  console.log('***route.parmas are : ', route.params);
-  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+  // console.log('***route.parmas are : ', route.params);
+  const {shareCollectionId, shareCollectionName, nickName} =
     route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -172,8 +172,32 @@ const SharedCollection = ({route, navigation}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const [friendList, setFriendList] = useState(addFriendList);
+  const [friendList, setFriendList] = useState([]);
   const [roomId, setRoomId] = useState(0);
+
+  const _getFriends = async () => {
+    try {
+        // API 아직 안열림
+        fetch(`https://api.sendwish.link:8081/collection/shared/${shareCollectionId}`, {
+        method: 'GET',
+        headers: {'Content-Type': `application/json`},
+        })
+        .then(response => {
+            // console.log('공유 컬렉션별 친구 목록 불러오기error: ', response);
+            return response.json();
+        })
+        .then(data => {
+            setFriendList(data.memberList);
+            // console.log('공유컬렉션별 친구 목록 확인', data);
+            console.log('공유컬렉션별 친구 목록!', friendList);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+}
+  useEffect(() => {
+  _getFriends();
+  }, [isFocused]);
 
   const createRoom = () => {
     try {
@@ -197,9 +221,9 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
-  console.log('********roomId is ', roomId);
+  // console.log('********roomId is ', roomId);
 
-  console.log('친구목록확인', addFriendList);
+  // console.log('친구목록확인', addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
@@ -207,6 +231,7 @@ const SharedCollection = ({route, navigation}) => {
       // console.log('**********************Collection focused & re-rendered');
       _getItemsFromShareCollection();
     setIsEditing(false);
+    // _getFriends();
   }, [isFocused]);
 
   // 공유 컬렉션 이름 수정
@@ -320,7 +345,7 @@ const SharedCollection = ({route, navigation}) => {
     createRoom();
     passData = {nickName, friendList, shareCollectionTitle};
     navigation.navigate('ChatRoom', {
-      passData: shareCollectionId, shareCollectionName, nickName, addFriendList,
+      passData: shareCollectionId, shareCollectionName, nickName, friendList,
     });
   };
 
@@ -408,7 +433,7 @@ const SharedCollection = ({route, navigation}) => {
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
                 {/* {nickName}님이 담았어요! */}
-                {addFriendList}님이 담았어요!
+                {friendList}님이 담았어요!
               </SubTitle>
               <ChatButton title={'채팅하기'} onPress={_pressChatButton} />
             </WrapRow>
