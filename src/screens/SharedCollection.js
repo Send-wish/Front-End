@@ -1,12 +1,5 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  TextInput,
-  Linking,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, TouchableOpacity, ScrollView, Modal, Linking} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -18,8 +11,8 @@ import {
   EditIcon,
   Input,
   Button,
+  ChatButton,
 } from '../components/Shared';
-
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
@@ -106,25 +99,29 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const SharedCollection = ({route, navigation}) => {
-  console.log("datac hke~!!!!!!!!!!!!!!!!!!!!!!!",route.params)
-  const {shareCollectionId, shareCollectionName, nickName} = route.params;
+  console.log('datac hke~!!!!!!!!!!!!!!!!!!!!!!!', route.params);
+  const {shareCollectionId, shareCollectionName, nickName, addFriendList} =
+    route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  // const refCollectionName = useRef(null);
-  const [shareCollectionTitle, setShareCollectionTitle] = useState(shareCollectionName);
+  const [shareCollectionTitle, setShareCollectionTitle] =
+    useState(shareCollectionName);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
-  const isFocused = useIsFocused(); // isFoucesd Define
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+
+  const [friendList, setFriendList] = useState(addFriendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
-      console.log('**********************Collection focused & re-rendered');
-    _getItemsFromShareCollection();
+      // console.log('**********************Collection focused & re-rendered');
+      _getItemsFromShareCollection();
     setIsEditing(false);
   }, [isFocused]);
 
+  // 공유 컬렉션 이름 수정
   const _changeShareCollectionName = async () => {
     setVisibleModal(false);
     try {
@@ -168,9 +165,10 @@ const SharedCollection = ({route, navigation}) => {
       tempArray.push(itemId);
       setDeleteList(tempArray);
     }
-    console.log('****************deleteList is : ', deleteList);
+    // console.log('****************deleteList is : ', deleteList);
   };
 
+  // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
     try {
       fetch(
@@ -191,6 +189,7 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
+  // 아이템 개별 링크
   const _openUrl = url => {
     Linking.openURL(url);
   };
@@ -203,8 +202,7 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
-  console.log('**********************is Editing : ', isEditing);
-
+  // 아이템 삭제
   const _deleteItemsFromShareCollection = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/collection/item`, {
@@ -253,7 +251,10 @@ const SharedCollection = ({route, navigation}) => {
             placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeShareCollectionName()} />
+          <Button
+            title="변경하기"
+            onPress={() => _changeShareCollectionName()}
+          />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -310,8 +311,21 @@ const SharedCollection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {nickName}님이 담았어요!
+                {/* {nickName}님이 담았어요! */}
+                {addFriendList}님이 담았어요!
               </SubTitle>
+              {/* <ChatButton title={'채팅하기'} /> */}
+              <ChatButton
+                title={'채팅하기'}
+                onPress={() => {
+                  passData = {nickName, friendList, shareCollectionTitle};
+                  navigation.navigate('ChatRoom', {
+                    passData: nickName,
+                    friendList,
+                    shareCollectionTitle,
+                  });
+                }}
+              />
             </WrapRow>
           </Column>
         </Row>
