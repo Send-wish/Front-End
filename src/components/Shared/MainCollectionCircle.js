@@ -67,6 +67,7 @@ const MainCollectionCircle = ({
   onLongPress,
   isCollectionEditing,
   isEditing,
+  imgUrl,
 }) => {
   const [items, setItems] = useState([]);
   const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
@@ -127,7 +128,7 @@ const MainCollectionCircle = ({
         <View>
           <CollectionView>
           <CollectionImage
-            source={{uri: imageUrl}}
+            source={{uri: imgUrl}}
             style={{
               color: isSelected ? theme.tintColorGreen : theme.mainBackground,
               opacity: isSelected ? 0.5 : 1,
