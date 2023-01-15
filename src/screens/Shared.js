@@ -160,16 +160,15 @@ const Shared = ({route, navigation}) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        // console.log('App has come to the foreground!');
+        console.log('App has come to the foreground!');
       }
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
       _getItems();
-      // console.log('AppState', appState.current);
+      console.log('AppState', appState.current);
     });
   }, [appState]);
-
 
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
@@ -184,8 +183,7 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
-    // console.log('shareCollectionName', shareCollectionName); // 공유 컬렉션 이름 확인
+    console.log('************nickName is', nickName); // 로그인 화면에서 받아온 닉네임 확인
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -219,7 +217,7 @@ const Shared = ({route, navigation}) => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {'Content-Type': 'application/json'},
         // body: JSON.stringify({
         //   nickName: nickName,
         // }),
@@ -229,7 +227,7 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setShareCollections(data);
-          // console.log('get share collections', data);
+          console.log('get share collections', data);
           setLoading(false);
         })
         .catch(error => {
@@ -468,7 +466,6 @@ const Shared = ({route, navigation}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        _getShareCollections();
         return response.json();
       });
       // .then(data => {
@@ -490,7 +487,6 @@ const Shared = ({route, navigation}) => {
       if (isEditing) {
         _addItemToShareCollection(shareCollectionId, nickName);
       } else {
-        // navigation.navigate('SharedCollection');
         navigation.navigate('SharedCollection', {
           shareCollectionId: shareCollectionId,
           nickName: nickName,
@@ -589,8 +585,10 @@ const Shared = ({route, navigation}) => {
                             _longPressCollection();
                           }}
                           imgUrl={collection?.defaultImage}
+
                           isCollectionEditing={isCollectionSelected}
                           isEditing={isEditing}
+
                         />
                       ))}
                 </ScrollView>
@@ -638,7 +636,7 @@ const Shared = ({route, navigation}) => {
                 {shareCollections.error
                   ? null
                   : shareCollections.map(shareCollection => (
-                    <CollectionCircle
+                      <CollectionCircle
                         imageStyle={{
                           opacity: isEditing ? 0.5 : 1,
                           position: 'absolute',
@@ -649,7 +647,7 @@ const Shared = ({route, navigation}) => {
                         key={shareCollection?.collectionId}
                         shareCollectionId={shareCollection?.collectionId}
                         shareCollectionName={shareCollection?.title}
-                        nickName={shareCollection?.nickname}
+                        nickName={shareCollectionName?.nickname}
                         onPress={() =>
                           _pressTargetShareCollection(
                             shareCollection?.collectionId,

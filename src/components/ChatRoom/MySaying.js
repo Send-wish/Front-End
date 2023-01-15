@@ -45,8 +45,8 @@ const SayingPart = styled.View`
 const Name = styled.Text`
   font-size: 15px;
   font-weight: bold;
-  color: ${({theme}) => theme.subText}
-  margin : 5px;
+  color: ${({theme}) => theme.subText};
+  margin: 5px;
 `;
 
 // 텍스트
@@ -90,8 +90,9 @@ const MySaying = ({}) => {
           <Time>23:07</Time>
           <SayingBalloon>
             <Saying>
-              내가 할말sagsag absolutea absolutea absoluteaasfafㄴㅁㅇㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㅁㄴㅎㅁㄴaaㄴㄴㅁㅇㅎㅁㄴㅎㄴㅁㅎㅁㄴㅎㄴㅁㅎㅁㅎㅁ asgasgasg asgasgasg
-              sagsagsag sagsagasgas
+              내가 할말sagsag absolutea absolutea
+              absoluteaasfafㄴㅁㅇㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㄴㅁㅎㅁㄴㅎㅁㄴaaㄴㄴㅁㅇㅎㅁㄴㅎㄴㅁㅎㅁㄴㅎㄴㅁㅎㅁㅎㅁ
+              asgasgasg asgasgasg sagsagsag sagsagasgas
             </Saying>
           </SayingBalloon>
         </SayingPart>
