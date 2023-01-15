@@ -19,8 +19,10 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import SharedCollection from './SharedCollection';
-
 import {useIsFocused} from '@react-navigation/native';
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
 
 const Container = styled.View`
   flex: 1;
@@ -121,6 +123,61 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
+const stompConfig = {
+  brokerURL: 'ws://localhost:8080/ws/chat',
+  debug: str => {
+    console.log('STMOP: ' + str);
+  },
+  onConnect: frame => {
+    console.log('connected');
+    const subscription = stompClient.subscribe('/topic/chat/room/1', msg => {
+      console.log(JSON.parse(msg.body));
+    });
+  },
+  onStompError: frame => {
+    console.log('error occur' + frame.body);
+  },
+};
+let stompClient = null;
+
+const webSocket = roomId => {
+  console.log(roomId);
+  stompClient = new Client({
+    brokerURL: 'wss://api.sendwish.link:8081/ws',
+    connectHeaders: {},
+    webSocketFactory: () => {
+      return SockJS('https://api.sendwish.link:8081/ws');
+    },
+    debug: str => {
+      console.log('STOMP: ' + str);
+    },
+    onConnect: function (frame) {
+      console.log('connected');
+      stompClient.subscribe('/sub/chat/' + roomId, msg => {
+        console.log(JSON.parse(msg.body));
+      });
+      if (!stompClient.connected) {
+        return;
+      }
+      stompClient.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          roomId: roomId,
+          sender: 'hcs4125',
+          message: 'test',
+          type: 'TALK',
+        }),
+      });
+    },
+    onStompError: frame => {
+      console.log('error occur' + frame.body);
+    },
+  });
+  stompClient.activate();
+
+  return stompClient;
+};
+
 const Shared = ({route, navigation}) => {
   // Tab navigator route params check
   const nickName = route.params.params.nickName;
@@ -146,6 +203,34 @@ const Shared = ({route, navigation}) => {
   const [collections, setCollections] = useState([]); // 컬렉션 목록
   const [isCollectionSelected, setIsCollectionSelected] = useState(false);
   const [targetCollectionId, setTargetCollectionId] = useState(0);
+  const [roomId, setRoomId] = useState(0);
+
+  const createRoom = () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chat/room`, {
+        method: 'POST',
+        headers: {'Content-Type': `application/json`},
+        body: JSON.stringify({
+          nickname: nickname,
+          title: chatRoomTitle,
+        }),
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          webSocket(res.chatRoomId);
+          setRoomId(res.chatRoomId);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    createRoom();
+  }, []);
+
+  console.log('********roomId is ', roomId);
 
   console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
@@ -563,7 +648,7 @@ const Shared = ({route, navigation}) => {
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          imgUrl = {collection?.defaultImage}
+                          imgUrl={collection?.defaultImage}
                           // isCollectionEditing={isCollectionSelected}
                           // isEditing={isEditing}
                         />
