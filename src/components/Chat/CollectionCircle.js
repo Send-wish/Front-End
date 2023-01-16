@@ -3,8 +3,7 @@ import React from 'react';
 import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
 
 const Container = styled.View`
-  padding: 10px;
-  margin: 40px 10px 10px 10px;
+  margin: 10px 10px 10px 10px;
   width: 65px;
   height: 65px;
   justify-content: center;
@@ -13,16 +12,14 @@ const Container = styled.View`
 `;
 
 const CollectionImage = styled.Image`
-  background-color: ${({theme}) => theme.mainBackground};
+  background-color: ${({theme}) => theme.strongBackground};
   padding: 10px;
-  margin: 10px 10px 10px 10px;
-  border-width: 1px;
-  width: 75px;
-  height: 75px;
+  margin: 5px 5px 5px 5px;
+  width: 65px;
+  height: 65px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
-  border-color: ${({theme}) => theme.basicText};
+  border-radius: 25px;
 `;
 
 const Row = styled.View`
@@ -34,12 +31,11 @@ const Row = styled.View`
 const Title = styled.Text`
   font-size: 11px;
   font-weight: bold;
-  color: ${({theme}) => theme.basicText};
+  color: ${({theme}) => theme.strongBackground};
   justify-content: center;
   align-items: center;
   text-align: center;
   width: 80px;
-  height: 30px;
 `;
 
 const CollectionCircle = ({onLongPress, frName, image}) => {

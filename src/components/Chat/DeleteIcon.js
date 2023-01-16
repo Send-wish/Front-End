@@ -7,7 +7,6 @@ import Antdesign from 'react-native-vector-icons/AntDesign';
 
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
-  margin: 10px;
   width: 30px;
   height: 30px;
   justify-content: center;
