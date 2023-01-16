@@ -26,11 +26,9 @@ const Input = forwardRef(
       placeholder,
       returnKeyType,
       maxLength,
-      isPassword,
     },
     ref,
   ) => {
-    const [isFocused, setIsFocused] = useState(true);
     return (
       <Container>
         <StyledInput
@@ -39,19 +37,14 @@ const Input = forwardRef(
           onChangeText={onChangeText}
           onSubmitEditing={onSubmitEditing}
           onBlur={() => {
-            setIsFocused(false);
             onBlur();
           }}
-          placeholder={placeholder}
           returnKeyType={returnKeyType}
           maxLength={maxLength}
           autoCapitalize="none"
           autoCorrect={false}
           textContentType="none"
-          isFocused={isFocused}
-          onFocus={() => setIsFocused(true)}
           autoFocus={true}
-          secureTextEntry={isPassword}
         />
       </Container>
     );
