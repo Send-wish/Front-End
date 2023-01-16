@@ -81,7 +81,7 @@ const EmptyPart = styled.View`
   width: 25%;
 `;
 
-const OthersSaying = ({}) => {
+const OthersSaying = ({sender, createAt, message}) => {
   return (
     <Container>
       <PartContainer>
@@ -89,10 +89,10 @@ const OthersSaying = ({}) => {
           <ProfilePhoto />
         </ProfilePart>
         <SayingPart>
-          <Name>벌크섭</Name>
-          <Time>23:07</Time>
+          <Name>{sender}</Name>
+          <Time>{createAt}</Time>
           <SayingBalloon>
-            <Saying>남이 할말</Saying>
+            <Saying>{message}</Saying>
           </SayingBalloon>
         </SayingPart>
         <EmptyPart />

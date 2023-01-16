@@ -104,7 +104,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 const SharedCollection = ({route, navigation}) => {
   // console.log('***route.parmas are : ', route.params);
   const {shareCollectionId, shareCollectionName, nickName} = route.params;
-  console.log('shareCollectionId is :', shareCollectionId);
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [shareCollectionTitle, setShareCollectionTitle] =
@@ -115,6 +114,7 @@ const SharedCollection = ({route, navigation}) => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [friendList, setFriendList] = useState([]);
   const [chatRoomId, setChatRoomId] = useState(0);
+  let update = 0;
 
   const _getFriends = async () => {
     try {
@@ -131,7 +131,6 @@ const SharedCollection = ({route, navigation}) => {
           return response.json();
         })
         .then(data => {
-          console.log('******** get data!!!! : ', data);
           setFriendList(data.memberList);
           // console.log('공유컬렉션별 친구 목록 확인', data);
         });
@@ -143,7 +142,7 @@ const SharedCollection = ({route, navigation}) => {
     _getFriends();
   }, [isFocused]);
 
-  console.log('공유컬렉션별 친구 목록!', friendList);
+  // console.log('공유컬렉션별 친구 목록!', friendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
@@ -271,9 +270,7 @@ const SharedCollection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('#########@@@@@@@@data is : ', data);
           setChatRoomId(data);
-          console.log('채팅룸아이디 확인', chatRoomId);
         });
     } catch (e) {
       console.log(e);
@@ -284,8 +281,6 @@ const SharedCollection = ({route, navigation}) => {
   }, []);
 
   const _pressChatButton = () => {
-    console.log('채팅룸아이디 확인', chatRoomId);
-    // _getChatRoomId();
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,
@@ -394,7 +389,7 @@ const SharedCollection = ({route, navigation}) => {
                 <SubTitle>총 N개의 위시템</SubTitle>
               </View>
               <Row>
-                <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} />
+                <SearchIcon />
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
