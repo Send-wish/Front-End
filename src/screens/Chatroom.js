@@ -31,7 +31,7 @@ const Container = styled.View`
 `;
 
 const UpperContainer = styled.View`
-  flex: 0.8;
+  height: 7%;
   width: 100%;
   align-items: flex-start;
   justify-content: space-between;
@@ -42,7 +42,7 @@ const UpperContainer = styled.View`
 
 const CollectionContainer = styled.View`
   flex: 1.7;
-  width: 92%;
+  width: 94%;
   align-items: center;
   justify-content: space-between;
   padding-top: 10px;
@@ -55,27 +55,27 @@ const CollectionContainer = styled.View`
 `;
 
 const MiddleContainer = styled.View`
-  flex: 7;
+  height: 500px;
   background-color: ${({theme}) => theme.mainBackground};
   flex-wrap: wrap;
   width: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
   padding-bottom: 10px;
   padding-top: 15px;
   justify-content: flex-end;
 `;
 
 const BottomContainer = styled.View`
-  flex: 1;
-  padding-top: 10px;
-  padding-bottom: 1px;
+  height: 500px;
+  padding-top: 17px;
+  padding-bottom: 5px;
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 15px;
   background-color: ${({theme}) => theme.strongBackground};
   flex-wrap: wrap;
   align-items: center;
-  width: 100%;
+  margin-right: 15px;
 `;
 
 const MainTitle = styled.Text`
@@ -93,7 +93,7 @@ const InputContainer = styled.View`
   padding-right: 6px;
   border-radius: 50px;
   width: 100%;
-  height: 60%;
+  height: 9%;
 `;
 
 const SendIcon = styled.View`
@@ -152,6 +152,7 @@ const ChatRoom = ({navigation, route}) => {
   const [chatList, setChatList] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [update, setUpdate] = useState('');
+  const refMessage = useRef(null);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -179,9 +180,8 @@ const ChatRoom = ({navigation, route}) => {
     console.log('here is disconnect!');
     client.current.deactivate();
   };
-  console.log('*********update2 is : , ', update);
-  console.log('chatList is : ', chatList);
-  const _subscribe = roomId => {
+
+  const _subscribe = roomId => {  
     client.current.subscribe('/sub/chat/' + roomId, msg => {
       console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
@@ -219,8 +219,11 @@ const ChatRoom = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    if (isFocused) _getItemsFromShareCollection();
-    setIsEditing(false);
+    if (isFocused) {
+      _getItemsFromShareCollection();
+      _getChatHistory();
+      setIsEditing(false);
+    }
   }, [isFocused]);
 
   _pressEnter = () => {
@@ -243,6 +246,32 @@ const ChatRoom = ({navigation, route}) => {
         })
         .then(data => {
           data.dtos ? setItems(data.dtos) : setItems([]);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const _getChatHistory = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chats/${chatRoomId}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          // for (let i = 0; i < data.length; i++) {
+          //   let tempObject = data[i];
+          //   tempObject.nickName = nickName;
+          //   tempArray = chatList;
+          //   tempArray.push(tempObject);
+          //   setChatList(tempArray);
+          // }
+          console.log('data : ', data);
+
+          // console.log('chatList is : ', chatList);
         });
     } catch (e) {
       console.log(e);
@@ -324,39 +353,51 @@ const ChatRoom = ({navigation, route}) => {
         </ScrollView>
         <LineIcon />
       </CollectionContainer>
-      <MiddleContainer>
-        <FlatList
-          data={chatList}
-          renderItem={({item}) => <Item item={item} />}
-          key={item => item['createAt']}
-          ref={ref => (flatListRef = ref)}
-          onContentSizeChange={() => flatListRef.scrollToEnd()}
-          showsVerticalScrollIndicator={false}
-          extraData={{update, updated}}
-        />
-      </MiddleContainer>
-      <BottomContainer>
-        <InputContainer>
-          <Input
-            onChangeText={text => setMessage(text)}
-            value={message}
-            onSubmitEditing={_pressEnter}
-            returnKeyType={'send'}
-            MaxLegnth={200}
+      <KeyboardAwareScrollView
+        contentContainerStyle={{
+          height: 530,
+          width: 405,
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        }}
+        extraScrollHeight={200}
+        resetScrollToCoords={{x: 0, y: 0}}
+        scrollEnabled={false}>
+        <MiddleContainer>
+          <FlatList
+            data={chatList}
+            renderItem={({item}) => <Item item={item} />}
+            key={item => item['createAt']}
+            ref={ref => (flatListRef = ref)}
+            onContentSizeChange={() => flatListRef.scrollToEnd()}
+            showsVerticalScrollIndicator={false}
+            extraData={{update, updated}}
           />
-          <TouchableHighlight onPress={() => _pressEnter()}>
-            <SendIcon>
-              <Feather
-                name="arrow-up"
-                size={30}
-                style={{
-                  color: theme.mainBackground,
-                }}
-              />
-            </SendIcon>
-          </TouchableHighlight>
-        </InputContainer>
-      </BottomContainer>
+        </MiddleContainer>
+        <BottomContainer>
+          <InputContainer>
+            <Input
+              ref={refMessage}
+              onChangeText={text => setMessage(text)}
+              value={message}
+              onSubmitEditing={_pressEnter}
+              returnKeyType={'send'}
+              MaxLegnth={200}
+            />
+            <TouchableHighlight onPress={() => _pressEnter()}>
+              <SendIcon>
+                <Feather
+                  name="arrow-up"
+                  size={30}
+                  style={{
+                    color: theme.mainBackground,
+                  }}
+                />
+              </SendIcon>
+            </TouchableHighlight>
+          </InputContainer>
+        </BottomContainer>
+      </KeyboardAwareScrollView>
     </Container>
   );
 };

@@ -5,16 +5,17 @@ import PropTypes from 'prop-types';
 
 const Container = styled.View`
   flex-direction: column;
-  width: 85%;
+  width: 90%;
+  height: 50px;
+  margin-top: 25px;
 `;
 const StyledInput = styled.TextInput.attrs(({theme}) => ({
   placeholderTextColor: theme.placeholder,
 }))`
   color: ${({theme}) => theme.basicText};
   padding: 0;
-  font-size: 19px;
-  border-left-width: 0;
-  border-right-width: 0;
+  font-size: 20px;
+
 `;
 const Input = forwardRef(
   (
@@ -23,12 +24,12 @@ const Input = forwardRef(
       onChangeText,
       onSubmitEditing,
       onBlur,
-      placeholder,
       returnKeyType,
       maxLength,
     },
     ref,
   ) => {
+
     return (
       <Container>
         <StyledInput
@@ -45,6 +46,7 @@ const Input = forwardRef(
           autoCorrect={false}
           textContentType="none"
           autoFocus={true}
+          blurOnSubmit={false}
         />
       </Container>
     );
