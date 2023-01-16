@@ -202,6 +202,7 @@ const ChatRoom = ({navigation, route}) => {
 
   useEffect(() => {
     _connect(chatRoomId);
+    return () => _disconnect();
   }, []);
 
   const _openUrl = url => {
