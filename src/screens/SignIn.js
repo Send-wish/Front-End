@@ -201,7 +201,7 @@ const SignIn = ({navigation}) => {
             onChangeText={_handleNickNameChange}
             onBlur={() => setNickName(nickName.trim())}
             maxLength={12}
-            onSubmitEditing={() => refNickName.current.focus()}
+            onSubmitEditing={() => refPassword.current.focus()}
           />
           <Input
             ref={refPassword}

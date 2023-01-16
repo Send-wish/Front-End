@@ -152,6 +152,7 @@ const ChatRoom = ({navigation, route}) => {
   const [chatList, setChatList] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [update, setUpdate] = useState('');
+  const refMessage = useRef(null);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -179,8 +180,7 @@ const ChatRoom = ({navigation, route}) => {
     console.log('here is disconnect!');
     client.current.deactivate();
   };
-  console.log('*********update2 is : , ', update);
-  console.log('chatList is : ', chatList);
+
   const _subscribe = roomId => {
     client.current.subscribe('/sub/chat/' + roomId, msg => {
       console.log('connected! and subscribed!');
@@ -338,6 +338,7 @@ const ChatRoom = ({navigation, route}) => {
       <BottomContainer>
         <InputContainer>
           <Input
+            ref={refMessage}
             onChangeText={text => setMessage(text)}
             value={message}
             onSubmitEditing={_pressEnter}

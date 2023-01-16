@@ -23,12 +23,12 @@ const Input = forwardRef(
       onChangeText,
       onSubmitEditing,
       onBlur,
-      placeholder,
       returnKeyType,
       maxLength,
     },
     ref,
   ) => {
+
     return (
       <Container>
         <StyledInput
