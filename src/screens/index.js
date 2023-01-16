@@ -1,29 +1,19 @@
-import Collection from './Collection';
-import Chat from './Chat';
-import ItemDetail from './ItemDetail';
-import Main from './Main';
-import Shared from './Shared';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import Start from './Start';
-import ChatRoom from './ChatRoom';
+import Main from './Main';
+import Collection from './Collection';
+import Shared from './Shared';
 import SharedCollection from './SharedCollection';
-import {Button} from '../components/Chat';
-import CollectionCircle from '../components/Chat';
-import AddCollectionCircle from '../components/Chat';
+import Chat from './Chat';
+import ChatRoom from './ChatRoom';
 
 export {
-  Chat,
-  Collection,
-  ItemDetail,
-  Main,
-  Shared,
   SignIn,
   SignUp,
-  Start,
-  Button,
-  CollectionCircle,
-  AddCollectionCircle,
+  Main,
+  Collection,
+  Shared,
   SharedCollection,
+  Chat,
   ChatRoom,
 };

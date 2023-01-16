@@ -11,7 +11,6 @@ import ErrorMessage from '../components/SignIn/ErrorMessage';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};

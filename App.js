@@ -1,15 +1,15 @@
 // Basic React Native App
-import React, {useState, useEffect, useCallback, useLayoutEffect} from 'react';
+import React from 'react';
 
 // Screens
 import {
-  Chat,
-  Collection,
-  Main,
-  Shared,
   SignIn,
   SignUp,
+  Main,
+  Collection,
+  Shared,
   SharedCollection,
+  Chat,
   ChatRoom,
 } from './src/screens';
 import Share from './Share';
@@ -19,22 +19,12 @@ import {ThemeProvider} from 'styled-components';
 import {theme} from './src/theme';
 
 // React Native Hooks
-import {NavigationContainer, useLinkProps} from '@react-navigation/native';
-import {
-  BottomTabView,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
-import {back} from 'react-native/Libraries/Animated/Easing';
-
-import SockJS from 'sockjs-client';
-import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
-
-import {Provider} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -102,7 +92,6 @@ const App = () => {
             headerShown: false,
           }}
           initialRouteName="SignIn">
-          {/* <Stack.Screen name="Start" component={Start} /> */}
           <Stack.Screen name="App" component={App} />
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
