@@ -92,7 +92,7 @@ const App = () => {
             headerShown: false,
           }}
           initialRouteName="SignIn">
-          <Stack.Screen name="App" component={App} />
+          {/* <Stack.Screen name="App" component={App} /> */}
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Navigation" component={Navigation} />

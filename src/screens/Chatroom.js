@@ -179,8 +179,7 @@ const ChatRoom = ({navigation, route}) => {
     console.log('here is disconnect!');
     client.current.deactivate();
   };
-  console.log('*********update2 is : , ', update);
-  console.log('chatList is : ', chatList);
+
   const _subscribe = roomId => {
     client.current.subscribe('/sub/chat/' + roomId, msg => {
       console.log('connected! and subscribed!');

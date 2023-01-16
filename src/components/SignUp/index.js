@@ -1,8 +1,9 @@
 import ProfileImage from './ProfileImage';
-// import FilterIcon from './Filtericon';
 import EditIcon from './EditIcon';
 import Input from './Input';
 import Button from './Button';
 import ErrorMessage from './ErrorMessage';
+import ImageButton from './ImageButton';
+import RandomImage from './RandomImage';
 
-export {Input, ProfileImage, EditIcon, Button, ErrorMessage};
+export {Input, ProfileImage, EditIcon, Button, ErrorMessage, ImageButton, RandomImage};

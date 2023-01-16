@@ -6,9 +6,9 @@ import Feather from 'react-native-vector-icons/Feather';
 import {theme} from '../../theme';
 
 const Container = styled.View`
-  padding: 10px;
-  margin: 1px 1px 3px 1px;
-  width: 300px;
+  padding: 5px;
+  margin: 2px 7px 7px 7px;
+  width: 100px;
   height: 160px;
   justify-content: center;
   align-items: center;
@@ -17,12 +17,11 @@ const Container = styled.View`
 
 const SignUpImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
-  padding: 10px;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   justify-content: center;
   align-items: center;
-  margin-top: 70px;
+  margin-top: -10px;
   border-radius: 40px;
   margin-bottom: 10px;
 `;
@@ -35,7 +34,7 @@ const Title = styled.Text`
   font-weight: bold;
   color: ${({theme}) => theme.basicText};
   justify-content: center;
-  align-items: center;
+  align-items : center;
   text-align: center;
   height: 20px;
   flex-wrap: wrap;
@@ -47,18 +46,16 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const ProfileImage = ({title, image, onPress}) => {
+const RandomImage = ({title, image, onPress}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress} style={{width: '100%'}}>
         <Row style={{marginBottom: 30, widht: '100%'}}>
-          {/* <Title>{title}</Title> */}
-          <SignUpImage source={{uri : image? image : null}} />
-          {/* <Feather name="edit-2" size={18} color={theme.basicText} /> */}
+          <SignUpImage source={{uri:image}} />
         </Row>
       </TouchableOpacity>
     </Container>
   );
 };
 
-export default ProfileImage;
+export default RandomImage;
