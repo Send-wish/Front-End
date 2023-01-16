@@ -258,14 +258,13 @@ const SharedCollection = ({route, navigation}) => {
     }
   };
 
-  // 공유컬렉션 아이템 렌더링
+  // 채팅방 아이디 가져오기
   const _getChatRoomId = () => {
     try {
       fetch(
         `https://api.sendwish.link:8081/collection/roomId/${shareCollectionId}`,
         {
           method: 'GET',
-          headers: {'Content-Type': 'application/json'},
         },
       )
         .then(res => {
@@ -274,14 +273,19 @@ const SharedCollection = ({route, navigation}) => {
         .then(data => {
           console.log('#########@@@@@@@@data is : ', data);
           setChatRoomId(data);
+          console.log('채팅룸아이디 확인', chatRoomId);
         });
     } catch (e) {
       console.log(e);
     }
   };
+  useEffect(() => {
+    _getChatRoomId();
+  }, []);
 
   const _pressChatButton = () => {
-    _getChatRoomId();
+    console.log('채팅룸아이디 확인', chatRoomId);
+    // _getChatRoomId();
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,

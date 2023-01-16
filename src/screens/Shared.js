@@ -468,6 +468,7 @@ const Shared = ({route, navigation}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
+        _getShareCollections();
         return response.json();
       });
       // .then(data => {
