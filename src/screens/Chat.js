@@ -1,13 +1,5 @@
-import React, {
-  useState,
-  useEffect,
-
-} from 'react';
-import {
-  View,
-  ScrollView,
-  FlatList,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, ScrollView, FlatList} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -278,14 +270,16 @@ const Chat = props => {
         <Row>
           <View style={{height: 150}}>
             <ScrollView horizontal>
-              {friends.reverse().map(friend => (
-                <CollectionCircle
-                  key={friend?.friend_id}
-                  frName={friend?.friend_nickname}
-                  onLongPress={() => _deleteFriend()}
-                  activeOpacity={0.6}
-                />
-              ))}
+              {friends.error
+                ? null
+                : friends.map(friend => (
+                    <CollectionCircle
+                      key={friend?.friend_id}
+                      frName={friend?.friend_nickname}
+                      onLongPress={() => _deleteFriend()}
+                      activeOpacity={0.6}
+                    />
+                  ))}
 
               <Ionicons
                 name="ellipsis-vertical"
