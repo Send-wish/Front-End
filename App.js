@@ -28,6 +28,13 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
+import {back} from 'react-native/Libraries/Animated/Easing';
+
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
+
+import {Provider} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -86,37 +93,27 @@ const Navigation = props => {
     </Tab.Navigator>
   );
 };
-
-
 const App = () => {
-
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider theme={theme}>
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-              }}
-              initialRouteName="SignIn">
-              {/* <Stack.Screen name="Start" component={Start} /> */}
-              <Stack.Screen name="App" component={App} />
-              <Stack.Screen name="SignIn" component={SignIn} />
-              <Stack.Screen name="SignUp" component={SignUp} />
-              <Stack.Screen name="Navigation" component={Navigation} />
-              <Stack.Screen name="Collection" component={Collection} />
-              <Stack.Screen
-                name="SharedCollection"
-                component={SharedCollection}
-              />
-              <Stack.Screen name="Share" component={Share} />
-              <Stack.Screen name="ChatRoom" component={ChatRoom} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="SignIn">
+          {/* <Stack.Screen name="Start" component={Start} /> */}
+          <Stack.Screen name="App" component={App} />
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Navigation" component={Navigation} />
+          <Stack.Screen name="Collection" component={Collection} />
+          <Stack.Screen name="SharedCollection" component={SharedCollection} />
+          <Stack.Screen name="Share" component={Share} />
+          <Stack.Screen name="ChatRoom" component={ChatRoom} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 
