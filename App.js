@@ -41,7 +41,7 @@ const Navigation = props => {
           backgroundColor: theme.mainBackground,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
-          opacity: 0.8,
+          opacity: 0.88,
           position: 'absolute',
           borderTopWidth: 0,
           paddingTop: 10,

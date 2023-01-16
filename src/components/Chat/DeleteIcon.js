@@ -13,7 +13,6 @@ const Container = styled.View`
   justify-content: center;
   align-items: center;
   border-radius: 11px;
-  margin-left: 10%;
   `;
 
 const DeleteIcon = ({onPress}) => {

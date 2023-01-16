@@ -181,12 +181,11 @@ const ChatRoom = ({navigation, route}) => {
     client.current.deactivate();
   };
 
-
   const _subscribe = roomId => {
-
     client.current.subscribe('/sub/chat/' + roomId, msg => {
       console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
+      console.log('msg.body: ' + msg.body);
       tempObject.nickName = nickName;
       tempArray = chatList;
       tempArray.push(tempObject);
@@ -264,13 +263,13 @@ const ChatRoom = ({navigation, route}) => {
           return res.json();
         })
         .then(data => {
-          // for (let i = 0; i < data.length; i++) {
-          //   let tempObject = data[i];
-          //   tempObject.nickName = nickName;
-          //   tempArray = chatList;
-          //   tempArray.push(tempObject);
-          //   setChatList(tempArray);
-          // }
+          for (let i = 0; i < data.length; i++) {
+            let tempObject = data[i];
+            tempObject.nickName = nickName;
+            tempArray = chatList;
+            tempArray.push(tempObject);
+            setChatList(tempArray);
+          }
           console.log('data : ', data);
 
           // console.log('chatList is : ', chatList);
