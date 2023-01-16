@@ -320,7 +320,7 @@ const ChatRoom = ({navigation, route}) => {
         <FlatList
           data={chatList}
           renderItem={({item}) => <Item item={item} />}
-          keyExtractor={item => item['createAt'].toString()}
+          // keyExtractor={item => item['createAt'].toString()}
         />
       </MiddleContainer>
       <BottomContainer>
