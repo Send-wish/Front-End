@@ -191,15 +191,15 @@ const ChatRoom = ({navigation, route}) => {
       setChatList(tempArray);
       setUpdated(!updated);
     });
-    client.current.publish({
-      destination: '/pub/chat',
-      body: JSON.stringify({
-        roomId: roomId,
-        sender: nickName,
-        message: '',
-        type: 'ENTER',
-      }),
-    });
+    // client.current.publish({
+    //   destination: '/pub/chat',
+    //   body: JSON.stringify({
+    //     roomId: roomId,
+    //     sender: nickName,
+    //     message: '',
+    //     type: 'ENTER',
+    //   }),
+    // });
   };
 
   const _publish = roomId => {
