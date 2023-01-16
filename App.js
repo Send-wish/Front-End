@@ -41,7 +41,7 @@ const Navigation = props => {
           backgroundColor: theme.mainBackground,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
-          opacity: 0.8,
+          opacity: 0.88,
           position: 'absolute',
           borderTopWidth: 0,
           paddingTop: 10,
@@ -92,7 +92,7 @@ const App = () => {
             headerShown: false,
           }}
           initialRouteName="SignIn">
-          <Stack.Screen name="App" component={App} />
+          {/* <Stack.Screen name="App" component={App} /> */}
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Navigation" component={Navigation} />

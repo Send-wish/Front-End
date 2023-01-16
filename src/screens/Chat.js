@@ -21,6 +21,7 @@ import {useIsFocused} from '@react-navigation/native';
 const channels = [];
 for (let i = 0; i < 20; i++) {
   channels.push({
+    friendName: `friendName: ${i}`,
     id: i,
     title: `title: ${i}`,
     description: `desc : ${i}`,
@@ -47,8 +48,7 @@ const UpperContainer = styled.View`
 `;
 const BottomContainer = styled.View`
   flex: 4;
-  flex-direction: row;
-  background-color: ${({theme}) => theme.subBackground};
+  background-color: ${({theme}) => theme.mainBackground};
   padding: 10px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
@@ -296,25 +296,21 @@ const Chat = props => {
       </UpperContainer>
 
       <BottomContainer>
-        <ScrollView>
-          <Column>
-            <SpackBetweenRow>
-              <View style={{marginBottom: 10}}>
-                <Title>채팅 목록</Title>
-                <SubTitle>당신의 wish item 을 공유해보세요 !</SubTitle>
-              </View>
-            </SpackBetweenRow>
-          </Column>
-
-          <ListFriend friendName="리스트" />
+        <Column>
+          <SpackBetweenRow>
+            <View style={{marginBottom: 10}}>
+              <Title>채팅 목록</Title>
+              <SubTitle>당신의 wish item 을 공유해보세요 !</SubTitle>
+            </View>
+          </SpackBetweenRow>
+        </Column>
+        <Column style={{width: '100%'}}>
           <FlatList
             data={channels}
             renderItem={({item}) => <Item item={item} />}
             keyExtractor={item => item['id'].toString()}
           />
-
-          <FlexRow></FlexRow>
-        </ScrollView>
+        </Column>
       </BottomContainer>
     </Container>
   );
