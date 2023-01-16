@@ -14,6 +14,8 @@ import {
   ChatButton,
 } from '../components/Shared';
 
+import ChatRoom from './ChatRoom';
+
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
@@ -100,6 +102,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const SharedCollection = ({route, navigation}) => {
+  // console.log('***route.parmas are : ', route.params);
   const {shareCollectionId, shareCollectionName, nickName} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -111,7 +114,6 @@ const SharedCollection = ({route, navigation}) => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [friendList, setFriendList] = useState([]);
   const [chatRoomId, setChatRoomId] = useState(0);
-  let update = 0;
 
   const _getFriends = async () => {
     try {
