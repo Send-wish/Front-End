@@ -62,6 +62,7 @@ const MiddleContainer = styled.View`
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
+  padding-top: 15px;
   justify-content: flex-end;
 `;
 
@@ -114,12 +115,25 @@ const LineIcon = styled.View`
   margin-top: 5px;
 `;
 
-const Item = ({item: {chatRoomId, createAt, message, sender}}) => {
-  console.log(message);
-  return <MySaying sender={sender} message={message} createAt={createAt} />;
+const Item = ({item: {createAt, message, sender, nickName}}) => {
+  const parcedCreateAt = createAt.substring(11, 16);
+  if (sender === nickName) {
+    return (
+      <MySaying sender={sender} message={message} createAt={parcedCreateAt} />
+    );
+  } else {
+    return (
+      <OthersSaying
+        sender={sender}
+        message={message}
+        createAt={parcedCreateAt}
+      />
+    );
+  }
 };
 
 const ChatRoom = ({navigation, route}) => {
+  let flatListRef;
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   const {
@@ -130,14 +144,14 @@ const ChatRoom = ({navigation, route}) => {
     chatRoomId,
   } = route.params;
 
-  console.log('friendList is : ', friendList);
-
   const client = useRef({});
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [message, setMessage] = useState('');
   const [chatList, setChatList] = useState([]);
+  const [updated, setUpdated] = useState(false);
+  const [update, setUpdate] = useState('');
 
   const _connect = roomId => {
     client.current = new Client({
@@ -148,9 +162,11 @@ const ChatRoom = ({navigation, route}) => {
       },
       debug: str => {
         console.log('STOMP: ' + str);
+        setUpdate(str);
       },
       onConnect: () => {
         _subscribe(roomId);
+        console.log('connected!');
       },
       onStompError: frame => {
         console.log('error occur' + frame.body);
@@ -163,15 +179,17 @@ const ChatRoom = ({navigation, route}) => {
     console.log('here is disconnect!');
     client.current.deactivate();
   };
-
+  console.log('*********update2 is : , ', update);
+  console.log('chatList is : ', chatList);
   const _subscribe = roomId => {
-    console.log('connected!');
     client.current.subscribe('/sub/chat/' + roomId, msg => {
-      //msg.body 정보를 사용한다!!
-      console.log(JSON.parse(msg.body));
+      console.log('connected! and subscribed!');
+      let tempObject = JSON.parse(msg.body);
+      tempObject.nickName = nickName;
       tempArray = chatList;
-      tempArray.push(msg.body);
+      tempArray.push(tempObject);
       setChatList(tempArray);
+      setUpdated(!updated);
     });
     client.current.publish({
       destination: '/pub/chat',
@@ -263,7 +281,7 @@ const ChatRoom = ({navigation, route}) => {
           }}>
           <MainTitle>{shareCollectionTitle}</MainTitle>
           <MainTitle style={{color: theme.basicText, fontSize: 15}}>
-            {/* ({friendList.map(friend => ' ' + friend + ' ')}) */}
+            ({friendList.map(friend => ' ' + friend + ' ')})
           </MainTitle>
         </View>
         <Feather
@@ -316,17 +334,25 @@ const ChatRoom = ({navigation, route}) => {
         <LineIcon />
       </CollectionContainer>
       <MiddleContainer>
-        <MySaying />
-        <OthersSaying />
         <FlatList
           data={chatList}
           renderItem={({item}) => <Item item={item} />}
-          // keyExtractor={item => item['createAt'].toString()}
+          key={item => item['createAt']}
+          ref={ref => (flatListRef = ref)}
+          onContentSizeChange={() => flatListRef.scrollToEnd()}
+          showsVerticalScrollIndicator={false}
+          extraData={{update, updated}}
         />
       </MiddleContainer>
       <BottomContainer>
         <InputContainer>
-          <Input onChangeText={text => setMessage(text)} value={message} />
+          <Input
+            onChangeText={text => setMessage(text)}
+            value={message}
+            onSubmitEditing={_pressEnter}
+            returnKeyType={'send'}
+            MaxLegnth={200}
+          />
           <TouchableHighlight onPress={() => _pressEnter()}>
             <SendIcon>
               <Feather
