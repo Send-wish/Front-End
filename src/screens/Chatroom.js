@@ -181,7 +181,9 @@ const ChatRoom = ({navigation, route}) => {
     client.current.deactivate();
   };
 
-  const _subscribe = roomId => {  
+
+  const _subscribe = roomId => {
+
     client.current.subscribe('/sub/chat/' + roomId, msg => {
       console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
