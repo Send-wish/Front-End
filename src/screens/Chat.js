@@ -38,21 +38,35 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
+  align-items: 'center';
+  justify-items: 'center';
+  align-content: 'center';
 `;
 
 const UpperContainer = styled.View`
-  flex: 1;
+  height: 10%;
   flex-direction: column;
   background-color: ${({theme}) => theme.mainBackground};
   padding: 0 5px;
 `;
+const MiddleContainer = styled.View`
+  height: 13%;
+  width: 94%;
+  margin-left: 11px;
+  margin-right: 11px;
+  margin-bottom: 24px;
+  background-color: ${({theme}) => theme.lightBackground};
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+`;
+
 const BottomContainer = styled.View`
-  flex: 4;
+  height: 100%;
   background-color: ${({theme}) => theme.mainBackground};
-  padding: 10px;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  margin-top: 15%;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const Row = styled.View`
@@ -109,6 +123,8 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   justify-content: flex-start;
   align-items: flex-start;
 `;
+
+
 
 const Chat = props => {
   const insets = useSafeAreaInsets();
@@ -260,16 +276,28 @@ const Chat = props => {
         <Row>
           <Column>
             <Title style={{marginTop: 30}}>
-              <Title style={{fontSize: 27, color: theme.tintColorPink}}>
+              <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
                 {nickName + ' '}
               </Title>
               님의 친구 목록
             </Title>
           </Column>
         </Row>
+      </UpperContainer>
+      <MiddleContainer>
         <Row>
-          <View style={{height: 150}}>
-            <ScrollView horizontal>
+          <View
+            style={{
+              flexDirection: 'row',
+              height: 80,
+              width: 350,
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              alignContent: 'center',
+              flexWrap: 'wrap',
+              paddingTop : 10,
+            }}>
+            <ScrollView horizontal style={{height: 100, width: 200}}>
               {friends.error
                 ? null
                 : friends.map(friend => (
@@ -280,12 +308,11 @@ const Chat = props => {
                       activeOpacity={0.6}
                     />
                   ))}
-
               <Ionicons
                 name="ellipsis-vertical"
                 size={20}
-                color={theme.subText}
-                style={{marginTop: 45, marginLeft: 10}}
+                color={theme.strongBackground}
+                style={{marginTop: 30, marginLeft: 10}}
               />
               <AddCollectionCircle
                 onPress={() => setVisibleModal(true)}
@@ -293,14 +320,20 @@ const Chat = props => {
             </ScrollView>
           </View>
         </Row>
-      </UpperContainer>
-
+      </MiddleContainer>
       <BottomContainer>
         <Column>
           <SpackBetweenRow>
-            <View style={{marginBottom: 10}}>
+            <View
+              style={{
+                paddingLeft: 10,
+                marginBottom: 10,
+                alignItems: 'flex-start',
+                justifyContent: 'flex-start',
+                width: '100%',
+              }}>
               <Title>채팅 목록</Title>
-              <SubTitle>당신의 wish item 을 공유해보세요 !</SubTitle>
+              <SubTitle>아이템을 친구와 공유하고, 이야기를 나눠요 !</SubTitle>
             </View>
           </SpackBetweenRow>
         </Column>
@@ -309,6 +342,7 @@ const Chat = props => {
             data={channels}
             renderItem={({item}) => <Item item={item} />}
             keyExtractor={item => item['id'].toString()}
+            showsVerticalScrollIndicator={false}
           />
         </Column>
       </BottomContainer>

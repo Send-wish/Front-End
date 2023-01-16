@@ -3,17 +3,16 @@ import styled from 'styled-components/native';
 import ShareIcon from './ShareIcon';
 import DeleteIcon from './DeleteIcon';
 import {theme} from '../theme';
-import {View, TouchableHighlight} from 'react-native';
+import {View, TouchableHighlight, ScrollView} from 'react-native';
 
 const Container = styled.View`
-  height: 80px;
-  border-radius: 15px;
+  height: 70px;
+  width: 370px;
   flex-direction: row;
-  margin-left: 10px;
-  margin-right: 10px;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  align-content: center;
   margin-bottom: 10px;
 `;
 
@@ -29,11 +28,16 @@ const LastMessage = styled.Text`
   font-weight: bold;
 `;
 
+const Time = styled.Text`
+  color: ${({theme}) => theme.subText};
+  font-size: 14px;
+  font-weight: bold;
+`;
+
 const CollectionCircleContainer = styled.View`
   padding: 5px;
-  margin: 5px 5px 5px 5px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   justify-content: center;
   align-items: center;
   border-radius: 17px;
@@ -42,10 +46,8 @@ const CollectionCircleContainer = styled.View`
 const CollectionCircleCollectionImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
   padding: 10px;
-  margin: 10px 10px 10px 10px;
-  border-width: 1px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   justify-content: center;
   align-items: center;
   border-radius: 17px;
@@ -79,7 +81,6 @@ const CollectionCircle = ({onLongPress, frName, image}) => {
               value={frName}
             />
           </CollectionCircleRow>
-          <CollectionCircleTitle>{frName}</CollectionCircleTitle>
         </View>
       </TouchableHighlight>
     </CollectionCircleContainer>
@@ -88,16 +89,40 @@ const CollectionCircle = ({onLongPress, frName, image}) => {
 
 const ListFriend = ({friendName, onPress}) => {
   return (
-    <Container style = {{backgroundColor : 'red'}}>
-      <CollectionCircle />
-      {/* <View>
+    <Container>
+      <View
+        style={{
+          width: '15%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+        }}>
+        <CollectionCircle />
+      </View>
+
+      <View
+        style={{
+          width: '75%',
+          height: '100%',
+          justifyContent: 'center',
+          paddingLeft: 10,
+        }}>
         <CollectionTitle>{friendName}</CollectionTitle>
         <LastMessage>{friendName}</LastMessage>
       </View>
-      <View style={{flexDirection: 'row'}}>
-        <ShareIcon onPress={onPress} />
-        <DeleteIcon onPress={onPress} />
-      </View> */}
+
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '10%',
+          justifyContent: 'center',
+          alignContent: 'flex-start',
+          height: '100%',
+          paddingTop: 20,
+        }}>
+        <Time>시간</Time>
+      </View>
     </Container>
   );
 };
