@@ -34,7 +34,15 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 
-import { Provider } from 'react-redux';
+import {createStore, applyMiddleware, compose} from 'redux';
+import {Provider} from 'react-redux';
+import {persistStore} from 'redux-persist';
+import {PersistGate} from 'redux-persist/integration/react';
+// import configureStore from './store';
+import {rootReducer} from './src/reducers';
+
+const store = createStore(rootReducer);
+const persistor = persistStore(store);
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -178,28 +186,32 @@ const App = () => {
   }, []);
 
   return (
-      <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-            initialRouteName="SignIn">
-            {/* <Stack.Screen name="Start" component={Start} /> */}
-            <Stack.Screen name="App" component={App} />
-            <Stack.Screen name="SignIn" component={SignIn} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="Navigation" component={Navigation} />
-            <Stack.Screen name="Collection" component={Collection} />
-            <Stack.Screen
-              name="SharedCollection"
-              component={SharedCollection}
-            />
-            <Stack.Screen name="Share" component={Share} />
-            <Stack.Screen name="ChatRoom" component={ChatRoom} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ThemeProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider theme={theme}>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
+              initialRouteName="SignIn">
+              {/* <Stack.Screen name="Start" component={Start} /> */}
+              <Stack.Screen name="App" component={App} />
+              <Stack.Screen name="SignIn" component={SignIn} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="Navigation" component={Navigation} />
+              <Stack.Screen name="Collection" component={Collection} />
+              <Stack.Screen
+                name="SharedCollection"
+                component={SharedCollection}
+              />
+              <Stack.Screen name="Share" component={Share} />
+              <Stack.Screen name="ChatRoom" component={ChatRoom} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 
