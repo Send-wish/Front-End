@@ -38,9 +38,9 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
-  align-items: 'center';
-  justify-items: 'center';
-  align-content: 'center';
+  align-items: center;
+  justify-items: center;
+  align-content: center;
 `;
 
 const UpperContainer = styled.View`
@@ -124,8 +124,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-
-
 const Chat = props => {
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
@@ -133,10 +131,12 @@ const Chat = props => {
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
+  const [img, setImg] = useState('');
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
+    // _getImage();
   }, [isFocused]);
 
   // 친구 추가
@@ -229,6 +229,24 @@ const Chat = props => {
     }
   };
 
+  const _getImage = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+        method: 'GET',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('!!!!!!!!!!!!!!!', data);
+          setImg(data);
+          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -295,7 +313,7 @@ const Chat = props => {
               justifyContent: 'flex-start',
               alignContent: 'center',
               flexWrap: 'wrap',
-              paddingTop : 10,
+              paddingTop: 10,
             }}>
             <ScrollView horizontal style={{height: 100, width: 200}}>
               {friends.error
@@ -306,6 +324,7 @@ const Chat = props => {
                       frName={friend?.friend_nickname}
                       onLongPress={() => _deleteFriend()}
                       activeOpacity={0.6}
+                      image={img}
                     />
                   ))}
               <Ionicons

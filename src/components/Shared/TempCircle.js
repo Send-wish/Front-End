@@ -68,7 +68,7 @@ const TempCircle = ({
                   : theme.mainBackground,
                 opacity: isClicked ? 0.5 : 1,
               }}
-              source={{uri: image}}
+              source={{uri : image? image : null}}
               value={frName}
             />
           </Row>
