@@ -500,7 +500,7 @@ const Shared = ({route, navigation}) => {
       _deleteShareCollection(shareCollectionId, nickName);
     }
   };
-
+    
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -563,6 +563,7 @@ const Shared = ({route, navigation}) => {
                             _addFriendList(friend?.friend_nickname);
                           }}
                           // isClicked={isFriendselected}
+                          // image={friend?.friend_img}
                         />
                       ))}
                 </ScrollView>
@@ -649,7 +650,7 @@ const Shared = ({route, navigation}) => {
                         key={shareCollection?.collectionId}
                         shareCollectionId={shareCollection?.collectionId}
                         shareCollectionName={shareCollection?.title}
-                        nickName={shareCollectionName?.nickname}
+                        nickName={shareCollection?.nickname}
                         onPress={() =>
                           _pressTargetShareCollection(
                             shareCollection?.collectionId,

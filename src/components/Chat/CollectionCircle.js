@@ -44,7 +44,7 @@ const CollectionCircle = ({onLongPress, frName, image}) => {
       <TouchableHighlight onLongPress={onLongPress}>
         <View>
         <Row>
-        <CollectionImage source={{uri: image}} value={frName}/>
+        <CollectionImage source={{uri : image? image : null}} value={frName}/>
         </Row>
         <Title>{frName}</Title>
         </View>

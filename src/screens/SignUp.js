@@ -155,7 +155,7 @@ const SignUp = ({navigation}) => {
         body: JSON.stringify({
           nickname: nickName,
           password: password,
-          // img : img,
+          img : img,
         }),
       })
         .then(response => response.json())
