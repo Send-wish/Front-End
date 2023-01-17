@@ -7,7 +7,7 @@ import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
-  margin: 40px 10px 10px 10px;
+  margin: 28px 20px 10px 10px;
   width: 65px;
   height: 65px;
   justify-content: center;
@@ -17,27 +17,27 @@ const Container = styled.View`
 
 const CollectionImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
-  padding: 10px;
-  margin: 10px 10px 10px 10px;
-  width: 75px;
-  height: 75px;
+  margin: 0.2px;
+  width: 39px;
+  height: 39px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
-  border-color: ${({theme}) => theme.tintColorGreen};
-  border-width: 1px;
+  border-color: ${({theme}) => theme.line};
 `;
 
 const CollectionView = styled.View`
-  background-color: ${({theme}) => theme.tintColorGreen};
+  background-color: ${({theme}) => theme.tintColorPink};
   padding: 10px;
-  margin: 10px 10px 10px 10px;
-  width: 75px;
-  height: 75px;
+  margin-bottom: 8px;
+  width: 80px;
+  height: 80px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  align-content: center;
+  justify-items: center;
+  border-radius: 25px;
   border-color: ${({theme}) => theme.line};
+  position: relative;
 `;
 
 const Row = styled.View`
@@ -60,84 +60,109 @@ const Title = styled.Text`
 const MainCollectionCircle = ({
   onPress,
   collectionTitle,
-  // isClicked,
+  imageStyle,
+  imageStyle2,
   titleStyle,
   nickName,
   collectionId,
   onLongPress,
   isCollectionEditing,
   isEditing,
-  imgUrl
-
+  firstImgUrl,
+  secondImgUrl,
+  thirdImgUrl,
+  fourthImgUrl,
 }) => {
   const [items, setItems] = useState([]);
-  const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-
-  useEffect(() => {
-    if (isFocused) console.log('Focused');
-    _getItemsFromCollection();
-  }, [isFocused]);
-
-  useEffect(() => {
-    _setImageUrl();
-  }, [items]);
-
-
-  const _getItemsFromCollection = async () => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          if (!data.nickname) {
-            return;
-          }
-          setItems(data.dtos);
-          // console.log(items); 
-        })
-        .then(_setImageUrl);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-
-  const _setImageUrl = () => {
-    if (items.length > 0) {
-      setImageUrl(items[0].imgUrl);
-    }
-  };
+  const [isChecked, setIsChecked] = useState(false);
 
   const _onPress = async () => {
     onPress();
-    _getItemsFromCollection();
-    setIsSelected(!isSelected);
-    // _setImageUrl();
+    setIsChecked(!isChecked);
   };
-
-  const [isSelected, setIsSelected] = useState(false);
 
   return (
     <Container>
       <TouchableHighlight onPress={_onPress} onLongPress={onLongPress}>
         <View>
-          <CollectionView>
-          <CollectionImage
-            source={{uri: imgUrl}}
+          <View
             style={{
-              color: isSelected ? theme.tintColorGreen : theme.mainBackground,
-              opacity: isSelected ? 0.5 : 1,
-            }}
-          />
+              width: 80,
+              height: 80,
+              backgroundColor: theme.strongBackground,
+              borderRadius: 25,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignContent: 'center',
+              zIndex: 1,
+              marginBottom: 8,
+              display: isChecked ? 'none' : 'flex',
+            }}>
+            <CollectionImage
+              source={{uri: firstImgUrl}}
+              style={{borderTopLeftRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: secondImgUrl}}
+              style={{borderBottomLeftRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: thirdImgUrl}}
+              style={{borderTopRightRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: fourthImgUrl}}
+              style={{borderBottomRightRadius: 25}}
+            />
+          </View>
+
+          <CollectionView style={{display: isChecked ? 'flex' : 'none'}}>
+            <Feather
+              name="check"
+              size={40}
+              color={theme.basicText}
+              style={{
+                position: 'absolute',
+                display: isChecked ? 'flex' : 'none',
+                zIndex: 10,
+              }}
+            />
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                backgroundColor: theme.strongBackground,
+                borderRadius: 25,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+                zIndex: 1,
+                marginBottom: 8,
+                opacity: 0.5,
+                position: 'absolute',
+              }}>
+              <CollectionImage
+                source={{uri: firstImgUrl}}
+                style={{borderTopLeftRadius: 25}}
+              />
+              <CollectionImage
+                source={{uri: secondImgUrl}}
+                style={{borderBottomLeftRadius: 25}}
+              />
+              <CollectionImage
+                source={{uri: thirdImgUrl}}
+                style={{borderTopRightRadius: 25}}
+              />
+              <CollectionImage
+                source={{uri: fourthImgUrl}}
+                style={{borderBottomRightRadius: 25}}
+              />
+            </View>
           </CollectionView>
+
           <Row>
             <Title style={titleStyle}>{collectionTitle}</Title>
           </Row>

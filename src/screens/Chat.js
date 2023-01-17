@@ -11,11 +11,9 @@ import {
   AddCollectionCircle,
 } from '../components/Chat';
 import {theme} from '../theme';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
-
 import {useIsFocused} from '@react-navigation/native';
 
 const channels = [];
@@ -115,6 +113,9 @@ const ModalView = styled.View`
   justify-content: center;
   align-items: center;
   opacity: 0.98;
+  padding-left  : 20px;
+  padding-right  : 20px;
+
 `;
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
@@ -288,7 +289,7 @@ const Chat = props => {
                 <Title style={{marginBottom: 10}}>친구 등록하기</Title>
                 <Title>추가할 친구의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  추가할 친구의 이름을 입력해주세요.
+                  친구와 아이템을 공유하고 의사결정을 할 수 있어요 !
                 </TintPinkSubTitle>
               </View>
             </View>

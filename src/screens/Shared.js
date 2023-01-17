@@ -77,7 +77,7 @@ const SubTitle = styled.Text`
 `;
 
 const TintPinkSubTitle = styled.Text`
-  margin-top: 7px;
+  margin-top: 10px;
   font-size: 14px;
   color: ${({theme}) => theme.tintColorPink};
 `;
@@ -92,11 +92,10 @@ const ModalView = styled.View`
 `;
 const ModalInnerView = styled.View`
   width: 100%;
-  /* height: 15%; */
+  height: 125px;
   background-color: ${({theme}) => theme.subBackground};
-  border-radius: 20px;
-  margin-top: -100px;
-  padding: 20px;
+  border-radius: 25px;
+  padding: 10px;
   justify-content: center;
   align-items: center;
 `;
@@ -104,12 +103,12 @@ const ModalInnerView = styled.View`
 const ModalCollectionView = styled.View`
   width: 100%;
   background-color: ${({theme}) => theme.subBackground};
-  border-radius: 20px;
+  border-radius: 25px;
   margin-top: 10px;
-  padding: 20px;
+  padding: 10px;
   justify-content: center;
   align-items: center;
-  height: 170px;
+  height: 125px;
 `;
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
@@ -179,9 +178,9 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    console.log('************nickName is', nickName);
-    console.log('************nickName is', addFriendList);
-
+    setAddFriendList([nickName]);
+    _getCollections();
+    _getItems();
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -196,8 +195,10 @@ const Shared = ({route, navigation}) => {
         .then(response => {
           if (!response.ok) {
             throw new Error(`${response.status} 공유 컬렉션 생성 에러발생`);
+          } else {
+            setShareCollectionName('');
+            return response.json();
           }
-          return response.json();
         })
         // .then(json => console.log(json))
         .then(data => {
@@ -306,13 +307,6 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setItems(data);
-          // console.log(
-          //   'in share screen items :',
-          //   data.imgUrl,
-          //   data.name,
-          //   data.price,
-          // );
-          // console.log(' get share screen items :', data);
         });
     } catch (e) {
       console.log(e);
@@ -395,11 +389,10 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성시 추가할 개인 컬렉션
   const _pressTargetCollection = collectionId => {
-    
     setIsCollectionSelected(!isCollectionSelected);
     setTargetCollectionId(collectionId);
-    if (isCollectionSelected &&targetCollectionId === targetCollectionId){
-    setTargetCollectionId();
+    if (isCollectionSelected && targetCollectionId === targetCollectionId) {
+      setTargetCollectionId();
     }
     console.log('targetCollectionId', targetCollectionId);
   };
@@ -506,11 +499,11 @@ const Shared = ({route, navigation}) => {
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
         <ModalView insets={insets}>
           <StyledTouchableOpacity
-            onPress={() => setVisibleModal(false)}
+            onPress={() => (setVisibleModal(false), setShareCollectionName(''))}
             style={{marginLeft: 5}}>
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
-          <KeyboardAwareScrollView extraScrollHeight={200}>
+          <KeyboardAwareScrollView extraScrollHeight={430}>
             <StyledTouchableOpacity
               onPress={() => setVisibleModal(false)}></StyledTouchableOpacity>
             <View style={{marginTop: 60}} />
@@ -520,10 +513,10 @@ const Shared = ({route, navigation}) => {
                 justifyContent: 'flex-start',
               }}>
               <View style={{width: 330}}>
-                <Title style={{marginBottom: 10}}>공유 콜렉션 만들기</Title>
-                <Title>콜렉션의 이름을 입력해주세요.</Title>
+                <Title style={{marginBottom: 10}}>공유 컬렉션 만들기</Title>
+                <Title>컬렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  공유 콜렉션의 이름을 입력해주세요.
+                  친구들과 컬렉션을 공유하고 의사결정을 할 수 있어요.
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -539,10 +532,18 @@ const Shared = ({route, navigation}) => {
               placeholder="새 콜렉션 이름"
               returnKeyType="done"
             />
-            <View style={{position: 'relative'}}>
+            <View>
+              <View style={{marginTop: 13, zIndex: 10}}>
+                <SubTitle
+                  style={{fontSize: 15, marginLeft: 5, marginBottom: 10}}>
+                  공유할 친구들을 선택해주세요.
+                </SubTitle>
+              </View>
               <ModalInnerView>
-                <ScrollView horizontal style={{height: 100}}>
-                  {/* 임시 */}
+                <ScrollView
+                  horizontal
+                  style={{width: 300}}
+                  showsHorizontalScrollIndicator={false}>
                   {friends.error
                     ? null
                     : friends.map(friend => (
@@ -564,12 +565,21 @@ const Shared = ({route, navigation}) => {
                           }}
                           // isClicked={isFriendselected}
                           // image={friend?.friend_img}
+
                         />
                       ))}
                 </ScrollView>
               </ModalInnerView>
+              <View style={{marginTop: 13}}>
+                <SubTitle style={{fontSize: 15, marginLeft: 5}}>
+                  친구들에게 공유할 컬렉션을 선택해주세요.
+                </SubTitle>
+              </View>
               <ModalCollectionView>
-                <ScrollView horizontal style={{height: 100}}>
+                <ScrollView
+                  horizontal
+                  style={{width: 300}}
+                  showsHorizontalScrollIndicator={false}>
                   {collections.error
                     ? null
                     : collections.map(collection => (
@@ -587,11 +597,11 @@ const Shared = ({route, navigation}) => {
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          imgUrl={collection?.defaultImage[0]}
-
-                          // isCollectionEditing={isCollectionSelected}
+                          firstImgUrl={collection?.defaultImage[0]}
+                          secondImgUrl={collection?.defaultImage[1]}
+                          thirdImgUrl={collection?.defaultImage[2]}
+                          fourthImgUrl={collection?.defaultImage[3]}
                           isEditing={isEditing}
-
                         />
                       ))}
                 </ScrollView>
@@ -634,7 +644,7 @@ const Shared = ({route, navigation}) => {
                 marginRight: 10,
                 height: 300,
               }}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style = {{width : 360}}>
                 {/* collection rendering */}
                 {shareCollections.error
                   ? null
@@ -663,7 +673,10 @@ const Shared = ({route, navigation}) => {
                         }}
                         isShareCollectionEditing={isShareCollectionEditing}
                         isEditing={isEditing}
-                        imgUrl={shareCollection?.defaultImage[0]}
+                        firstImgUrl={shareCollection?.defaultImage[0]}
+                        secondImgUrl={shareCollection?.defaultImage[1]}
+                        thirdImgUrl={shareCollection?.defaultImage[2]}
+                        fourthImgUrl={shareCollection?.defaultImage[3]}
                       />
                     ))}
 
@@ -672,7 +685,7 @@ const Shared = ({route, navigation}) => {
                   size={15}
                   style={{
                     marginTop: 45,
-                    marginLeft: 10,
+                    marginRight: 10,
                     color: isEditing
                       ? theme.subBackground
                       : theme.componentBackground,
@@ -688,7 +701,7 @@ const Shared = ({route, navigation}) => {
                     color: isEditing ? theme.subText : theme.basicText,
                   }}
                   onPress={() => (isEditing ? {} : setVisibleModal(true))}
-                  title="공유 콜렉션 만들기"></AddCollectionCircle>
+                  title="공유 컬렉션 만들기"></AddCollectionCircle>
               </ScrollView>
             </View>
           </View>
@@ -709,13 +722,13 @@ const Shared = ({route, navigation}) => {
                   style={{
                     color: isEditing ? theme.strongSubText : theme.basicText,
                   }}>
-                  내 위시템 전체보기
+                  내 아이템 전체보기
                 </Title>
                 <SubTitle
                   style={{
                     color: isEditing ? theme.strongSubText : theme.subText,
                   }}>
-                  총 {items.length}개의 위시템
+                  총 {items.length}개의 아이템을 공유 컬렉션에 담아주세요 !
                 </SubTitle>
               </View>
               <Row>

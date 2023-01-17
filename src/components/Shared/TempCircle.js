@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React, {useState} from 'react';
 import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
 import {theme} from '../../theme';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Container = styled.View`
   margin: 20px 10px 10px 10px;
@@ -21,7 +22,7 @@ const CollectionImage = styled.Image`
   height: 75px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  border-radius: 27px;
   border-color: ${({theme}) => theme.basicText};
 `;
 
@@ -42,30 +43,36 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-const TempCircle = ({
-  frName,
-  titleStyle,
-  image,
-  onPress,
-}) => {
-  const _pressClickButton = () => {
-    setIsClicked(!isClicked);
+
+const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
+  const _pressFriend = () => {
+    setIsChecked(!isChecked);
     onPress();
   };
 
-  const [isClicked, setIsClicked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
     <Container>
-      <TouchableHighlight onPress={_pressClickButton}>
+      <TouchableHighlight onPress={_pressFriend}>
         <View>
           <Row>
+            <Feather
+              name="check"
+              size={40}
+              color={theme.basicText}
+              style={{
+                position: 'absolute',
+                display: isChecked ? 'flex' : 'none',
+                zIndex: 10,
+              }}
+            />
             <CollectionImage
               style={{
-                backgroundColor: isClicked
+                backgroundColor: isChecked
                   ? theme.tintColorGreen
                   : theme.mainBackground,
-                opacity: isClicked ? 0.5 : 1,
+                opacity: isChecked ? 0.5 : 1,
               }}
               source={{uri : image? image : null}}
               value={frName}
