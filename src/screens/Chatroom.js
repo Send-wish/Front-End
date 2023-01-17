@@ -209,6 +209,7 @@ const ChatRoom = ({navigation, route}) => {
       debug: str => {
         console.log('STOMP: ' + str);
         setUpdate(str);
+        _getItemsFromShareCollection();
       },
       onConnect: () => {
         _subscribe(roomId);

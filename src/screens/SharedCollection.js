@@ -356,9 +356,9 @@ const SharedCollection = ({route, navigation}) => {
                   }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={_pressChatButton}>
+              <TouchableOpacity>
                 <View>
-                  <ChatButton title={'채팅하기'} />
+                  <ChatButton title={'채팅하기'} onPress={_pressChatButton} />
                 </View>
               </TouchableOpacity>
             </WrapRow>

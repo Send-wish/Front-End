@@ -16,20 +16,40 @@ import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 
-const channels = [];
-for (let i = 0; i < 20; i++) {
-  channels.push({
-    friendName: `friendName: ${i}`,
-    id: i,
-    title: `title: ${i}`,
-    description: `desc : ${i}`,
-    createdAt: i,
-  });
-}
+const Item = ({
+  item: {chatRoomId, defaultImage, lastMessage, title},
+  onPress,
+}) => {
+  if (lastMessage.createAt) {
+    const sentTime = new Date(lastMessage.createAt) / 1000;
+    const currentTime = new Date() / 1000;
+    const timeGap = currentTime - sentTime;
 
-const Item = ({item: {id, title, description, createdAt}, onPress}) => {
-  // console.log(id);
-  return <ListFriend friendName={title} />;
+    let gap;
+    if (timeGap < 60) {
+      gap = '방금 전';
+    }
+    if (timeGap > 60 && timeGap < 3600) {
+      gap = Math.round(timeGap / 60) + '분 전';
+    }
+    if (timeGap > 3600 && timeGap < 86400) {
+      gap = Math.round(timeGap / 3600) + '시간 전';
+    }
+    if (timeGap > 86400 && timeGap < 604800) {
+      gap = Math.round(timeGap / 86400) + '일 전';
+    }
+
+    return (
+      <ListFriend
+        chatRoomId={chatRoomId}
+        defaultImage={defaultImage}
+        createAt={gap}
+        message={lastMessage.message}
+        sender={lastMessage.sender}
+        title={title}
+      />
+    );
+  }
 };
 
 const Container = styled.View`
@@ -113,9 +133,8 @@ const ModalView = styled.View`
   justify-content: center;
   align-items: center;
   opacity: 0.98;
-  padding-left  : 20px;
-  padding-right  : 20px;
-
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
@@ -126,6 +145,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Chat = props => {
+  let flatListRef;
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
@@ -133,6 +153,7 @@ const Chat = props => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
   const [chatRoomList, setChatRoomList] = useState([]);
+  const [update, setUpdate] = useState('');
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
@@ -240,7 +261,7 @@ const Chat = props => {
         })
         .then(data => {
           setChatRoomList(data);
-          console.log('data : ', data);
+          console.log('data !!!!!: ', data);
         });
     } catch (e) {
       console.log(e);
@@ -249,45 +270,47 @@ const Chat = props => {
 
   return (
     <Container insets={insets}>
-      <Modal animationType="slide" transparent={true} visible={visibleModal}>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={visibleModal}
+        style={{flex: 1}}>
         <ModalView insets={insets}>
           <StyledTouchableOpacity
             onPress={() => setVisibleModal(false)}
-            style={{marginLeft: 5}}>
+            style={{marginLeft: 5, marginTop: 85}}>
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
-          <KeyboardAwareScrollView extraScrollHeight={200}>
-            <StyledTouchableOpacity
-              onPress={() => setVisibleModal(false)}></StyledTouchableOpacity>
-            <View style={{marginTop: 60}} />
-            <View
-              style={{
-                width: '100%',
-                justifyContent: 'flex-start',
-              }}>
-              <View style={{width: 330}}>
-                <Title style={{marginBottom: 10}}>친구 등록하기</Title>
-                <Title>추가할 친구의 이름을 입력해주세요.</Title>
-                <TintPinkSubTitle>
-                  친구와 아이템을 공유하고 의사결정을 할 수 있어요 !
-                </TintPinkSubTitle>
-              </View>
+          <StyledTouchableOpacity
+            onPress={() => setVisibleModal(false)}></StyledTouchableOpacity>
+          <View style={{marginTop: 60}} />
+          <View
+            style={{
+              width: '100%',
+              justifyContent: 'flex-start',
+            }}>
+            <View style={{width: 320}}>
+              <Title style={{marginBottom: 10}}>친구 등록하기</Title>
+              <Title>추가할 친구의 이름을 입력해주세요.</Title>
+              <TintPinkSubTitle>
+                친구와 아이템을 공유하고 의사결정을 할 수 있어요 !
+              </TintPinkSubTitle>
             </View>
-            <Input
-              // ref={refFrName}
-              value={frName}
-              onChangeText={setFrName}
-              onBlur={() => setFrName(frName)}
-              maxLength={20}
-              onSubmitEditing={() => {
-                _addFriends();
-              }}
-              placeholder="친구 닉네임"
-              returnKeyType="done"
-            />
-            <Button title="친구 등록하기" onPress={() => _addFriends()} />
-            <View style={{marginBottom: 20}} />
-          </KeyboardAwareScrollView>
+          </View>
+          <Input
+            // ref={refFrName}
+            value={frName}
+            onChangeText={setFrName}
+            onBlur={() => setFrName(frName)}
+            maxLength={20}
+            onSubmitEditing={() => {
+              _addFriends();
+            }}
+            placeholder="친구 닉네임"
+            returnKeyType="done"
+          />
+          <Button title="친구 등록하기" onPress={() => _addFriends()} />
+          <View style={{marginBottom: 20}} />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -357,10 +380,13 @@ const Chat = props => {
         </Column>
         <Column style={{width: '100%'}}>
           <FlatList
-            data={channels}
+            data={chatRoomList}
             renderItem={({item}) => <Item item={item} />}
-            keyExtractor={item => item['id'].toString()}
+            key={item => item['createAt']}
+            ref={ref => (flatListRef = ref)}
             showsVerticalScrollIndicator={false}
+            onContentSizeChange={() => flatListRef.scrollToEnd()}
+            extraData={{update}}
           />
         </Column>
       </BottomContainer>
