@@ -38,9 +38,9 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
-  align-items: 'center';
-  justify-items: 'center';
-  align-content: 'center';
+  align-items: center;
+  justify-items: center;
+  align-content: center;
 `;
 
 const UpperContainer = styled.View`
@@ -124,8 +124,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-
-
 const Chat = props => {
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
@@ -133,10 +131,12 @@ const Chat = props => {
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
+  const [chatRoomList, setChatRoomList] = useState([]);
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
+    _getChatList();
   }, [isFocused]);
 
   // 친구 추가
@@ -183,7 +183,6 @@ const Chat = props => {
         headers: {'Content-Type': `application/json`},
       })
         .then(response => {
-          console.log('errorcheck!!response Get  friend: ', response);
           return response.json();
         })
         .then(data => {
@@ -226,6 +225,24 @@ const Chat = props => {
       // });
     } catch (e) {
       console.log('friend delete fail', e);
+    }
+  };
+
+  const _getChatList = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/chat/rooms/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setChatRoomList(data);
+          console.log('data : ', data);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -274,7 +291,7 @@ const Chat = props => {
       </Modal>
       <UpperContainer>
         <Row>
-          <Column>
+          <Column style={{width: '95%'}}>
             <Title style={{marginTop: 30}}>
               <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
                 {nickName + ' '}
@@ -295,7 +312,7 @@ const Chat = props => {
               justifyContent: 'flex-start',
               alignContent: 'center',
               flexWrap: 'wrap',
-              paddingTop : 10,
+              paddingTop: 10,
             }}>
             <ScrollView horizontal style={{height: 100, width: 200}}>
               {friends.error

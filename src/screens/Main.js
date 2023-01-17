@@ -456,10 +456,10 @@ const Main = ({navigation, route}) => {
                 justifyContent: 'flex-start',
               }}>
               <View style={{width: 330}}>
-                <Title style={{marginBottom: 10}}>새 콜렉션 만들기</Title>
-                <Title>새 콜렉션의 이름을 입력해주세요.</Title>
+                <Title style={{marginBottom: 10}}>새 컬렉션 만들기</Title>
+                <Title>새 컬렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  새 콜렉션의 이름을 입력해주세요.
+                  새 컬렉션의 이름을 입력해주세요.
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -472,11 +472,11 @@ const Main = ({navigation, route}) => {
               onSubmitEditing={() => {
                 _madeCollection();
               }}
-              placeholder="새 콜렉션 이름"
+              placeholder="새 컬렉션 이름"
               returnKeyType="done"
             />
             <Button
-              title="새 콜렉션 만들기"
+              title="새 컬렉션 만들기"
               onPress={() => _madeCollection()}
             />
             <View style={{marginBottom: 20}} />
@@ -500,7 +500,7 @@ const Main = ({navigation, route}) => {
                 }}>
                 {nickName + ' '}
               </Title>
-              님의 콜렉션
+              님의 컬렉션
             </Title>
           </Column>
         </Row>
@@ -525,7 +525,10 @@ const Main = ({navigation, route}) => {
                         collectionId={collection?.collectionId}
                         collectionTitle={collection?.title}
                         nickName={collection?.nickname}
-                        imgUrl={collection?.defaultImage}
+                        firstImgUrl={collection?.defaultImage[0]}
+                        secondImgUrl={collection?.defaultImage[1]}
+                        thirdImgUrl={collection?.defaultImage[2]}
+                        fourthImgUrl={collection?.defaultImage[3]}
                         onPress={() =>
                           _pressTargetCollection(
                             collection?.collectionId,
@@ -546,7 +549,7 @@ const Main = ({navigation, route}) => {
                   size={15}
                   style={{
                     marginTop: 45,
-                    marginLeft: 10,
+                    marginRight: 10,
                     color: isEditing
                       ? theme.subBackground
                       : theme.componentBackground,
@@ -562,7 +565,7 @@ const Main = ({navigation, route}) => {
                     color: isEditing ? theme.subText : theme.basicText,
                   }}
                   onPress={() => (isEditing ? {} : setVisibleModal(true))}
-                  title="새 콜렉션 추가"></AddCollectionCircle>
+                  title="새 컬렉션 추가"></AddCollectionCircle>
               </ScrollView>
             </View>
           </View>
@@ -583,13 +586,13 @@ const Main = ({navigation, route}) => {
                   style={{
                     color: isEditing ? theme.strongSubText : theme.basicText,
                   }}>
-                  내 위시템 전체보기
+                  아이템 전체보기
                 </Title>
                 <SubTitle
                   style={{
                     color: isEditing ? theme.strongSubText : theme.subText,
                   }}>
-                  총 {items.length}개의 위시템
+                  총 {items.length}개의 아이템을 컬렉션에 담아주세요 !
                 </SubTitle>
               </View>
               <Row>

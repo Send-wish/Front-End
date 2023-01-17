@@ -10,9 +10,6 @@ const Container = styled.View`
   width: 370px;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
   margin-bottom: 10px;
 `;
 
@@ -39,7 +36,6 @@ const CollectionCircleContainer = styled.View`
   width: 50px;
   height: 50px;
   justify-content: center;
-  align-items: center;
   border-radius: 17px;
 `;
 
@@ -48,8 +44,6 @@ const CollectionCircleCollectionImage = styled.Image`
   padding: 10px;
   width: 50px;
   height: 50px;
-  justify-content: center;
-  align-items: center;
   border-radius: 17px;
   border-color: ${({theme}) => theme.basicText};
 `;
@@ -57,16 +51,12 @@ const CollectionCircleCollectionImage = styled.Image`
 const CollectionCircleRow = styled.View`
   flex-direction: row;
   justify-content: center;
-  align-items: center;
 `;
 
 const CollectionCircleTitle = styled.Text`
   font-size: 11px;
   font-weight: bold;
   color: ${({theme}) => theme.basicText};
-  justify-content: center;
-  align-items: center;
-  text-align: center;
   width: 80px;
 `;
 
@@ -96,7 +86,6 @@ const ListFriend = ({friendName, onPress}) => {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          alignContent: 'center',
         }}>
         <CollectionCircle />
       </View>

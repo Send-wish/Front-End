@@ -25,20 +25,16 @@ const Container = styled.View`
   flex: 1;
   justify-content: flex-end;
   align-items: center;
-  flex-wrap: wrap;
   background-color: transparent;
 `;
 
 const BottomContainer = styled.View`
   padding-left: 20px;
   padding-right: 20px;
-  /* justify-content: center; */
   align-items: center;
-  height: 40%;
+  height: 58%;
   width: 100%;
   background-color: ${({theme}) => theme.basicText};
-  flex-wrap: wrap;
-  border-color: ${({theme}) => theme.componentBackground};
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
 `;
@@ -54,24 +50,27 @@ const Row = styled.View`
 
 const SaveStatus = styled.View`
   justify-content: center;
-  align-items: flex-start;
-  height: 20%;
+  height: 11%;
   width: 100%;
-  background-color: ${({theme}) => theme.basicText};
 `;
 
 const CollectionList = styled.View`
-  align-items: flex-start;
+  border-radius: 30px;
+  margin-top: 5px;
+  margin-bottom: 13px;
+  padding-top: 9px;
+  padding-left: 10px;
+  padding-right: 10px;
   flex-direction: row;
-  height: 62%;
+  height: 33%;
   width: 100%;
-  background-color: ${({theme}) => theme.basicText};
+  background-color: ${({theme}) => theme.line};
 `;
 const DividingLine = styled.View`
   justify-content: center;
   align-items: center;
   height: 0.2%;
-  width: 90%;
+  width: 96%;
   background-color: ${({theme}) => theme.componentBackground};
   border-radius: 20px;
   z-index: 1;
@@ -85,31 +84,15 @@ const LineIcon = styled.View`
   background-color: ${({theme}) => theme.subText};
   border-radius: 20px;
   margin-top: 10px;
-  margin-bottom: 40px;
+  margin-bottom: 33px;
 `;
 
-const ContinueButton = ({onPress}) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          height: 33,
-          width: 100,
-          borderRadius: 10,
-          backgroundColor: theme.tintColorPink,
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignContent: 'center',
-        }}>
-        <Text
-          style={{color: theme.basicText, fontSize: 16, fontWeight: 'bold'}}>
-          쇼핑 계속하기
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+const SectionTitle = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: ${({theme}) => theme.mainBackground};
+  margin-left: 8px;
+`;
 
 const ContiuneInApp = ({onPress}) => {
   return (
@@ -142,7 +125,7 @@ const MainTitle = styled.Text`
 
 const CircleContainer = styled.View`
   padding: 10px;
-  margin: 40px 10px 10px 10px;
+  margin: 22px 10px 10px 10px;
   width: 65px;
   height: 65px;
   justify-content: center;
@@ -151,15 +134,12 @@ const CircleContainer = styled.View`
 `;
 
 const CircleCollectionImage = styled.Image`
-  background-color: ${({theme}) => theme.componentBackground};
-  padding: 10px;
-  margin: 10px 10px 10px 10px;
-  width: 75px;
-  height: 75px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 30px;
-  border-color: ${({theme}) => theme.line};
+  background-color: ${({theme}) => theme.subBackground};
+  margin: 0.2px;
+  width: 35px;
+  height: 35px;
+  border-width: 1px;
+  border-color: ${({theme}) => theme.componentBackground};
 `;
 
 const CircleRow = styled.View`
@@ -169,22 +149,110 @@ const CircleRow = styled.View`
 `;
 
 const CircleTitle = styled.Text`
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
-  color: ${({theme}) => theme.subText};
+  color: ${({theme}) => theme.strongSubText};
   justify-content: center;
   align-items: center;
   text-align: center;
   width: 80px;
-  height: 30px;
-  margin-bottom: 15px;
+  margin-top: 6px;
 `;
 
-const CollectionCircle = ({onPress, title, image}) => {
+const CollectionCircle = ({
+  onPress,
+  title,
+  defaultImage,
+  collectionId,
+  sharedUrl,
+}) => {
+  const _onPress = () => {
+    onPress(collectionId, nickName, sharedUrl);
+  };
   return (
     <CircleContainer>
-      <TouchableOpacity onPress={onPress}>
-        <CircleCollectionImage source={{uri: image}} />
+      <TouchableOpacity onPress={_onPress}>
+        <View
+          style={{
+            width: 72,
+            height: 72,
+            backgroundColor: theme.mainBackground,
+            borderRadius: 21,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            zIndex: 1,
+          }}>
+          <CircleCollectionImage
+            source={{uri: defaultImage[0]}}
+            style={{borderTopLeftRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[1]}}
+            style={{borderBottomLeftRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[2]}}
+            style={{borderTopRightRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[3]}}
+            style={{borderBottomRightRadius: 20}}
+          />
+        </View>
+        <CircleRow>
+          <CircleTitle>{title}</CircleTitle>
+        </CircleRow>
+      </TouchableOpacity>
+    </CircleContainer>
+  );
+};
+
+const ShareCollectionCircle = ({
+  onPress,
+  title,
+  defaultImage,
+  collectionId,
+  sharedUrl,
+}) => {
+  const _onPress = () => {
+    onPress(collectionId, nickName, sharedUrl);
+  };
+
+  return (
+    <CircleContainer>
+      <TouchableOpacity onPress={_onPress}>
+        <View
+          style={{
+            width: 72,
+            height: 72,
+            backgroundColor: theme.mainBackground,
+            borderRadius: 21,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            zIndex: 1,
+          }}>
+          <CircleCollectionImage
+            source={{uri: defaultImage[0]}}
+            style={{borderTopLeftRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[1]}}
+            style={{borderBottomLeftRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[2]}}
+            style={{borderTopRightRadius: 20}}
+          />
+          <CircleCollectionImage
+            source={{uri: defaultImage[3]}}
+            style={{borderBottomRightRadius: 20}}
+          />
+        </View>
+
         <CircleRow>
           <CircleTitle>{title}</CircleTitle>
         </CircleRow>
@@ -199,6 +267,8 @@ const Share = () => {
   const [waitSecond, setWaitSecond] = useState(false);
   const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
   const [collections, setCollections] = useState([]); // 컬렉션 목록
+  const [shareCollections, setShareCollections] = useState([]);
+  const [sharedUrl, setSharedUrl] = useState('');
 
   const loadUsernameFromSharedStorage = async () => {
     try {
@@ -206,7 +276,6 @@ const Share = () => {
         'nickNameData',
         appGroupIdentifier,
       );
-      // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
       // console.log('share check data==in share', value);
       nickName = value;
       // console.log('nickName check in share', nickName);
@@ -217,14 +286,18 @@ const Share = () => {
       console.log(errorCode);
     }
   };
+
   loadUsernameFromSharedStorage();
 
   useEffect(() => {
     ShareMenuReactView.data()
-    .then(({data}) => {
-        _getCollections()
+      .then(({data}) => {
+        _getCollections();
+        _getShareCollections();
         postItem(data[0].data);
+        setSharedUrl(data[0].data);
         _timeoutFunc();
+        console.log('************************sharedUrl is', sharedUrl);
       })
       .catch(error => {
         if (error.response) {
@@ -250,7 +323,7 @@ const Share = () => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {'Content-Type': 'application/json'},
       })
         .then(res => {
           return res.json();
@@ -258,6 +331,30 @@ const Share = () => {
         .then(data => {
           setCollections(data);
           setLoading(false);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // 공유 컬렉션 렌더링
+  const _getShareCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setShareCollections(data);
+          console.log('get share collections', data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.log(error);
         });
     } catch (e) {
       console.log(e);
@@ -292,10 +389,53 @@ const Share = () => {
     }
   };
 
-  // console.log('waitSecond', waitSecond);
-  // console.log('collections ', collections);
+  const _addItemToCollection = async (collectionId, nickName, sharedUrl) => {
+    try {
+      fetch('https://api.sendwish.link:8081/item/enrollment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: collectionId,
+          itemIdList: [sharedUrl],
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getCollections();
+        return response.json();
+      });
+    } catch (e) {
+      console.log('adding item to collection failed');
+    }
+  };
 
-  
+  const _addItemToShareCollection = async (
+    shareCollectionId,
+    nickName,
+    sharedUrl,
+  ) => {
+    try {
+      fetch('https://api.sendwish.link:8081/item/enrollment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: shareCollectionId,
+          itemIdList: [sharedUrl],
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getShareCollections();
+        return response.json();
+      });
+    } catch (e) {
+      console.log('adding item to collection failed');
+    }
+  };
 
   const _setWaitSecond = () => {
     setWaitSecond(true);
@@ -319,7 +459,7 @@ const Share = () => {
           <SaveStatus>
             <Row>
               <MainTitle style={{marginLeft: 10}}>
-                {waitSecond ? '저장 완료!' : '아이템 저장 중'}
+                {waitSecond ? '저장 완료!' : '아이템 저장 중 ... !'}
               </MainTitle>
               <View
                 style={{
@@ -337,24 +477,47 @@ const Share = () => {
             </Row>
           </SaveStatus>
           <DividingLine />
-          <CollectionList>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {collections.error
-                ? null
-                : collections.map(collection => (
-                    <CollectionCircle
-                      titleStyle={{
-                        color: theme.basicText,
-                      }}
-                      key={collection?.collectionId}
-                      collectionId={collection?.collectionId}
-                      collectionTitle={collection?.title}
-                      nickName={collection?.nickname}
-                      title={collection?.title}
-                    />
-                  ))}
-            </ScrollView>
-          </CollectionList>
+          <View style={{padding: 8, marginTop: 10}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <SectionTitle> 컬렉션에 담기</SectionTitle>
+            </View>
+            <CollectionList>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {collections.error
+                  ? null
+                  : collections.map(collection => (
+                      <CollectionCircle
+                        key={collection?.collectionId}
+                        collectionId={collection?.collectionId}
+                        title={collection?.title}
+                        defaultImage={collection?.defaultImage}
+                        nickName={collection?.nickname}
+                        onPress={_addItemToCollection}
+                        sharedUrl={sharedUrl}
+                      />
+                    ))}
+              </ScrollView>
+            </CollectionList>
+
+            <SectionTitle> 공유컬렉션에 담기</SectionTitle>
+            <CollectionList>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {shareCollections.error
+                  ? null
+                  : shareCollections.map(shareCollection => (
+                      <ShareCollectionCircle
+                        key={shareCollection?.collectionId}
+                        collectionId={shareCollection?.collectionId}
+                        title={shareCollection?.title}
+                        defaultImage={shareCollection?.defaultImage}
+                        nickName={shareCollection?.nickname}
+                        onPress={_addItemToShareCollection}
+                        sharedUrl={sharedUrl}
+                      />
+                    ))}
+              </ScrollView>
+            </CollectionList>
+          </View>
         </BottomContainer>
       </Container>
     </ThemeProvider>
