@@ -3,13 +3,15 @@ const Colors = {
   black: '#111111',
   pink: '#ff1493',
   palepink: '#990052',
+  pastelPink: '#FFE1DD',
   green: '#22bfb2',
   palegreen: '#0f5751',
+  darkgreen: '#deeded',
   grey_0: '#d5d5d5',
   grey_1: '#a6a6a6',
   grey_2: '#636363',
   grey_3: '#2f2f2f',
-  grey_4 : '#1c1c1c',
+  grey_4: '#1c1c1c',
   red: '#e84118',
 };
 
@@ -24,11 +26,13 @@ export const theme = {
 
   basicText: Colors.white,
   subText: Colors.grey_1,
-  strongSubText : Colors.grey_2,
+  strongSubText: Colors.grey_2,
 
   tintcolorPalegreen: Colors.palegreen,
   tintcolorPalepink: Colors.palepink,
   tintColorPink: Colors.pink,
   tintColorGreen: Colors.green,
+  tintColorDarkGreen: Colors.darkgreen,
+  tintColorPastelPink: Colors.pastelPink,
   line: Colors.grey_0,
 };

@@ -12,7 +12,14 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
-import {Input, MySaying, OthersSaying, ItemBox} from '../components/ChatRoom';
+import {
+  Input,
+  MySaying,
+  OthersSaying,
+  ItemBox,
+  MySayingItem,
+  OthersSayingItem,
+} from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
@@ -115,20 +122,58 @@ const LineIcon = styled.View`
   margin-top: 5px;
 `;
 
-const Item = ({item: {createAt, message, sender, nickName}}) => {
+const _openUrl = url => {
+  Linking.openURL(url);
+};
+
+const Item = ({item: {createAt, message, sender, nickName, itemDto}}) => {
   const parcedCreateAt = createAt.substring(11, 16);
   if (sender === nickName) {
-    return (
-      <MySaying sender={sender} message={message} createAt={parcedCreateAt} />
-    );
+    if (itemDto) {
+      const {imgUrl, itemId, name, originUrl, price} = itemDto;
+      return (
+        <MySayingItem
+          sender={sender}
+          message={message}
+          createAt={parcedCreateAt}
+          imgUrl={imgUrl}
+          itemId={itemId}
+          name={name}
+          originUrl={originUrl}
+          price={price}
+          onPress={_openUrl}
+        />
+      );
+    } else {
+      return (
+        <MySaying sender={sender} message={message} createAt={parcedCreateAt} />
+      );
+    }
   } else {
-    return (
-      <OthersSaying
-        sender={sender}
-        message={message}
-        createAt={parcedCreateAt}
-      />
-    );
+    if (itemDto) {
+      const {imgUrl, itemId, name, originUrl, price} = itemDto;
+      return (
+        <OthersSayingItem
+          sender={sender}
+          message={message}
+          createAt={parcedCreateAt}
+          imgUrl={imgUrl}
+          itemId={itemId}
+          name={name}
+          originUrl={originUrl}
+          price={price}
+          onPress={_openUrl}
+        />
+      );
+    } else {
+      return (
+        <OthersSaying
+          sender={sender}
+          message={message}
+          createAt={parcedCreateAt}
+        />
+      );
+    }
   }
 };
 
@@ -271,9 +316,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          console.log('data : ', data);
-
-          // console.log('chatList is : ', chatList);
+          // console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);

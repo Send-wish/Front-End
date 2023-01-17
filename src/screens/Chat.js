@@ -131,12 +131,12 @@ const Chat = props => {
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const nickName = props.route.params.params.nickName;
-  const [img, setImg] = useState('');
+  const [chatRoomList, setChatRoomList] = useState([]);
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
-    // _getImage();
+    _getChatList();
   }, [isFocused]);
 
   // 친구 추가
@@ -183,7 +183,6 @@ const Chat = props => {
         headers: {'Content-Type': `application/json`},
       })
         .then(response => {
-          console.log('errorcheck!!response Get  friend: ', response);
           return response.json();
         })
         .then(data => {
@@ -229,18 +228,18 @@ const Chat = props => {
     }
   };
 
-  const _getImage = async () => {
+  const _getChatList = async () => {
     try {
-      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+      fetch(`https://api.sendwish.link:8081/chat/rooms/${nickName}`, {
         method: 'GET',
+        headers: {'Content-Type': 'application/json'},
       })
         .then(res => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!', data);
-          setImg(data);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          setChatRoomList(data);
+          console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);
@@ -292,7 +291,7 @@ const Chat = props => {
       </Modal>
       <UpperContainer>
         <Row>
-          <Column>
+          <Column style={{width: '95%'}}>
             <Title style={{marginTop: 30}}>
               <Title style={{fontSize: 27, color: theme.tintColorGreen}}>
                 {nickName + ' '}
@@ -324,7 +323,6 @@ const Chat = props => {
                       frName={friend?.friend_nickname}
                       onLongPress={() => _deleteFriend()}
                       activeOpacity={0.6}
-                      image={img}
                     />
                   ))}
               <Ionicons

@@ -7,23 +7,22 @@ import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
-  margin: 40px 10px 10px 10px;
+  margin: 45px 25px 10px 10px;
   width: 65px;
   height: 65px;
   justify-content: center;
   align-items: center;
   border-radius: 75px;
+
 `;
 
 const CollectionImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
-  padding: 10px;
-  margin: 10px 10px 10px 10px;
-  width: 75px;
-  height: 75px;
+  margin: 0.2px;
+  width: 39px;
+  height: 39px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
   border-color: ${({theme}) => theme.line};
 `;
 
@@ -67,52 +66,14 @@ const CollectionCircle = ({
   onLongPress,
   isCollectionEditing,
   isEditing,
-  imgUrl
+  firstImgUrl,
+  secondImgUrl,
+  thirdImgUrl,
+  fourthImgUrl,
 }) => {
   const [items, setItems] = useState([]);
   // const [imageUrl, setImageUrl] = useState('https://i.imgur.com/6XzJjYm.png');
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-
-  // useEffect(() => {
-  //   _setImageUrl();
-  // }, [items]);
-
-  // const _getItemsFromCollection = async () => {
-  //   try {
-  //     fetch(
-  //       `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-  //       {
-  //         method: 'GET',
-  //         headers: {'Content-Type': 'application/json'},
-  //       },
-  //     )
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(data => {
-  //         if (!data.nickname) {
-  //           return;
-  //         }
-  //         setItems(data.dtos);
-  //         console.log(items);
-  //       })
-  //       .then(_setImageUrl);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // const _setImageUrl = () => {
-  //   if (items.length > 0) {
-  //     setImageUrl(items[0].imgUrl);
-  //   }
-  // };
-
-  // const _onPress = () => {
-  //   onPress();
-  //   _getItemsFromCollection();
-  //   _setImageUrl();
-  // };
 
   return (
     <Container>
@@ -121,17 +82,44 @@ const CollectionCircle = ({
         onLongPress={onLongPress}
         style={{opacity: isEditing ? 0.5 : 1}}>
         <View>
-          <CollectionImage
-            source={{uri: imgUrl}}
-            style={{display: isCollectionEditing ? 'none' : 'flex'}}
-          />
+          <View
+            style={{
+              width: 80,
+              height: 80,
+              backgroundColor: theme.strongBackground,
+              borderRadius: 25,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignContent: 'center',
+              zIndex: 1,
+              display: isCollectionEditing ? 'none' : 'flex',
+              marginBottom: 8,
+            }}>
+            <CollectionImage
+              source={{uri: firstImgUrl}}
+              style={{borderTopLeftRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: secondImgUrl}}
+              style={{borderBottomLeftRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: thirdImgUrl}}
+              style={{borderTopRightRadius: 25}}
+            />
+            <CollectionImage
+              source={{uri: fourthImgUrl}}
+              style={{borderBottomRightRadius: 25}}
+            />
+          </View>
           <View
             style={{
               display: isCollectionEditing ? 'flex' : 'none',
             }}>
             <CollectionView>
               <CollectionImage
-                source={{uri : imgUrl}}
+                source={{uri: firstImgUrl}}
                 style={{opacity: 0.5}}
               />
             </CollectionView>
