@@ -16,8 +16,9 @@ const Container = styled.View`
 const Title = styled.Text`
   font-size: 22px;
   width: 100%;
-  text-align: center;
   font-weight: bold;
+  justify-items: center;
+  align-items: center;
   color: ${({theme}) => theme.basicText};
 `;
 

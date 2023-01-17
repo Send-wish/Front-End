@@ -586,7 +586,7 @@ const Shared = ({route, navigation}) => {
                           onLongPress={() => {
                             _longPressCollection();
                           }}
-                          imgUrl={collection?.defaultImage}
+                          imgUrl={collection?.defaultImage[0]}
 
                           // isCollectionEditing={isCollectionSelected}
                           isEditing={isEditing}
@@ -662,7 +662,7 @@ const Shared = ({route, navigation}) => {
                         }}
                         isShareCollectionEditing={isShareCollectionEditing}
                         isEditing={isEditing}
-                        imgUrl={shareCollection?.defaultImage}
+                        imgUrl={shareCollection?.defaultImage[0]}
                       />
                     ))}
 

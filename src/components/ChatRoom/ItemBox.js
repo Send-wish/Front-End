@@ -11,9 +11,8 @@ import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
-  margin-top: 10px;
-  padding: 10px;
-  width: 95px;
+  margin-top: 8px;
+  width: 90px;
   height: 100px;
   justify-content: center;
   align-items: center;
@@ -23,9 +22,9 @@ const Container = styled(Animated.createAnimatedComponent(View))`
 const ItemImage = styled.Image`
   background-color: ${({theme}) => theme.tintColorPink};
   padding: 10px;
-  margin: 3px 3px 3px 3px;
-  width: 70px;
-  height: 70px;
+  margin: 2px 2px 2px 2px;
+  width: 73px;
+  height: 73px;
   justify-content: center;
   align-items: center;
   border-radius: 24px;
@@ -63,12 +62,13 @@ const Title = styled.Text`
 
 const Price = styled.Text`
   margin: 1px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
   color: ${({theme}) => theme.basicText};
+  width : 60px;
 `;
 
 const Sale = styled.Text`
