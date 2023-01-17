@@ -33,7 +33,7 @@ const Title = styled.Text`
   font-size: 20px;
   font-weight: bold;
   color: ${({theme}) => theme.basicText};
-  justify-content: center
+  justify-content: center;
   align-items : center;
   text-align: center;
   height: 20px;
@@ -49,7 +49,7 @@ const Row = styled.View`
 const ProfileImage = ({title, image, onPress}) => {
   return (
     <Container>
-      <SignUpImage source={{uri: image}} />
+      <SignUpImage source={{uri : image? image : null}} />
       <TouchableOpacity onPress={onPress}>
         <Row>
           <Title>{title}</Title>

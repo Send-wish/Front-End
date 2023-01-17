@@ -114,12 +114,14 @@ const Collection = ({route, navigation}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // isFoucesd Define
-
+  const [img, setImg] = useState(''); // 내이미지 받아오기
+  
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
     if (isFocused)
     _getItemsFromCollection();
     setIsEditing(false);
+    _getImage();
   }, [isFocused]);
 
   // 컬렉션 네임 수정
@@ -229,6 +231,24 @@ const Collection = ({route, navigation}) => {
     }
   };
 
+  const _getImage = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+        method: 'GET',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('!!!!!!!!!!!!!!!',data)
+          setImg(data.img);
+          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
   return (
     <Container insets={insets}>
       <Modal
@@ -303,7 +323,7 @@ const Collection = ({route, navigation}) => {
                 width: 400,
                 height: 60,
               }}>
-              <ProfileImage />
+              <ProfileImage image={img}/>
               <SubTitle
                 style={{
                   fontSize: 15,
