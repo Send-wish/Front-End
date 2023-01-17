@@ -143,33 +143,33 @@ const Chat = props => {
   //   // 데이터 요청 함수 
   // }, [count]);
 
-  const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
+  // const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
 
   // SSE 연결 요청 
-  sse.addEventListener('open', event => {
-    console.log('Open SSE connection.', event);
-  });
+  // sse.addEventListener('open', event => {
+  //   console.log('Open SSE connection.', event);
+  // });
 
-  // 서버 데이터 수신 
-  sse.addEventListener('list', event => {
-    console.log('데이터전체 값:',event);
-    console.log('데이터 value 확인: ', event.data);
-    // setCount(event);
-  });
+  // // 서버 데이터 수신 
+  // sse.addEventListener('list', event => {
+  //   console.log('데이터전체 값:',event);
+  //   console.log('데이터 value 확인: ', event.data);
+  //   // setCount(event);
+  // });
 
-  // 데이터 수신 에러 체크
-  sse.addEventListener('error', event => {
-    if (event.type === 'error') {
-      console.error('Connection error:', event.message);
-    } else if (event.type === 'exception') {
-      console.error('Error:', event.message, event.error);
-    }
-  });
+  // // 데이터 수신 에러 체크
+  // sse.addEventListener('error', event => {
+  //   if (event.type === 'error') {
+  //     console.error('Connection error:', event.message);
+  //   } else if (event.type === 'exception') {
+  //     console.error('Error:', event.message, event.error);
+  //   }
+  // });
 
-  // SSE 연결 종료
-  sse.addEventListener('close', event => {
-    console.log('Close SSE connection.');
-  });
+  // // SSE 연결 종료
+  // sse.addEventListener('close', event => {
+  //   console.log('Close SSE connection.');
+  // });
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
@@ -380,7 +380,7 @@ const Chat = props => {
                       frName={friend?.friend_nickname}
                       onLongPress={() => _deleteFriend()}
                       activeOpacity={0.6}
-                      // image={friend?.friend_img}
+                      image={friend?.friend_img}
                     />
                   ))}
               <Ionicons
