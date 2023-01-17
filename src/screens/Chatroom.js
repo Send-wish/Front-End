@@ -198,6 +198,7 @@ const ChatRoom = ({navigation, route}) => {
   const [updated, setUpdated] = useState(false);
   const [update, setUpdate] = useState('');
   const refMessage = useRef(null);
+  const [img, setImg] = useState(''); // 내이미지 받아오기
 
   const _connect = roomId => {
     client.current = new Client({
@@ -269,6 +270,7 @@ const ChatRoom = ({navigation, route}) => {
       _getItemsFromShareCollection();
       _getChatHistory();
       setIsEditing(false);
+      _getImage(); // 내이미지 받아오기
     }
   }, [isFocused]);
 
@@ -305,7 +307,7 @@ const ChatRoom = ({navigation, route}) => {
         headers: {'Content-Type': 'application/json'},
       })
         .then(res => {
-          return res.json();
+          return res.json();bj
         })
         .then(data => {
           for (let i = 0; i < data.length; i++) {
@@ -321,6 +323,25 @@ const ChatRoom = ({navigation, route}) => {
       console.log(e);
     }
   };
+
+  // 내 이미지 받아오기
+  const _getImage = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+        method: 'GET',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('!!!!!!!!!!!!!!!',data)
+          setImg(data.img);
+          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
   return (
     <Container insets={insets}>
@@ -416,6 +437,7 @@ const ChatRoom = ({navigation, route}) => {
             onContentSizeChange={() => flatListRef.scrollToEnd()}
             showsVerticalScrollIndicator={false}
             extraData={{update, updated}}
+            // image={img}
           />
         </MiddleContainer>
         <BottomContainer>

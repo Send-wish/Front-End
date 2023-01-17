@@ -493,7 +493,7 @@ const Shared = ({route, navigation}) => {
       _deleteShareCollection(shareCollectionId, nickName);
     }
   };
-
+    
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -563,6 +563,9 @@ const Shared = ({route, navigation}) => {
                           onPress={() => {
                             _addFriendList(friend?.friend_nickname);
                           }}
+                          // isClicked={isFriendselected}
+                          // image={friend?.friend_img}
+
                         />
                       ))}
                 </ScrollView>
