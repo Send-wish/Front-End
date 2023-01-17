@@ -44,7 +44,6 @@ const Title = styled.Text`
 
 const TempCircle = ({
   frName,
-  friendName,
   titleStyle,
   image,
   onPress,

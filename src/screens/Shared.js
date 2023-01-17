@@ -149,8 +149,6 @@ const Shared = ({route, navigation}) => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  const [img, setImg] = useState('');
-
   // 아이템 추가 자동 렌더링
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
@@ -177,7 +175,6 @@ const Shared = ({route, navigation}) => {
     _getFriends();
     _getCollections();
     setIsEditing(false);
-    // _getImage();
   }, [isFocused]);
 
   // 공유 컬렉션 생성
@@ -503,24 +500,6 @@ const Shared = ({route, navigation}) => {
       _deleteShareCollection(shareCollectionId, nickName);
     }
   };
-
-  const _getImage = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
-        method: 'GET',
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          console.log('!!!!!!!!!!!!!!!',data)
-          setImg(data);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    };
     
   return (
     <Container insets={insets}>
@@ -584,7 +563,7 @@ const Shared = ({route, navigation}) => {
                             _addFriendList(friend?.friend_nickname);
                           }}
                           // isClicked={isFriendselected}
-                          image={img}
+                          // image={friend?.friend_img}
                         />
                       ))}
                 </ScrollView>
@@ -671,7 +650,7 @@ const Shared = ({route, navigation}) => {
                         key={shareCollection?.collectionId}
                         shareCollectionId={shareCollection?.collectionId}
                         shareCollectionName={shareCollection?.title}
-                        nickName={shareCollectionName?.nickname}
+                        nickName={shareCollection?.nickname}
                         onPress={() =>
                           _pressTargetShareCollection(
                             shareCollection?.collectionId,
