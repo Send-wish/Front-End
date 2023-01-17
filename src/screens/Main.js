@@ -85,7 +85,7 @@ const SubTitle = styled.Text`
 `;
 
 const TintPinkSubTitle = styled.Text`
-  margin-top: 7px;
+  margin-top: 10px;
   font-size: 14px;
   color: ${({theme}) => theme.tintColorPink};
 `;
@@ -459,7 +459,8 @@ const Main = ({navigation, route}) => {
                 <Title style={{marginBottom: 10}}>새 컬렉션 만들기</Title>
                 <Title>새 컬렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  새 컬렉션의 이름을 입력해주세요.
+                  다양한 쇼핑몰에서 담은 
+                  여러 아이템들을 담을 수 있어요!
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -513,7 +514,7 @@ const Main = ({navigation, route}) => {
                 marginRight: 10,
                 height: 300,
               }}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style ={{width : 360}}>
                 {collections.error
                   ? null
                   : collections.map(collection => (

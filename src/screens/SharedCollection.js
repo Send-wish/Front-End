@@ -2,23 +2,19 @@ import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, ScrollView, Modal, Linking} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
-
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   SearchIcon,
   ItemBox,
   ProfileImage,
   EditIcon,
-  Input,
-  Button,
-  ChatButton,
 } from '../components/Shared';
-
-import ChatRoom from './ChatRoom';
+import {Button, Input, ChatButton} from '../components/SharedCollection';
 
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
+import {ThemeConsumer} from 'styled-components';
 
 const Container = styled.View`
   flex: 1;
@@ -309,7 +305,7 @@ const SharedCollection = ({route, navigation}) => {
             onSubmitEditing={() => {
               _changeShareCollectionName();
             }}
-            placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
+            placeholder="변경할 컬렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
           <Button
@@ -332,24 +328,25 @@ const SharedCollection = ({route, navigation}) => {
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVisibleModal(true)}>
-              <WrapRow style={{marginTop: 30}}>
+
+            <WrapRow style={{marginTop: 30}}>
+              <Title
+                style={{
+                  marginRight: 10,
+                  color: isEditing ? theme.strongSubText : theme.basicText,
+                }}>
                 <Title
                   style={{
-                    marginRight: 10,
-                    color: isEditing ? theme.strongSubText : theme.basicText,
+                    fontSize: 27,
+                    color: isEditing
+                      ? theme.tintcolorPalegreen
+                      : theme.tintColorGreen,
                   }}>
-                  <Title
-                    style={{
-                      fontSize: 27,
-                      color: isEditing
-                        ? theme.tintcolorPalegreen
-                        : theme.tintColorGreen,
-                    }}>
-                    {shareCollectionTitle}
-                  </Title>
-                  콜렉션
+                  {shareCollectionTitle}
                 </Title>
+                컬렉션
+              </Title>
+              <TouchableOpacity onPress={() => setVisibleModal(true)}>
                 <Feather
                   name="edit-2"
                   size={20}
@@ -358,8 +355,14 @@ const SharedCollection = ({route, navigation}) => {
                     color: isEditing ? theme.strongSubText : theme.basicText,
                   }}
                 />
-              </WrapRow>
-            </TouchableOpacity>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={_pressChatButton}>
+                <View>
+                  <ChatButton title={'채팅하기'} />
+                </View>
+              </TouchableOpacity>
+            </WrapRow>
+
             <WrapRow
               style={{
                 paddingTop: 20,
@@ -372,10 +375,8 @@ const SharedCollection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {/* {nickName}님이 담았어요! */}
-                {friendList}님이 담았어요!
+                {friendList.map(friend => friend + ' ')}님이 담았어요!
               </SubTitle>
-              <ChatButton title={'채팅하기'} onPress={_pressChatButton} />
             </WrapRow>
           </Column>
         </Row>
@@ -385,7 +386,7 @@ const SharedCollection = ({route, navigation}) => {
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>
-                <SubTitle>총 N개의 위시템</SubTitle>
+                <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
                 <SearchIcon />

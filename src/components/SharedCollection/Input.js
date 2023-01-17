@@ -27,7 +27,7 @@ const StyledInput = styled.TextInput.attrs(({theme}) => ({
   border-bottom-width: 0.5px;
   border-left-width: 0;
   border-right-width: 0;
-  margin-bottom: 15px;
+  margin-bottom: 200px;
 `;
 const Input = forwardRef(
   (

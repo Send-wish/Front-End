@@ -13,7 +13,6 @@ const Container = styled.View`
   justify-content: center;
   align-items: center;
   border-radius: 75px;
-
 `;
 
 const CollectionImage = styled.Image`
@@ -29,13 +28,16 @@ const CollectionImage = styled.Image`
 const CollectionView = styled.View`
   background-color: ${({theme}) => theme.tintColorPink};
   padding: 10px;
-  margin: 10px 10px 10px 10px;
-  width: 75px;
-  height: 75px;
+  margin-bottom: 8px;
+  width: 80px;
+  height: 80px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  align-content: center;
+  justify-items: center;
+  border-radius: 25px;
   border-color: ${({theme}) => theme.line};
+  position: relative;
 `;
 
 const Row = styled.View`
@@ -118,17 +120,46 @@ const CollectionCircle = ({
               display: isCollectionEditing ? 'flex' : 'none',
             }}>
             <CollectionView>
-              <CollectionImage
-                source={{uri: firstImgUrl}}
-                style={{opacity: 0.5}}
-              />
+              <View
+                style={{
+                  width: 80,
+                  height: 80,
+                  backgroundColor: theme.strongBackground,
+                  borderRadius: 25,
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  zIndex: 1,
+                  display: isCollectionEditing ? 'flex' : 'none',
+                  marginBottom: 8,
+                  opacity: 0.5,
+                  position: 'absolute',
+                }}>
+                <CollectionImage
+                  source={{uri: firstImgUrl}}
+                  style={{borderTopLeftRadius: 25}}
+                />
+                <CollectionImage
+                  source={{uri: secondImgUrl}}
+                  style={{borderBottomLeftRadius: 25}}
+                />
+                <CollectionImage
+                  source={{uri: thirdImgUrl}}
+                  style={{borderTopRightRadius: 25}}
+                />
+                <CollectionImage
+                  source={{uri: fourthImgUrl}}
+                  style={{borderBottomRightRadius: 25}}
+                />
+              </View>
             </CollectionView>
+
             <View
               style={{
                 borderRadius: 100,
                 position: 'absolute',
-                marginLeft: 55,
-                marginTop: 3,
+                marginLeft: 54,
                 backgroundColor: theme.mainBackground,
                 opacity: 0.7,
               }}>

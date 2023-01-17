@@ -320,7 +320,7 @@ const Collection = ({route, navigation}) => {
           <Column>
             <SpackBetweenRow>
               <View style={{marginBottom: 10}}>
-                <SubTitle>총 N개의 위시템</SubTitle>
+                <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
                 <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} />
