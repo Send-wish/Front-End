@@ -261,7 +261,7 @@ const Collection = ({route, navigation}) => {
             value={collectionTitle}
             onChangeText={setCollectionTitle}
             onBlur={() => setCollectionTitle(collectionTitle)}
-            maxLength={8}
+            maxLength={9}
             onSubmitEditing={() => {
               _changeCollectionName();
             }}

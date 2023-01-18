@@ -306,7 +306,7 @@ const Chat = ({route, navigation}) => {
   };
 
   // 친구 삭제
-  const _deleteFriend = async () => {
+  const _deleteFriend = async (frName) => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
@@ -411,7 +411,7 @@ const Chat = ({route, navigation}) => {
             value={frName}
             onChangeText={setFrName}
             onBlur={() => setFrName(frName)}
-            maxLength={20}
+            maxLength={12}
             onSubmitEditing={() => {
               _addFriends();
             }}
@@ -454,7 +454,7 @@ const Chat = ({route, navigation}) => {
                     <CollectionCircle
                       key={friend?.friend_id}
                       frName={friend?.friend_nickname}
-                      onLongPress={() => _deleteFriend()}
+                      onLongPress={() => _deleteFriend(friend?.friend_nickname)}
                       activeOpacity={0.6}
                       image={friend?.friend_img}
                     />
