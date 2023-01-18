@@ -67,13 +67,15 @@ const CollectionCircleTitle = styled.Text`
   width: 80px;
 `;
 
-const CollectionCircle = ({onLongPress, defaultImage}) => {
+const CollectionCircle = ({onLongPress, firstDefaultImage}) => {
   return (
     <CollectionCircleContainer>
       <TouchableHighlight onLongPress={onLongPress}>
         <View>
           <CollectionCircleRow>
-            <CollectionCircleCollectionImage source={{uri: defaultImage[0]}} />
+            <CollectionCircleCollectionImage
+              source={{uri: firstDefaultImage}}
+            />
           </CollectionCircleRow>
         </View>
       </TouchableHighlight>
@@ -82,8 +84,7 @@ const CollectionCircle = ({onLongPress, defaultImage}) => {
 };
 
 const ListFriend = ({
-  chatRoomId,
-  defaultImage,
+  firstDefaultImage,
   createAt,
   message,
   sender,
@@ -100,7 +101,7 @@ const ListFriend = ({
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <CollectionCircle defaultImage={defaultImage} />
+          <CollectionCircle firstDefaultImage={firstDefaultImage} />
         </View>
 
         <View

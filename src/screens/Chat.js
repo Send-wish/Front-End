@@ -18,24 +18,38 @@ import {useIsFocused} from '@react-navigation/native';
 import EventSource from 'react-native-sse';
 
 const Item = ({
-  item: {
-    chatRoomId,
-    defaultImage,
-    lastMessage,
-    title,
-    shareCollectionId,
-    shareCollectionTitle,
-    nickName,
-  },
+  item: {chatRoomId, lastMessage, collection, friends},
   onPress,
 }) => {
+  const sender = lastMessage?.sender;
+  const message = lastMessage?.message;
+  const createAt = lastMessage?.createAt;
+  const shareCollectionId = collection?.collectionId;
+  const shareCollectionTitle = collection?.title;
+  const nickName = collection?.nickname;
+  const firstDefaultImage = collection?.defaultImage[0];
+  const secondDefaultImage = collection?.defaultImage[1];
+  const thirdDefaultImage = collection?.defaultImage[2];
+  const fourthDefaultImage = collection?.defaultImage[3];
+
+  let friendList = [];
+  for (let i = 0; i < friends.length; i++) {
+    friendList.push(friends[i].friend_nickname);
+  }
+
   const _onPress = () => {
-    onPress(shareCollectionId, shareCollectionTitle, nickName);
+    onPress(
+      shareCollectionId,
+      shareCollectionTitle,
+      nickName,
+      friendList,
+      chatRoomId,
+    );
   };
 
   if (lastMessage) {
-    if (lastMessage.createAt) {
-      const sentTime = new Date(lastMessage.createAt) / 1000;
+    if (createAt) {
+      const sentTime = new Date(createAt) / 1000;
       const currentTime = new Date() / 1000;
       const timeGap = currentTime - sentTime;
 
@@ -56,12 +70,12 @@ const Item = ({
       return (
         <ListFriend
           chatRoomId={chatRoomId}
-          defaultImage={defaultImage}
+          firstDefaultImage={firstDefaultImage}
           createAt={gap}
-          message={lastMessage.message}
-          sender={lastMessage.sender}
-          title={title}
-          onPress = {_onPress}
+          message={message}
+          sender={sender}
+          title={shareCollectionTitle}
+          onPress={_onPress}
         />
       );
     }
@@ -341,12 +355,14 @@ const Chat = ({route, navigation}) => {
     shareCollectionId,
     shareCollectionTitle,
     nickName,
+    friendList,
     chatRoomId,
   ) => {
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,
       nickName,
+      friendList,
       chatRoomId,
     });
   };

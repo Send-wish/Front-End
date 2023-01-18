@@ -597,11 +597,11 @@ const Main = ({navigation, route}) => {
                 </SubTitle>
               </View>
               <Row>
-                <SearchIcon
+                {/* <SearchIcon
                   style={{
                     display: isEditing || isCollectionEditing ? 'none' : 'flex',
                   }}
-                />
+                /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}

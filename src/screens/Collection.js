@@ -343,7 +343,7 @@ const Collection = ({route, navigation}) => {
                 <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
-                <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} />
+                {/* <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
