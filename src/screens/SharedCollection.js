@@ -410,7 +410,7 @@ const SharedCollection = ({route, navigation}) => {
                 <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
-                <SearchIcon />
+                {/* <SearchIcon /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}

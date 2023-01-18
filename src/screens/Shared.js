@@ -732,7 +732,7 @@ const Shared = ({route, navigation}) => {
                 </SubTitle>
               </View>
               <Row>
-                <SearchIcon style={{opacity: isEditing ? 0 : 1}} />
+                {/* <SearchIcon style={{opacity: isEditing ? 0 : 1}} /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}

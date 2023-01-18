@@ -317,7 +317,6 @@ const ChatRoom = ({navigation, route}) => {
                 return parseFloat(a.price) - parseFloat(b.price);
               })
             : null;
-          console.log('************temp : ', temp);
           setItems(temp);
         });
     } catch (e) {
@@ -359,8 +358,6 @@ const ChatRoom = ({navigation, route}) => {
   useEffect(() => {
     _getItemsFromShareCollection();
   }, [isSorted]);
-
-  console.log('isSorted : ', isSorted);
 
   return (
     <Container insets={insets}>
@@ -459,7 +456,7 @@ const ChatRoom = ({navigation, route}) => {
               <Foundation name="filter" size={23} color={theme.basicText} />
             </View>
           </TouchableOpacity>
-          
+
         </View>
         <LineIcon />
       </CollectionContainer>
