@@ -3,7 +3,13 @@ import styled from 'styled-components/native';
 import ShareIcon from './ShareIcon';
 import DeleteIcon from './DeleteIcon';
 import {theme} from '../theme';
-import {Text, View, TouchableHighlight, ScrollView} from 'react-native';
+import {
+  Text,
+  View,
+  TouchableHighlight,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 
 const Container = styled.View`
   height: 70px;
@@ -82,45 +88,48 @@ const ListFriend = ({
   message,
   sender,
   title,
+  onPress,
 }) => {
   return (
-    <Container>
-      <View
-        style={{
-          width: '15%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <CollectionCircle defaultImage={defaultImage} />
-      </View>
+    <TouchableOpacity onPress={onPress}>
+      <Container>
+        <View
+          style={{
+            width: '15%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <CollectionCircle defaultImage={defaultImage} />
+        </View>
 
-      <View
-        style={{
-          width: '65%',
-          height: '100%',
-          justifyContent: 'center',
-          paddingLeft: 10,
-        }}>
-        <CollectionTitle>{title}</CollectionTitle>
-        <LastMessage>
-          {message}
-          {'  '}({sender}님이 보냄)
-        </LastMessage>
-      </View>
+        <View
+          style={{
+            width: '65%',
+            height: '100%',
+            justifyContent: 'center',
+            paddingLeft: 10,
+          }}>
+          <CollectionTitle>{title}</CollectionTitle>
+          <LastMessage>
+            {message}
+            {'  '}({sender}님이 보냄)
+          </LastMessage>
+        </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '20%',
-          justifyContent: 'center',
-          alignContent: 'flex-start',
-          height: '100%',
-          paddingTop: 20,
-        }}>
-        <Time>{createAt}</Time>
-      </View>
-    </Container>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '20%',
+            justifyContent: 'center',
+            alignContent: 'flex-start',
+            height: '100%',
+            paddingTop: 20,
+          }}>
+          <Time>{createAt}</Time>
+        </View>
+      </Container>
+    </TouchableOpacity>
   );
 };
 

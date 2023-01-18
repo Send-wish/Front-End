@@ -28,7 +28,7 @@ const ProfilePart = styled.View`
 `;
 
 // 프로필 사진
-const ProfilePhoto = styled.View`
+const ProfilePhoto = styled.Image`
   width: 50px;
   height: 50px;
   background-color: ${({theme}) => theme.basicText};
@@ -177,12 +177,13 @@ const OthersSaying = ({
   imgUrl,
   price,
   originUrl,
+  senderImg
 }) => {
   return (
     <Container>
       <PartContainer>
         <ProfilePart>
-          <ProfilePhoto />
+          <ProfilePhoto source={{uri : senderImg}}/>
         </ProfilePart>
         <SayingPart>
           <Name>{sender}</Name>

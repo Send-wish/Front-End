@@ -6,6 +6,7 @@ import {
   Text,
   TouchableHighlight,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -26,6 +27,7 @@ import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/Key
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
+import Foundation from 'react-native-vector-icons/Foundation';
 
 const Container = styled.View`
   flex: 1;
@@ -126,7 +128,9 @@ const _openUrl = url => {
   Linking.openURL(url);
 };
 
-const Item = ({item: {createAt, message, sender, nickName, itemDto}}) => {
+const Item = ({
+  item: {createAt, message, sender, senderImg, nickName, itemDto},
+}) => {
   const parcedCreateAt = createAt.substring(11, 16);
   if (sender === nickName) {
     if (itemDto) {
@@ -142,11 +146,17 @@ const Item = ({item: {createAt, message, sender, nickName, itemDto}}) => {
           originUrl={originUrl}
           price={price}
           onPress={_openUrl}
+          senderImg={senderImg}
         />
       );
     } else {
       return (
-        <MySaying sender={sender} message={message} createAt={parcedCreateAt} />
+        <MySaying
+          sender={sender}
+          message={message}
+          createAt={parcedCreateAt}
+          senderImg={senderImg}
+        />
       );
     }
   } else {
@@ -163,6 +173,7 @@ const Item = ({item: {createAt, message, sender, nickName, itemDto}}) => {
           originUrl={originUrl}
           price={price}
           onPress={_openUrl}
+          senderImg={senderImg}
         />
       );
     } else {
@@ -171,6 +182,7 @@ const Item = ({item: {createAt, message, sender, nickName, itemDto}}) => {
           sender={sender}
           message={message}
           createAt={parcedCreateAt}
+          senderImg={senderImg}
         />
       );
     }
@@ -182,7 +194,7 @@ const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   const {
-    friendList,
+    // friendList,
     nickName,
     shareCollectionId,
     shareCollectionTitle,
@@ -199,6 +211,7 @@ const ChatRoom = ({navigation, route}) => {
   const [update, setUpdate] = useState('');
   const refMessage = useRef(null);
   const [img, setImg] = useState(''); // 내이미지 받아오기
+  const [isSorted, setIsSorted] = useState(false);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -293,7 +306,20 @@ const ChatRoom = ({navigation, route}) => {
           return res.json();
         })
         .then(data => {
-          data.dtos ? setItems(data.dtos) : setItems([]);
+          // data.dtos ? setItems(data.dtos) : setItems([]);
+          let temp = [];
+          if (data.dtos) {
+            temp = data.dtos;
+          }
+
+          isSorted
+            ? temp.sort(function (a, b) {
+                return parseFloat(a.price) - parseFloat(b.price);
+              })
+            : null;
+          console.log('************temp : ', temp);
+          setItems(temp);
+          
         });
     } catch (e) {
       console.log(e);
@@ -307,7 +333,8 @@ const ChatRoom = ({navigation, route}) => {
         headers: {'Content-Type': 'application/json'},
       })
         .then(res => {
-          return res.json();bj
+          return res.json();
+          bj;
         })
         .then(data => {
           for (let i = 0; i < data.length; i++) {
@@ -323,6 +350,14 @@ const ChatRoom = ({navigation, route}) => {
       console.log(e);
     }
   };
+
+  // console.log('chatList : ', chatList);
+
+  const _pressFilter = () => {
+    isSorted ? setIsSorted(false) : setIsSorted(true);
+  };
+
+  console.log('isSorted : ', isSorted);
 
   return (
     <Container insets={insets}>
@@ -347,7 +382,7 @@ const ChatRoom = ({navigation, route}) => {
           }}>
           <MainTitle>{shareCollectionTitle}</MainTitle>
           <MainTitle style={{color: theme.basicText, fontSize: 15}}>
-            ({friendList.map(friend => ' ' + friend + ' ')})
+            {/* ({friendList.map(friend => ' ' + friend + ' ')}) */}
           </MainTitle>
         </View>
         <Feather
@@ -397,6 +432,29 @@ const ChatRoom = ({navigation, route}) => {
                 />
               ))}
         </ScrollView>
+        <View
+          style={{
+            position: 'absolute',
+            alignItems: 'flex-end',
+            width: 353,
+            paddingTop: 3,
+          }}>
+          <TouchableOpacity onPress={_pressFilter}>
+            <View
+              style={{
+                backgroundColor: theme.mainBackground,
+                width: 38,
+                height: 38,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 13,
+                borderColor: theme.componentBackground,
+                borderWidth: 3,
+              }}>
+              <Foundation name="filter" size={23} color={theme.basicText} />
+            </View>
+          </TouchableOpacity>
+        </View>
         <LineIcon />
       </CollectionContainer>
       <KeyboardAwareScrollView

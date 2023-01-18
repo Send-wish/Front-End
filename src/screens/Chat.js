@@ -18,38 +18,53 @@ import {useIsFocused} from '@react-navigation/native';
 import EventSource from 'react-native-sse';
 
 const Item = ({
-  item: {chatRoomId, defaultImage, lastMessage, title},
+  item: {
+    chatRoomId,
+    defaultImage,
+    lastMessage,
+    title,
+    shareCollectionId,
+    shareCollectionTitle,
+    nickName,
+  },
   onPress,
 }) => {
-  if (lastMessage.createAt) {
-    const sentTime = new Date(lastMessage.createAt) / 1000;
-    const currentTime = new Date() / 1000;
-    const timeGap = currentTime - sentTime;
+  const _onPress = () => {
+    onPress(shareCollectionId, shareCollectionTitle, nickName);
+  };
 
-    let gap;
-    if (timeGap < 60) {
-      gap = '방금 전';
-    }
-    if (timeGap > 60 && timeGap < 3600) {
-      gap = Math.round(timeGap / 60) + '분 전';
-    }
-    if (timeGap > 3600 && timeGap < 86400) {
-      gap = Math.round(timeGap / 3600) + '시간 전';
-    }
-    if (timeGap > 86400 && timeGap < 604800) {
-      gap = Math.round(timeGap / 86400) + '일 전';
-    }
+  if (lastMessage) {
+    if (lastMessage.createAt) {
+      const sentTime = new Date(lastMessage.createAt) / 1000;
+      const currentTime = new Date() / 1000;
+      const timeGap = currentTime - sentTime;
 
-    return (
-      <ListFriend
-        chatRoomId={chatRoomId}
-        defaultImage={defaultImage}
-        createAt={gap}
-        message={lastMessage.message}
-        sender={lastMessage.sender}
-        title={title}
-      />
-    );
+      let gap;
+      if (timeGap < 60) {
+        gap = '방금 전';
+      }
+      if (timeGap > 60 && timeGap < 3600) {
+        gap = Math.round(timeGap / 60) + '분 전';
+      }
+      if (timeGap > 3600 && timeGap < 86400) {
+        gap = Math.round(timeGap / 3600) + '시간 전';
+      }
+      if (timeGap > 86400 && timeGap < 604800) {
+        gap = Math.round(timeGap / 86400) + '일 전';
+      }
+
+      return (
+        <ListFriend
+          chatRoomId={chatRoomId}
+          defaultImage={defaultImage}
+          createAt={gap}
+          message={lastMessage.message}
+          sender={lastMessage.sender}
+          title={title}
+          onPress = {_onPress}
+        />
+      );
+    }
   }
 };
 
@@ -160,24 +175,23 @@ const Chat = ({route, navigation}) => {
 
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
   // useEffect(() => {
-  //   // 데이터 요청 함수 
+  //   // 데이터 요청 함수
   // }, [count]);
 
   // const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
-  // const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
 
-  // SSE 연결 요청 
+  // // SSE 연결 요청
   // sse.addEventListener('open', event => {
   //   console.log('Open SSE connection.', event);
   // });
 
-  // // 서버 데이터 수신 
+  // // 서버 데이터 수신
   // sse.addEventListener('list', event => {
   //   console.log('데이터전체 값:',event);
   //   console.log('데이터 value 확인: ', event.data);
   //   // setCount(event);
   // });
-  // // 서버 데이터 수신 
+  // // 서버 데이터 수신
   // sse.addEventListener('list', event => {
   //   console.log('데이터전체 값:',event);
   //   console.log('데이터 value 확인: ', event.data);
@@ -323,6 +337,20 @@ const Chat = ({route, navigation}) => {
     }
   };
 
+  const _pressChat = (
+    shareCollectionId,
+    shareCollectionTitle,
+    nickName,
+    chatRoomId,
+  ) => {
+    navigation.navigate('ChatRoom', {
+      shareCollectionId,
+      shareCollectionTitle,
+      nickName,
+      chatRoomId,
+    });
+  };
+
   return (
     <Container insets={insets}>
       <Modal
@@ -437,13 +465,13 @@ const Chat = ({route, navigation}) => {
         <Column style={{width: '100%'}}>
           <FlatList
             data={chatRoomList}
-            renderItem={({item}) => <Item item={item} />}
+            renderItem={({item}) => <Item item={item} onPress={_pressChat} />}
             key={item => item['createAt']}
             ref={ref => (flatListRef = ref)}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => flatListRef.scrollToEnd()}
             extraData={{update}}
-            />
+          />
         </Column>
       </BottomContainer>
     </Container>
