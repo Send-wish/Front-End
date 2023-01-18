@@ -352,7 +352,7 @@ const Shared = ({route, navigation}) => {
     try {
       fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
         method: 'GET',
-        headers: {'Content-Type': `application/json`},
+        // headers: {'Content-Type': `application/json`},
       })
         .then(response => {
           // console.log('errorcheck!!response Get  friend: ', response);
@@ -360,7 +360,7 @@ const Shared = ({route, navigation}) => {
         })
         .then(data => {
           setFriends(data);
-          // console.log('get friends', data);
+          console.log('get friends', data);
         });
     } catch (e) {
       console.log(e);
@@ -564,7 +564,7 @@ const Shared = ({route, navigation}) => {
                             _addFriendList(friend?.friend_nickname);
                           }}
                           // isClicked={isFriendselected}
-                          // image={friend?.friend_img}
+                          image={friend?.friend_img}
 
                         />
                       ))}
