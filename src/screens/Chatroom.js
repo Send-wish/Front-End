@@ -297,6 +297,7 @@ const ChatRoom = ({navigation, route}) => {
     setMessage('');
   };
 
+  
   // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
     try {
