@@ -244,7 +244,7 @@ const Chat = ({route, navigation}) => {
 
   // 친구 추가
   const _addFriends = async () => {
-    console.log('nickname check!!!!', nickName);
+    // console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
       await fetch('https://api.sendwish.link:8081/friend', {
