@@ -27,7 +27,7 @@ const ProfilePart = styled.View`
 `;
 
 // 프로필 사진
-const ProfilePhoto = styled.Image`
+const ProfilePhoto = styled.View`
   width: 50px;
   height: 50px;
   background-color: ${({theme}) => theme.basicText};
@@ -80,7 +80,7 @@ const EmptyPart = styled.View`
   width: 25%;
 `;
 
-const MySaying = ({sender, createAt, message, senderImg}) => {
+const MySaying = ({sender, createAt, message}) => {
   return (
     <Container>
       <PartContainer>
@@ -93,7 +93,7 @@ const MySaying = ({sender, createAt, message, senderImg}) => {
           </SayingBalloon>
         </SayingPart>
         <ProfilePart>
-          <ProfilePhoto source={{uri : senderImg}}/>
+          <ProfilePhoto />
         </ProfilePart>
       </PartContainer>
     </Container>

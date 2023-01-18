@@ -144,7 +144,10 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={price}
+          price={new String(price).replace(
+            /\B(?=(\d{3})+(?!\d))/g,
+            ',',
+          )}
           onPress={_openUrl}
           senderImg={senderImg}
         />
@@ -171,7 +174,10 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={price}
+          price={new String(price).replace(
+            /\B(?=(\d{3})+(?!\d))/g,
+            ',',
+          )}
           onPress={_openUrl}
           senderImg={senderImg}
         />
