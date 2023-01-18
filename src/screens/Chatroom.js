@@ -271,7 +271,6 @@ const ChatRoom = ({navigation, route}) => {
       _getItemsFromShareCollection();
       _getChatHistory();
       setIsEditing(false);
-      _getImage(); // 내이미지 받아오기
     }
   }, [isFocused]);
 
@@ -325,24 +324,7 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  // 내 이미지 받아오기
-  const _getImage = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
-        method: 'GET',
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          console.log('!!!!!!!!!!!!!!!',data)
-          setImg(data.img);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  console.log("chatList : ", chatList);
 
   return (
     <Container insets={insets}>

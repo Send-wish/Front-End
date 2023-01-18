@@ -80,7 +80,7 @@ const EmptyPart = styled.View`
   width: 25%;
 `;
 
-const MySaying = ({sender, createAt, message}) => {
+const MySaying = ({sender, createAt, message, profileImage}) => {
   return (
     <Container>
       <PartContainer>
@@ -93,7 +93,7 @@ const MySaying = ({sender, createAt, message}) => {
           </SayingBalloon>
         </SayingPart>
         <ProfilePart>
-          <ProfilePhoto />
+          <ProfilePhoto img = {profileImage}/>
         </ProfilePart>
       </PartContainer>
     </Container>
