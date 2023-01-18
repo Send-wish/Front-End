@@ -306,7 +306,7 @@ const Chat = ({route, navigation}) => {
   };
 
   // 친구 삭제
-  const _deleteFriend = async (frName) => {
+  const _deleteFriend = async frName => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
@@ -447,7 +447,10 @@ const Chat = ({route, navigation}) => {
               flexWrap: 'wrap',
               paddingTop: 10,
             }}>
-            <ScrollView horizontal style={{height: 100, width: 200}}>
+            <ScrollView
+              horizontal
+              style={{height: 100, width: 200}}
+              showsHorizontalScrollIndicator={false}>
               {friends.error
                 ? null
                 : friends.map(friend => (
