@@ -525,7 +525,7 @@ const Shared = ({route, navigation}) => {
               value={shareCollectionName}
               onChangeText={setShareCollectionName}
               onBlur={() => setShareCollectionName(shareCollectionName)}
-              maxLength={20}
+              maxLength={8}
               onSubmitEditing={() => {
                 _madeShareCollection();
               }}

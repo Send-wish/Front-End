@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import ShareIcon from './ShareIcon';
 import DeleteIcon from './DeleteIcon';
 import {theme} from '../theme';
-import {View, TouchableHighlight, ScrollView} from 'react-native';
+import {Text, View, TouchableHighlight, ScrollView} from 'react-native';
 
 const Container = styled.View`
   height: 70px;
@@ -17,6 +17,7 @@ const CollectionTitle = styled.Text`
   color: ${({theme}) => theme.basicText};
   font-size: 18px;
   font-weight: bold;
+  margin-bottom: 5px;
 `;
 
 const LastMessage = styled.Text`
@@ -60,16 +61,13 @@ const CollectionCircleTitle = styled.Text`
   width: 80px;
 `;
 
-const CollectionCircle = ({onLongPress, frName, image}) => {
+const CollectionCircle = ({onLongPress, defaultImage}) => {
   return (
     <CollectionCircleContainer>
       <TouchableHighlight onLongPress={onLongPress}>
         <View>
           <CollectionCircleRow>
-            <CollectionCircleCollectionImage
-              source={{uri: image}}
-              value={frName}
-            />
+            <CollectionCircleCollectionImage source={{uri: defaultImage[0]}} />
           </CollectionCircleRow>
         </View>
       </TouchableHighlight>
@@ -77,7 +75,14 @@ const CollectionCircle = ({onLongPress, frName, image}) => {
   );
 };
 
-const ListFriend = ({friendName, onPress}) => {
+const ListFriend = ({
+  chatRoomId,
+  defaultImage,
+  createAt,
+  message,
+  sender,
+  title,
+}) => {
   return (
     <Container>
       <View
@@ -87,30 +92,33 @@ const ListFriend = ({friendName, onPress}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <CollectionCircle />
+        <CollectionCircle defaultImage={defaultImage} />
       </View>
 
       <View
         style={{
-          width: '75%',
+          width: '65%',
           height: '100%',
           justifyContent: 'center',
           paddingLeft: 10,
         }}>
-        <CollectionTitle>{friendName}</CollectionTitle>
-        <LastMessage>{friendName}</LastMessage>
+        <CollectionTitle>{title}</CollectionTitle>
+        <LastMessage>
+          {message}
+          {'  '}({sender}님이 보냄)
+        </LastMessage>
       </View>
 
       <View
         style={{
           flexDirection: 'row',
-          width: '10%',
+          width: '20%',
           justifyContent: 'center',
           alignContent: 'flex-start',
           height: '100%',
           paddingTop: 20,
         }}>
-        <Time>시간</Time>
+        <Time>{createAt}</Time>
       </View>
     </Container>
   );
