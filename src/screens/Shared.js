@@ -178,7 +178,7 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
-    if (addFriendList.length < 1) {
+    if (addFriendList.length < 2) {
       return Alert.alert('친구를 선택해야 공유컬렉션을 만들 수 있어요!');
     }
 
