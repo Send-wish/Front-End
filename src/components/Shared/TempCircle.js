@@ -43,6 +43,7 @@ const Title = styled.Text`
   height: 30px;
 `;
 
+
 const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
   const _pressFriend = () => {
     setIsChecked(!isChecked);
@@ -73,7 +74,7 @@ const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
                   : theme.mainBackground,
                 opacity: isChecked ? 0.5 : 1,
               }}
-              source={{uri: image}}
+              source={{uri : image? image : null}}
               value={frName}
             />
           </Row>

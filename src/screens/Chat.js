@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
+import EventSource from 'react-native-sse';
 
 const Item = ({
   item: {chatRoomId, defaultImage, lastMessage, title},
@@ -154,11 +155,47 @@ const Chat = props => {
   const nickName = props.route.params.params.nickName;
   const [chatRoomList, setChatRoomList] = useState([]);
   const [update, setUpdate] = useState('');
+  const [img, setImg] = useState('');
+  const [count, setCount] = useState();
+
+  // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
+  // useEffect(() => {
+  //   // 데이터 요청 함수 
+  // }, [count]);
+
+  const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
+
+  // SSE 연결 요청 
+  sse.addEventListener('open', event => {
+    console.log('Open SSE connection.', event);
+  });
+
+  // 서버 데이터 수신 
+  sse.addEventListener('list', event => {
+    console.log('데이터전체 값:',event);
+    console.log('데이터 value 확인: ', event.data);
+    // setCount(event);
+  });
+
+  // 데이터 수신 에러 체크
+  sse.addEventListener('error', event => {
+    if (event.type === 'error') {
+      console.error('Connection error:', event.message);
+    } else if (event.type === 'exception') {
+      console.error('Error:', event.message, event.error);
+    }
+  });
+
+  // SSE 연결 종료
+  sse.addEventListener('close', event => {
+    console.log('Close SSE connection.');
+  });
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
     _getChatList();
+    _getImage();
   }, [isFocused]);
 
   // 친구 추가
@@ -261,7 +298,25 @@ const Chat = props => {
         })
         .then(data => {
           setChatRoomList(data);
-          console.log('data !!!!!: ', data);
+          // console.log('data : ', data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const _getImage = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+        method: 'GET',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          // console.log('!!!!!!!!!!!!!!!', data);
+          setImg(data.img);
+          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
@@ -347,6 +402,7 @@ const Chat = props => {
                       frName={friend?.friend_nickname}
                       onLongPress={() => _deleteFriend()}
                       activeOpacity={0.6}
+                      // image={friend?.friend_img}
                     />
                   ))}
               <Ionicons

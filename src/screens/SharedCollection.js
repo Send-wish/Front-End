@@ -110,6 +110,7 @@ const SharedCollection = ({route, navigation}) => {
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
   const [friendList, setFriendList] = useState([]);
   const [chatRoomId, setChatRoomId] = useState(0);
+  const [img, setImg] = useState(''); // 내이미지 받아오기
 
   const _getFriends = async () => {
     try {
@@ -135,6 +136,7 @@ const SharedCollection = ({route, navigation}) => {
   };
   useEffect(() => {
     _getFriends();
+    _getImage();
   }, [isFocused]);
 
   // console.log('공유컬렉션별 친구 목록!', friendList);
@@ -285,6 +287,25 @@ const SharedCollection = ({route, navigation}) => {
     });
   };
 
+
+  const _getImage = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
+        method: 'GET',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('!!!!!!!!!!!!!!!',data)
+          setImg(data.img);
+          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
   return (
     <Container insets={insets}>
       <Modal
@@ -369,7 +390,7 @@ const SharedCollection = ({route, navigation}) => {
                 width: 400,
                 height: 60,
               }}>
-              <ProfileImage />
+              <ProfileImage image={img}/>
               <SubTitle
                 style={{
                   fontSize: 15,
