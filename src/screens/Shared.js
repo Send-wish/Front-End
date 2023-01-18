@@ -537,7 +537,7 @@ const Shared = ({route, navigation}) => {
               onSubmitEditing={() => {
                 _madeShareCollection();
               }}
-              placeholder="새 콜렉션 이름"
+              placeholder="새 컬렉션 이름"
               returnKeyType="done"
             />
             <View>
@@ -615,7 +615,7 @@ const Shared = ({route, navigation}) => {
               </ModalCollectionView>
             </View>
             <Button
-              title="새 콜렉션 만들기"
+              title="새 컬렉션 만들기"
               onPress={() => _madeShareCollection()}
             />
           </KeyboardAwareScrollView>
