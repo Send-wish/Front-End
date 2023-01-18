@@ -405,7 +405,7 @@ const Chat = ({route, navigation}) => {
             value={frName}
             onChangeText={setFrName}
             onBlur={() => setFrName(frName)}
-            maxLength={20}
+            maxLength={12}
             onSubmitEditing={() => {
               _addFriends();
             }}
@@ -441,7 +441,10 @@ const Chat = ({route, navigation}) => {
               flexWrap: 'wrap',
               paddingTop: 10,
             }}>
-            <ScrollView horizontal style={{height: 100, width: 200}}>
+            <ScrollView
+              horizontal
+              style={{height: 100, width: 200}}
+              showsHorizontalScrollIndicator={false}>
               {friends.error
                 ? null
                 : friends.map(friend => (

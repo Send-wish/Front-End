@@ -290,10 +290,14 @@ const ChatRoom = ({navigation, route}) => {
   }, [isFocused]);
 
   _pressEnter = () => {
+    if (message === '') {
+      return;
+    }
     _publish(chatRoomId);
     setMessage('');
   };
 
+  
   // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
     try {
