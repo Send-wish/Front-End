@@ -290,6 +290,9 @@ const ChatRoom = ({navigation, route}) => {
   }, [isFocused]);
 
   _pressEnter = () => {
+    if (message === '') {
+      return;
+    }
     _publish(chatRoomId);
     setMessage('');
   };
