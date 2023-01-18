@@ -144,10 +144,7 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={new String(price).replace(
-            /\B(?=(\d{3})+(?!\d))/g,
-            ',',
-          )}
+          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           onPress={_openUrl}
           senderImg={senderImg}
         />
@@ -174,10 +171,7 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={new String(price).replace(
-            /\B(?=(\d{3})+(?!\d))/g,
-            ',',
-          )}
+          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           onPress={_openUrl}
           senderImg={senderImg}
         />
@@ -207,8 +201,6 @@ const ChatRoom = ({navigation, route}) => {
     chatRoomId,
     screen,
   } = route.params;
-
-  console.log(screen);
 
   const client = useRef({});
   const [items, setItems] = useState([]);

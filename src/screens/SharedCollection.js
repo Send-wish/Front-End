@@ -397,7 +397,7 @@ const SharedCollection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {friendList.map(friend => friend + ' ')}님이 담았어요!
+                {friendList?.map(friend => friend + ' ')}님이 담았어요!
               </SubTitle>
             </WrapRow>
           </Column>

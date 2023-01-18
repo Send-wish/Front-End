@@ -46,8 +46,8 @@ const SayingPart = styled.View`
 const Name = styled.Text`
   font-size: 15px;
   font-weight: bold;
-  color: ${({theme}) => theme.subText}
-  margin : 5px;
+  color: ${({theme}) => theme.subText};
+  margin: 5px;
 `;
 
 // 텍스트
@@ -86,7 +86,7 @@ const OthersSaying = ({sender, createAt, message, senderImg}) => {
     <Container>
       <PartContainer>
         <ProfilePart>
-          <ProfilePhoto source={{uri : senderImg}}/>
+          <ProfilePhoto source={{uri: senderImg}} />
         </ProfilePart>
         <SayingPart>
           <Name>{sender}</Name>
