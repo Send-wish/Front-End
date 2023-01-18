@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, FlatList} from 'react-native';
+import {View, ScrollView, FlatList, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -29,6 +29,10 @@ const Item = ({
   },
   onPress,
 }) => {
+  const _onPress = () => {
+    onPress(shareCollectionId, shareCollectionTitle, nickName);
+  };
+
   if (lastMessage) {
     if (lastMessage.createAt) {
       const sentTime = new Date(lastMessage.createAt) / 1000;
@@ -57,7 +61,7 @@ const Item = ({
           message={lastMessage.message}
           sender={lastMessage.sender}
           title={title}
-          onPress={onPress(shareCollectionId, shareCollectionTitle, nickName)}
+          onPress = {_onPress}
         />
       );
     }
@@ -156,14 +160,14 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Chat = (props) => {
+const Chat = ({route, navigation}) => {
   let flatListRef;
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const nickName = props.route.params.params.nickName;
+  const nickName = route.params.params.nickName;
   const [chatRoomList, setChatRoomList] = useState([]);
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');
@@ -187,7 +191,21 @@ const Chat = (props) => {
   //   console.log('데이터 value 확인: ', event.data);
   //   // setCount(event);
   // });
+  // // 서버 데이터 수신
+  // sse.addEventListener('list', event => {
+  //   console.log('데이터전체 값:',event);
+  //   console.log('데이터 value 확인: ', event.data);
+  //   // setCount(event);
+  // });
 
+  // // 데이터 수신 에러 체크
+  // sse.addEventListener('error', event => {
+  //   if (event.type === 'error') {
+  //     console.error('Connection error:', event.message);
+  //   } else if (event.type === 'exception') {
+  //     console.error('Error:', event.message, event.error);
+  //   }
+  // });
   // // 데이터 수신 에러 체크
   // sse.addEventListener('error', event => {
   //   if (event.type === 'error') {
@@ -201,12 +219,15 @@ const Chat = (props) => {
   // sse.addEventListener('close', event => {
   //   console.log('Close SSE connection.');
   // });
+  // // SSE 연결 종료
+  // sse.addEventListener('close', event => {
+  //   console.log('Close SSE connection.');
+  // });
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
     _getChatList();
-    _getImage();
   }, [isFocused]);
 
   // 친구 추가
@@ -309,25 +330,7 @@ const Chat = (props) => {
         })
         .then(data => {
           setChatRoomList(data);
-          console.log('data : ', data);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const _getImage = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
-        method: 'GET',
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          // console.log('!!!!!!!!!!!!!!!', data);
-          setImg(data.img);
-          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          console.log('data akjdflasjflaskjlksajf: ', data);
         });
     } catch (e) {
       console.log(e);
