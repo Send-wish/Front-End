@@ -459,6 +459,7 @@ const ChatRoom = ({navigation, route}) => {
               <Foundation name="filter" size={23} color={theme.basicText} />
             </View>
           </TouchableOpacity>
+          
         </View>
         <LineIcon />
       </CollectionContainer>
