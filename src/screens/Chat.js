@@ -195,46 +195,42 @@ const Chat = ({route, navigation}) => {
 
 
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
-  useEffect(() => {
-    // 데이터 요청 함수
-    _getChatList();
-    console.log('테스트!!!');
-  }, [count]);
+  // useEffect(() => {
+  //   // 데이터 요청 함수
+  //   _getChatList();
+  //   console.log('테스트!!!');
+  // }, [count]);
 
-  const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
+  // const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
 
-  // SSE 연결 요청
-  useEffect(() => {
-    sse.addEventListener('open', event => {
-      console.log('Open SSE connection!!!',event);
-    });
-  },[]);
-  // 서버 데이터 수신
-  sse.addEventListener('list', event => {
-    console.log('데이터전체 값:', event);
-    console.log('데이터 value 확인: ', event.data);
-    setCount(event.data);
-  });
-  // 더미 데이터 확인
-  sse.addEventListener('connected', event => {
-    // console.log('더미 값:', event);
-    // console.log('더미 확인: ', event.data);
-    // setCount(event);
-  });
+  // // SSE 연결 요청
+  // useEffect(() => {
+  //   sse.addEventListener('open', event => {
+  //     console.log('Open SSE connection!!!',event);
+  //   });
+  // },[]);
+  // // 서버 데이터 수신
+ 
+  // // 더미 데이터 확인
+  // sse.addEventListener('connected', event => {
+  //   // console.log('더미 값:', event);
+  //   // console.log('더미 확인: ', event.data);
+  //   // setCount(event);
+  // });
 
-  // 데이터 수신 에러 체크
-  sse.addEventListener('error', event => {
-    if (event.type === 'error') {
-      console.error('Connection error:', event.message);
-    } else if (event.type === 'exception') {
-      console.error('Error:', event.message, event.error);
-    }
-  });
+  // // 데이터 수신 에러 체크
+  // sse.addEventListener('error', event => {
+  //   if (event.type === 'error') {
+  //     console.error('Connection error:', event.message);
+  //   } else if (event.type === 'exception') {
+  //     console.error('Error:', event.message, event.error);
+  //   }
+  // });
 
-  // SSE 연결 종료
-  sse.addEventListener('close', event => {
-    console.log('Close SSE connection.');
-  });
+  // // SSE 연결 종료
+  // sse.addEventListener('close', event => {
+  //   console.log('Close SSE connection.');
+  // });
 
   useEffect(() => {
     if (isFocused) console.log('Chat Focused');
@@ -298,7 +294,7 @@ const Chat = ({route, navigation}) => {
   };
 
   // 친구 삭제
-  const _deleteFriend = async () => {
+  const _deleteFriend = async (frName) => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
@@ -310,7 +306,7 @@ const Chat = ({route, navigation}) => {
           friendNickname: frName,
         }),
       }).then(response => {
-        // console.log('errorcheck!!response: ', response);
+        console.log('errorcheck!!response: ', response);
         if (!response.ok) {
           // throw new Error(`${response.status} 에러발생`);
           Alert.alert('등록되지 않은 친구입니다 :(');
@@ -344,6 +340,12 @@ const Chat = ({route, navigation}) => {
         .then(data => {
           setChatRoomList(data);
           console.log('data akjdflasjflaskjlksajf: ', data);
+
+          sse.addEventListener('list', event => {
+            console.log('데이터전체 값:', event);
+            console.log('데이터 value 확인: ', event.data);
+            setCount(event.data);
+          });
         });
     } catch (e) {
       console.log(e);
@@ -446,7 +448,7 @@ const Chat = ({route, navigation}) => {
                     <CollectionCircle
                       key={friend?.friend_id}
                       frName={friend?.friend_nickname}
-                      onLongPress={() => _deleteFriend()}
+                      onLongPress={() => _deleteFriend(friend?.friend_nickname)}
                       activeOpacity={0.6}
                       image={friend?.friend_img}
                     />
