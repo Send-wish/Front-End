@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, FlatList} from 'react-native';
+import {View, ScrollView, FlatList, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -145,14 +145,14 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Chat = props => {
+const Chat = ({route, navigation}) => {
   let flatListRef;
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const nickName = props.route.params.params.nickName;
+  const nickName = route.params.params.nickName;
   const [chatRoomList, setChatRoomList] = useState([]);
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');
@@ -214,7 +214,6 @@ const Chat = props => {
     if (isFocused) console.log('Chat Focused');
     _getFriends();
     _getChatList();
-    _getImage();
   }, [isFocused]);
 
   // 친구 추가
@@ -317,25 +316,7 @@ const Chat = props => {
         })
         .then(data => {
           setChatRoomList(data);
-          console.log('data : ', data);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const _getImage = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/profile/${nickName}`, {
-        method: 'GET',
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          // console.log('!!!!!!!!!!!!!!!', data);
-          setImg(data.img);
-          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          console.log('data akjdflasjflaskjlksajf: ', data);
         });
     } catch (e) {
       console.log(e);
@@ -462,7 +443,7 @@ const Chat = props => {
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => flatListRef.scrollToEnd()}
             extraData={{update}}
-          />
+            />
         </Column>
       </BottomContainer>
     </Container>
