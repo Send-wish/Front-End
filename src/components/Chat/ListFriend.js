@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import ShareIcon from './ShareIcon';
 import DeleteIcon from './DeleteIcon';
 import {theme} from '../theme';
-import {View, TouchableHighlight, ScrollView} from 'react-native';
+import {Text, View, TouchableHighlight, ScrollView} from 'react-native';
 
 const Container = styled.View`
   height: 70px;
@@ -104,7 +104,8 @@ const ListFriend = ({
         }}>
         <CollectionTitle>{title}</CollectionTitle>
         <LastMessage>
-          {message} ({sender}님이 보냄)
+          {message}
+          {'  '}({sender}님이 보냄)
         </LastMessage>
       </View>
 
