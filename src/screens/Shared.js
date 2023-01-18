@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Linking, TouchableOpacity, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -178,6 +178,13 @@ const Shared = ({route, navigation}) => {
 
   // 공유 컬렉션 생성
   const _madeShareCollection = async () => {
+    if (addFriendList.length < 1) {
+      return Alert.alert('친구를 선택해야 공유컬렉션을 만들 수 있어요!');
+    }
+
+    if (shareCollectionName === '') {
+      return Alert.alert('컬렉션 이름을 입력해주세요!');
+    }
     setAddFriendList([nickName]);
     _getCollections();
     _getItems();
@@ -331,6 +338,7 @@ const Shared = ({route, navigation}) => {
         }
         _getItems();
         setAddToShareCollection([]);
+        _getShareCollections();
         return;
         // return response.json();
       });
@@ -493,7 +501,7 @@ const Shared = ({route, navigation}) => {
       _deleteShareCollection(shareCollectionId, nickName);
     }
   };
-    
+
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -565,7 +573,6 @@ const Shared = ({route, navigation}) => {
                           }}
                           // isClicked={isFriendselected}
                           image={friend?.friend_img}
-
                         />
                       ))}
                 </ScrollView>
@@ -644,7 +651,10 @@ const Shared = ({route, navigation}) => {
                 marginRight: 10,
                 height: 300,
               }}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style = {{width : 360}}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{width: 360}}>
                 {/* collection rendering */}
                 {shareCollections.error
                   ? null
@@ -722,7 +732,7 @@ const Shared = ({route, navigation}) => {
                   style={{
                     color: isEditing ? theme.strongSubText : theme.basicText,
                   }}>
-                  내 아이템 전체보기
+                  아이템 전체보기
                 </Title>
                 <SubTitle
                   style={{
@@ -736,7 +746,7 @@ const Shared = ({route, navigation}) => {
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
-                  name={isEditing ? 'x' : 'edit-2'}
+                  name={isEditing || isShareCollectionEditing ? 'x' : 'edit-2'}
                 />
               </Row>
             </SpackBetweenRow>
