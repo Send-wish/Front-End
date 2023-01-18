@@ -193,10 +193,13 @@ const Chat = ({route, navigation}) => {
   const [img, setImg] = useState('');
   const [count, setCount] = useState();
 
+
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
-  // useEffect(() => {
-  //   // 데이터 요청 함수
-  // }, [count]);
+  useEffect(() => {
+    // 데이터 요청 함수
+    _getChatList();
+    console.log('테스트!!!');
+  }, [count]);
 
   const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
 
@@ -206,17 +209,16 @@ const Chat = ({route, navigation}) => {
       console.log('Open SSE connection!!!',event);
     });
   },[]);
-
   // 서버 데이터 수신
   sse.addEventListener('list', event => {
     console.log('데이터전체 값:', event);
     console.log('데이터 value 확인: ', event.data);
-    // setCount(event);
+    setCount(event.data);
   });
   // 더미 데이터 확인
   sse.addEventListener('connected', event => {
-    console.log('더미 값:', event);
-    console.log('더미 확인: ', event.data);
+    // console.log('더미 값:', event);
+    // console.log('더미 확인: ', event.data);
     // setCount(event);
   });
 
