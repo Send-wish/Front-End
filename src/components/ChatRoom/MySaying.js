@@ -93,7 +93,7 @@ const MySaying = ({sender, createAt, message, senderImg}) => {
           </SayingBalloon>
         </SayingPart>
         <ProfilePart>
-          <ProfilePhoto source={{uri : senderImg}}/>
+          <ProfilePhoto source={{uri: senderImg}} />
         </ProfilePart>
       </PartContainer>
     </Container>

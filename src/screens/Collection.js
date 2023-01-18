@@ -269,7 +269,7 @@ const Collection = ({route, navigation}) => {
             onSubmitEditing={() => {
               _changeCollectionName();
             }}
-            placeholder="변경할 콜렉션 이름을 입력해주세요 :)"
+            placeholder="변경할 컬렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
           <Button title="변경하기" onPress={() => _changeCollectionName()} />
@@ -305,7 +305,7 @@ const Collection = ({route, navigation}) => {
                     }}>
                     {collectionTitle}
                   </Title>
-                  콜렉션
+                  컬렉션
                 </Title>
                 <Feather
                   name="edit-2"
