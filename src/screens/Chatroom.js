@@ -199,7 +199,10 @@ const ChatRoom = ({navigation, route}) => {
     shareCollectionId,
     shareCollectionTitle,
     chatRoomId,
+    screen,
   } = route.params;
+
+  console.log(screen);
 
   const client = useRef({});
   const [items, setItems] = useState([]);
@@ -212,6 +215,7 @@ const ChatRoom = ({navigation, route}) => {
   const refMessage = useRef(null);
   const [img, setImg] = useState(''); // 내이미지 받아오기
   const [isSorted, setIsSorted] = useState(false);
+  const [isFolded, setIsFolded] = useState(false);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -332,7 +336,6 @@ const ChatRoom = ({navigation, route}) => {
       })
         .then(res => {
           return res.json();
-          bj;
         })
         .then(data => {
           for (let i = 0; i < data.length; i++) {
@@ -342,7 +345,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          // console.log('data : ', data);
+          console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);
@@ -367,7 +370,7 @@ const ChatRoom = ({navigation, route}) => {
           size={25}
           color={theme.basicText}
           onPress={() =>
-            navigation.navigate('SharedCollection', {
+            navigation.navigate(screen, {
               shareCollectionId: shareCollectionId,
               nickName: nickName,
               shareCollectionName: shareCollectionTitle,
@@ -389,11 +392,14 @@ const ChatRoom = ({navigation, route}) => {
           name="menu"
           size={30}
           style={{
-            color: theme.basicText,
+            color: isFolded ? theme.tintColorPink : theme.basicText,
+          }}
+          onPress={() => {
+            setIsFolded(!isFolded);
           }}
         />
       </UpperContainer>
-      <CollectionContainer>
+      <CollectionContainer style={{display: isFolded ? 'none' : 'flex'}}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -456,7 +462,6 @@ const ChatRoom = ({navigation, route}) => {
               <Foundation name="filter" size={23} color={theme.basicText} />
             </View>
           </TouchableOpacity>
-
         </View>
         <LineIcon />
       </CollectionContainer>
@@ -470,15 +475,18 @@ const ChatRoom = ({navigation, route}) => {
         extraScrollHeight={200}
         resetScrollToCoords={{x: 0, y: 0}}
         scrollEnabled={false}>
-        <MiddleContainer>
+        <MiddleContainer style={{height: isFolded ? 638 : 500}}>
           <FlatList
             data={chatList}
             renderItem={({item}) => <Item item={item} />}
             key={item => item['createAt']}
             ref={ref => (flatListRef = ref)}
-            onContentSizeChange={() => flatListRef.scrollToEnd()}
+            onContentSizeChange={() =>
+              flatListRef.scrollToEnd({animated: false})
+            }
             showsVerticalScrollIndicator={false}
             extraData={{update, updated}}
+
             // image={img}
           />
         </MiddleContainer>

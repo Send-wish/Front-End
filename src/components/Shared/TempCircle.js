@@ -5,19 +5,31 @@ import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
 const Container = styled.View`
-  margin: 20px 10px 10px 10px;
-  width: 65px;
-  height: 65px;
+  margin: 20px 5px 5px 3px;
+  width: 75px;
+  height: 75px;
   justify-content: center;
   align-items: center;
-  border-radius: 75px;
+  border-radius: 27px;
+`;
+
+const ImageContainer = styled.View`
+  background-color: ${({theme}) => theme.tintColorGreen};
+  padding: 10px;
+  margin: 10px 10px 10px 10px;
+  border-width: 0.2px;
+  width: 75px;
+  height: 75px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 27px;
 `;
 
 const CollectionImage = styled.Image`
   background-color: ${({theme}) => theme.mainBackground};
   padding: 10px;
   margin: 10px 10px 10px 10px;
-  border-width: 1px;
+  border-width: 0.2px;
   width: 75px;
   height: 75px;
   justify-content: center;
@@ -43,7 +55,6 @@ const Title = styled.Text`
   height: 30px;
 `;
 
-
 const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
   const _pressFriend = () => {
     setIsChecked(!isChecked);
@@ -67,16 +78,16 @@ const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
                 zIndex: 10,
               }}
             />
-            <CollectionImage
-              style={{
-                backgroundColor: isChecked
-                  ? theme.tintColorGreen
-                  : theme.mainBackground,
-                opacity: isChecked ? 0.5 : 1,
-              }}
-              source={{uri : image? image : null}}
-              value={frName}
-            />
+            <ImageContainer>
+              <CollectionImage
+                style={{
+                  opacity: isChecked ? 0.5 : 1,
+                  postion: 'absolute',
+                }}
+                source={{uri: image ? image : null}}
+                value={frName}
+              />
+            </ImageContainer>
           </Row>
           <Title style={titleStyle}>{frName}</Title>
         </View>
