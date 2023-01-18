@@ -22,7 +22,7 @@ const SignUpImage = styled.Image`
   justify-content: center;
   align-items: center;
   margin-top: -10px;
-  border-radius: 40px;
+  border-radius: 30px;
   margin-bottom: 10px;
 `;
 

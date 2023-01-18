@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, FlatList, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -246,7 +252,6 @@ const Chat = ({route, navigation}) => {
 
   // 친구 추가
   const _addFriends = async () => {
-    setVisibleModal(false);
     console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
@@ -259,11 +264,12 @@ const Chat = ({route, navigation}) => {
         }),
       })
         .then(response => {
-          // console.log('errorcheck!!response addfriend: ', response);
           if (!response.ok) {
-            // throw new Error(`${response.status} 에러발생`);
+            Alert.alert('이미 등록된 친구이거나 없는 사용자입니다 :(');
             throw new Error('이미 등록된 친구이거나 없는 사용자입니다 :)');
           }
+          setVisibleModal(false);
+          setFrName('');
           return response.json();
         })
         .then(json => console.log('from server data check', json))
@@ -315,6 +321,7 @@ const Chat = ({route, navigation}) => {
         // console.log('errorcheck!!response: ', response);
         if (!response.ok) {
           // throw new Error(`${response.status} 에러발생`);
+          Alert.alert('등록되지 않은 친구입니다 :(');
           throw new Error('등록되지 않은 친구입니다 :)');
         }
         _getFriends();
@@ -351,6 +358,8 @@ const Chat = ({route, navigation}) => {
     }
   };
 
+  const screen = 'Chat';
+
   const _pressChat = (
     shareCollectionId,
     shareCollectionTitle,
@@ -364,6 +373,7 @@ const Chat = ({route, navigation}) => {
       nickName,
       friendList,
       chatRoomId,
+      screen,
     });
   };
 

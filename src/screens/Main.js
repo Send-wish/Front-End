@@ -1,9 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  ScrollView,
-  Linking,
-} from 'react-native';
+import {View, ScrollView, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -49,7 +45,7 @@ const BottomContainer = styled.View`
   border-top-right-radius: 30px;
 `;
 
-// 가로 
+// 가로
 const Row = styled.View`
   flex-direction: row;
 `;
@@ -180,7 +176,6 @@ const Main = ({navigation, route}) => {
   };
   loadUsernameFromSharedStorage();
 
-
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
@@ -197,8 +192,9 @@ const Main = ({navigation, route}) => {
 
   // 컬렉션 생성
   const _madeCollection = async () => {
-    console.log('nickName from Sign In', nickName); // 로그인 화면에서 받아온 닉네임 확인
-    // console.log('collectionName', collectionName); // 컬렉션 이름 확인
+    if (collectionName === '') {
+      return Alert.alert('컬렉션 이름을 입력해주세요');
+    }
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection', {
@@ -347,6 +343,7 @@ const Main = ({navigation, route}) => {
           // console.log('result', result);
         })
         .then(_getItems)
+        .then(_getCollections)
         .then(setAddToCollection([]))
         .then(setIsEditing(false));
     } catch (e) {
@@ -459,8 +456,7 @@ const Main = ({navigation, route}) => {
                 <Title style={{marginBottom: 10}}>새 컬렉션 만들기</Title>
                 <Title>새 컬렉션의 이름을 입력해주세요.</Title>
                 <TintPinkSubTitle>
-                  다양한 쇼핑몰에서 담은 
-                  여러 아이템들을 담을 수 있어요!
+                  다양한 쇼핑몰에서 담은 여러 아이템들을 담을 수 있어요!
                 </TintPinkSubTitle>
               </View>
             </View>
@@ -514,7 +510,10 @@ const Main = ({navigation, route}) => {
                 marginRight: 10,
                 height: 300,
               }}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style ={{width : 360}}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{width: 360}}>
                 {collections.error
                   ? null
                   : collections.map(collection => (

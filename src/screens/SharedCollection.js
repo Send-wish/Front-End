@@ -278,15 +278,16 @@ const SharedCollection = ({route, navigation}) => {
   }, []);
 
   const _pressChatButton = () => {
+    const screen = 'SharedCollection';
     navigation.navigate('ChatRoom', {
       shareCollectionId,
       shareCollectionTitle,
       nickName,
       friendList,
       chatRoomId,
+      screen,
     });
   };
-
 
   const _getImage = async () => {
     try {
@@ -297,14 +298,14 @@ const SharedCollection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!',data)
+          console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
           console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container insets={insets}>
@@ -390,7 +391,7 @@ const SharedCollection = ({route, navigation}) => {
                 width: 400,
                 height: 60,
               }}>
-              <ProfileImage image={img}/>
+              <ProfileImage image={img} />
               <SubTitle
                 style={{
                   fontSize: 15,

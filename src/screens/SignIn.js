@@ -183,7 +183,7 @@ const SignIn = ({navigation}) => {
         <Title style={{marginTop: 30}}>간편한 소비, Sendwish</Title>
         <Row>
           <Title style={{marginTop: 10}}>
-            <Title style={{color: theme.tintColorGreen}}>콜렉션</Title>에
+            <Title style={{color: theme.tintColorGreen}}>컬렉션</Title>에
             담아보세요!{' '}
           </Title>
         </Row>

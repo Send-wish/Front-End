@@ -12,7 +12,7 @@ const Container = styled.View`
   height: 160px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  border-radius: 35px;
 `;
 
 const SignUpImage = styled.Image`
@@ -23,7 +23,7 @@ const SignUpImage = styled.Image`
   justify-content: center;
   align-items: center;
   margin-top: 70px;
-  border-radius: 40px;
+  border-radius: 33px;
   margin-bottom: 10px;
 `;
 
