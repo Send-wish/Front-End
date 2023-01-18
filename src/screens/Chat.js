@@ -411,7 +411,7 @@ const Chat = ({route, navigation}) => {
             value={frName}
             onChangeText={setFrName}
             onBlur={() => setFrName(frName)}
-            maxLength={20}
+            maxLength={12}
             onSubmitEditing={() => {
               _addFriends();
             }}
