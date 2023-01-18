@@ -194,7 +194,7 @@ const ChatRoom = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
   const {
-    // friendList,
+    friendList,
     nickName,
     shareCollectionId,
     shareCollectionTitle,
@@ -319,7 +319,6 @@ const ChatRoom = ({navigation, route}) => {
             : null;
           console.log('************temp : ', temp);
           setItems(temp);
-          
         });
     } catch (e) {
       console.log(e);
@@ -357,6 +356,10 @@ const ChatRoom = ({navigation, route}) => {
     isSorted ? setIsSorted(false) : setIsSorted(true);
   };
 
+  useEffect(() => {
+    _getItemsFromShareCollection();
+  }, [isSorted]);
+
   console.log('isSorted : ', isSorted);
 
   return (
@@ -382,7 +385,7 @@ const ChatRoom = ({navigation, route}) => {
           }}>
           <MainTitle>{shareCollectionTitle}</MainTitle>
           <MainTitle style={{color: theme.basicText, fontSize: 15}}>
-            {/* ({friendList.map(friend => ' ' + friend + ' ')}) */}
+            ({friendList.map(friend => ' ' + friend + ' ')})
           </MainTitle>
         </View>
         <Feather
@@ -442,14 +445,16 @@ const ChatRoom = ({navigation, route}) => {
           <TouchableOpacity onPress={_pressFilter}>
             <View
               style={{
-                backgroundColor: theme.mainBackground,
+                backgroundColor: isSorted
+                  ? theme.tintColorPink
+                  : theme.mainBackground,
                 width: 38,
                 height: 38,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 13,
-                borderColor: theme.componentBackground,
-                borderWidth: 3,
+                borderColor: theme.basicText,
+                borderWidth: 2,
               }}>
               <Foundation name="filter" size={23} color={theme.basicText} />
             </View>
