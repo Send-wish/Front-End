@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, TouchableOpacity, ScrollView, Modal, Linking} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Modal, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -150,6 +150,9 @@ const SharedCollection = ({route, navigation}) => {
 
   // 공유 컬렉션 이름 수정
   const _changeShareCollectionName = async () => {
+    if (shareCollectionTitle === '') {
+      return Alert.alert('공유 컬렉션 이름을 입력해주세요');
+    }
     setVisibleModal(false);
     try {
       await fetch('https://api.sendwish.link:8081/collection', {

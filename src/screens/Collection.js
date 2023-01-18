@@ -1,11 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Linking,
-} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Modal, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -115,17 +109,19 @@ const Collection = ({route, navigation}) => {
   const [deleteList, setDeleteList] = useState([]);
   const isFocused = useIsFocused(); // isFoucesd Define
   const [img, setImg] = useState(''); // 내이미지 받아오기
-  
+
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused)
-    _getItemsFromCollection();
+    if (isFocused) _getItemsFromCollection();
     setIsEditing(false);
     _getImage();
   }, [isFocused]);
 
   // 컬렉션 네임 수정
   const _changeCollectionName = async () => {
+    if (collectionTitle === '') {
+      return Alert.alert('컬렉션 이름을 입력해주세요')
+    }
     setVisibleModal(false);
     try {
       await fetch('https://api.sendwish.link:8081/collection', {
@@ -204,7 +200,7 @@ const Collection = ({route, navigation}) => {
       setIsEditing(true);
     }
   };
-  
+
   // 아이템 삭제
   const _deleteItemsFromCollection = async () => {
     try {
@@ -240,14 +236,14 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!',data)
+          console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
           console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container insets={insets}>
@@ -265,7 +261,7 @@ const Collection = ({route, navigation}) => {
             value={collectionTitle}
             onChangeText={setCollectionTitle}
             onBlur={() => setCollectionTitle(collectionTitle)}
-            maxLength={20}
+            maxLength={8}
             onSubmitEditing={() => {
               _changeCollectionName();
             }}
@@ -289,24 +285,24 @@ const Collection = ({route, navigation}) => {
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVisibleModal(true)}>
-              <WrapRow style={{marginTop: 30}}>
+            <WrapRow style={{marginTop: 30}}>
+              <Title
+                style={{
+                  marginRight: 10,
+                  color: isEditing ? theme.strongSubText : theme.basicText,
+                }}>
                 <Title
                   style={{
-                    marginRight: 10,
-                    color: isEditing ? theme.strongSubText : theme.basicText,
+                    fontSize: 27,
+                    color: isEditing
+                      ? theme.tintcolorPalegreen
+                      : theme.tintColorGreen,
                   }}>
-                  <Title
-                    style={{
-                      fontSize: 27,
-                      color: isEditing
-                        ? theme.tintcolorPalegreen
-                        : theme.tintColorGreen,
-                    }}>
-                    {collectionTitle}
-                  </Title>
-                  컬렉션
+                  {collectionTitle}
                 </Title>
+                컬렉션
+              </Title>
+              <TouchableOpacity onPress={() => setVisibleModal(true)}>
                 <Feather
                   name="edit-2"
                   size={20}
@@ -315,15 +311,15 @@ const Collection = ({route, navigation}) => {
                     color: isEditing ? theme.strongSubText : theme.basicText,
                   }}
                 />
-              </WrapRow>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </WrapRow>
             <WrapRow
               style={{
                 paddingTop: 20,
                 width: 400,
                 height: 60,
               }}>
-              <ProfileImage image={img}/>
+              <ProfileImage image={img} />
               <SubTitle
                 style={{
                   fontSize: 15,
