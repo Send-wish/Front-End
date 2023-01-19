@@ -192,8 +192,7 @@ const Chat = ({route, navigation}) => {
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');
   const [count, setCount] = useState();
-  const [length, setLength] = useState(0);
-
+  const [length, setLength] = useState(70);
 
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
   // useEffect(() => {
@@ -211,7 +210,7 @@ const Chat = ({route, navigation}) => {
   //   });
   // },[]);
   // // 서버 데이터 수신
- 
+
   // // 더미 데이터 확인
   // sse.addEventListener('connected', event => {
   //   // console.log('더미 값:', event);
@@ -295,7 +294,7 @@ const Chat = ({route, navigation}) => {
   };
 
   // 친구 삭제
-  const _deleteFriend = async (frName) => {
+  const _deleteFriend = async frName => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
@@ -339,7 +338,7 @@ const Chat = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          setChatRoomList(data);
+          data ? setChatRoomList(data) : null;
         });
     } catch (e) {
       console.log(e);
