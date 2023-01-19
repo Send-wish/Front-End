@@ -192,29 +192,29 @@ const Chat = ({route, navigation}) => {
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');
   const [count, setCount] = useState();
+  const [length, setLength] = useState(70);
 
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
   // useEffect(() => {
   //   // 데이터 요청 함수
+  //   _getChatList();
+  //   console.log('테스트!!!');
   // }, [count]);
 
   // const sse = new EventSource('https://api.sendwish.link:8081/chat/connect');
 
   // // SSE 연결 요청
-  // sse.addEventListener('open', event => {
-  //   console.log('Open SSE connection.', event);
-  // });
+  // useEffect(() => {
+  //   sse.addEventListener('open', event => {
+  //     console.log('Open SSE connection!!!',event);
+  //   });
+  // },[]);
+  // // 서버 데이터 수신
 
-  // // 서버 데이터 수신
-  // sse.addEventListener('list', event => {
-  //   console.log('데이터전체 값:',event);
-  //   console.log('데이터 value 확인: ', event.data);
-  //   // setCount(event);
-  // });
-  // // 서버 데이터 수신
-  // sse.addEventListener('list', event => {
-  //   console.log('데이터전체 값:',event);
-  //   console.log('데이터 value 확인: ', event.data);
+  // // 더미 데이터 확인
+  // sse.addEventListener('connected', event => {
+  //   // console.log('더미 값:', event);
+  //   // console.log('더미 확인: ', event.data);
   //   // setCount(event);
   // });
 
@@ -226,19 +226,7 @@ const Chat = ({route, navigation}) => {
   //     console.error('Error:', event.message, event.error);
   //   }
   // });
-  // // 데이터 수신 에러 체크
-  // sse.addEventListener('error', event => {
-  //   if (event.type === 'error') {
-  //     console.error('Connection error:', event.message);
-  //   } else if (event.type === 'exception') {
-  //     console.error('Error:', event.message, event.error);
-  //   }
-  // });
 
-  // // SSE 연결 종료
-  // sse.addEventListener('close', event => {
-  //   console.log('Close SSE connection.');
-  // });
   // // SSE 연결 종료
   // sse.addEventListener('close', event => {
   //   console.log('Close SSE connection.');
@@ -252,7 +240,7 @@ const Chat = ({route, navigation}) => {
 
   // 친구 추가
   const _addFriends = async () => {
-    console.log('nickname check!!!!', nickName);
+    // console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
       await fetch('https://api.sendwish.link:8081/friend', {
@@ -306,7 +294,7 @@ const Chat = ({route, navigation}) => {
   };
 
   // 친구 삭제
-  const _deleteFriend = async (frName) => {
+  const _deleteFriend = async frName => {
     // 변수 감싸서 변형
     // cosnt name = encodeURI("bulksup")
     try {
@@ -318,7 +306,7 @@ const Chat = ({route, navigation}) => {
           friendNickname: frName,
         }),
       }).then(response => {
-        // console.log('errorcheck!!response: ', response);
+        console.log('errorcheck!!response: ', response);
         if (!response.ok) {
           // throw new Error(`${response.status} 에러발생`);
           Alert.alert('등록되지 않은 친구입니다 :(');
@@ -350,8 +338,7 @@ const Chat = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          setChatRoomList(data);
-          console.log('data akjdflasjflaskjlksajf: ', data);
+          data ? setChatRoomList(data) : null;
         });
     } catch (e) {
       console.log(e);
@@ -376,6 +363,12 @@ const Chat = ({route, navigation}) => {
       screen,
     });
   };
+
+  useEffect(() => {
+    setLength(chatRoomList.length * 70 + 80);
+  }, [chatRoomList]);
+
+  console.log('length', length);
 
   return (
     <Container insets={insets}>
@@ -407,7 +400,6 @@ const Chat = ({route, navigation}) => {
             </View>
           </View>
           <Input
-            // ref={refFrName}
             value={frName}
             onChangeText={setFrName}
             onBlur={() => setFrName(frName)}
@@ -447,7 +439,10 @@ const Chat = ({route, navigation}) => {
               flexWrap: 'wrap',
               paddingTop: 10,
             }}>
-            <ScrollView horizontal style={{height: 100, width: 200}}>
+            <ScrollView
+              horizontal
+              style={{height: 100, width: 200}}
+              showsHorizontalScrollIndicator={false}>
               {friends.error
                 ? null
                 : friends.map(friend => (
@@ -488,7 +483,7 @@ const Chat = ({route, navigation}) => {
             </View>
           </SpackBetweenRow>
         </Column>
-        <Column style={{width: '100%'}}>
+        <Column style={{flexGrow: 1}}>
           <FlatList
             data={chatRoomList}
             renderItem={({item}) => <Item item={item} onPress={_pressChat} />}
@@ -497,6 +492,7 @@ const Chat = ({route, navigation}) => {
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => flatListRef.scrollToEnd()}
             extraData={{update}}
+            contentContainerStyle={{flexGrow: 1, height: length}}
           />
         </Column>
       </BottomContainer>
