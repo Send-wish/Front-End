@@ -341,11 +341,11 @@ const Chat = ({route, navigation}) => {
           setChatRoomList(data);
           console.log('data akjdflasjflaskjlksajf: ', data);
 
-          sse.addEventListener('list', event => {
-            console.log('데이터전체 값:', event);
-            console.log('데이터 value 확인: ', event.data);
-            setCount(event.data);
-          });
+          // sse.addEventListener('list', event => {
+          //   console.log('데이터전체 값:', event);
+          //   console.log('데이터 value 확인: ', event.data);
+          //   setCount(event.data);
+          // });
         });
     } catch (e) {
       console.log(e);
