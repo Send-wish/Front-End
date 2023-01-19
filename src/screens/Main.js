@@ -465,7 +465,7 @@ const Main = ({navigation, route}) => {
               value={collectionName}
               onChangeText={setCollectionName}
               onBlur={() => setCollectionName(collectionName)}
-              maxLength={9}
+              maxLength={10}
               onSubmitEditing={() => {
                 _madeCollection();
               }}
