@@ -192,6 +192,7 @@ const Chat = ({route, navigation}) => {
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');
   const [count, setCount] = useState();
+  const [length, setLength] = useState(0);
 
 
   // SSE 전체 데이터 전송 안될 시 Get 요청으로 데이터 받아오기
@@ -339,13 +340,6 @@ const Chat = ({route, navigation}) => {
         })
         .then(data => {
           setChatRoomList(data);
-          console.log('data akjdflasjflaskjlksajf: ', data);
-
-          sse.addEventListener('list', event => {
-            console.log('데이터전체 값:', event);
-            console.log('데이터 value 확인: ', event.data);
-            setCount(event.data);
-          });
         });
     } catch (e) {
       console.log(e);
@@ -370,6 +364,12 @@ const Chat = ({route, navigation}) => {
       screen,
     });
   };
+
+  useEffect(() => {
+    setLength(chatRoomList.length * 70 + 80);
+  }, [chatRoomList]);
+
+  console.log('length', length);
 
   return (
     <Container insets={insets}>
@@ -401,7 +401,6 @@ const Chat = ({route, navigation}) => {
             </View>
           </View>
           <Input
-            // ref={refFrName}
             value={frName}
             onChangeText={setFrName}
             onBlur={() => setFrName(frName)}
@@ -485,7 +484,7 @@ const Chat = ({route, navigation}) => {
             </View>
           </SpackBetweenRow>
         </Column>
-        <Column style={{width: '100%'}}>
+        <Column style={{flexGrow: 1}}>
           <FlatList
             data={chatRoomList}
             renderItem={({item}) => <Item item={item} onPress={_pressChat} />}
@@ -494,6 +493,7 @@ const Chat = ({route, navigation}) => {
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => flatListRef.scrollToEnd()}
             extraData={{update}}
+            contentContainerStyle={{flexGrow: 1, height: length}}
           />
         </Column>
       </BottomContainer>
