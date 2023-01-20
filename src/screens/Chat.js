@@ -368,7 +368,7 @@ const Chat = ({route, navigation}) => {
     setLength(chatRoomList.length * 70 + 80);
   }, [chatRoomList]);
 
-  console.log('length', length);
+  // console.log('length', length);
 
   return (
     <Container insets={insets}>

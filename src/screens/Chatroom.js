@@ -28,6 +28,9 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
+import Peer from 'react-native-peerjs';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 const Container = styled.View`
   flex: 1;
@@ -189,6 +192,44 @@ const Item = ({
   }
 };
 
+  // 피어 생성
+  // const localPeer = new Peer();
+  // localPeer.on('error', console.log);
+
+  // localPeer.on('open', localPeerId => {
+  //   console.log('Local peer open with ID', localPeerId);
+  
+  //   // const remotePeer = new Peer();
+  //   // remotePeer.on('error', console.log);
+  //   remotePeer.on('open', targetId => {
+  //     console.log('Remote peer open with ID', remotePeerId);
+  
+  //     const conn = remotePeer.connect(localPeerId);
+  //     conn.on('error', console.log);
+  //     conn.on('open', () => {
+  //       console.log('Remote peer has opened connection.');
+  //       console.log('conn', conn);
+  //       conn.on('data', data => console.log('Received from local peer', data));
+  //       console.log('Remote peer sending data.');
+  //       conn.send('Hello, this is the REMOTE peer!');
+  //     });
+  //   });
+  // });
+  
+  // localPeer.on('connection', conn => {
+  //   console.log('Local peer has received connection.');
+  //   conn.on('error', console.log);
+  //   conn.on('open', () => {
+  //     console.log('Local peer has opened connection.');
+  //     console.log('conn', conn);
+  //     conn.on('data', data => console.log('Received from remote peer', data));
+  //     console.log('Local peer sending data.');
+  //     conn.send('Hello, this is the LOCAL peer!');
+  //   });
+  // });
+
+
+
 const ChatRoom = ({navigation, route}) => {
   let flatListRef;
   const insets = useSafeAreaInsets();
@@ -214,6 +255,7 @@ const ChatRoom = ({navigation, route}) => {
   const [img, setImg] = useState(''); // 내이미지 받아오기
   const [isSorted, setIsSorted] = useState(false);
   const [isFolded, setIsFolded] = useState(false);
+  const [targetId, setTargetId]=useState('');
 
   const _connect = roomId => {
     client.current = new Client({
@@ -223,29 +265,29 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
-        console.log('STOMP: ' + str);
+        // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
       },
       onConnect: () => {
         _subscribe(roomId);
-        console.log('connected!');
+        // console.log('connected!');
       },
       onStompError: frame => {
-        console.log('error occur' + frame.body);
+        // console.log('error occur' + frame.body);
       },
     });
     client.current.activate();
   };
 
   const _disconnect = () => {
-    console.log('here is disconnect!');
+    // console.log('here is disconnect!');
     client.current.deactivate();
   };
 
   const _subscribe = roomId => {
     client.current.subscribe('/sub/chat/' + roomId, msg => {
-      console.log('connected! and subscribed!');
+      // console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
       console.log('msg.body: ' + msg.body);
       tempObject.nickName = nickName;
@@ -347,7 +389,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          console.log('data : ', data);
+          // console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);
@@ -379,6 +421,8 @@ const ChatRoom = ({navigation, route}) => {
             })
           }
         />
+        <MaterialIcons name="live-tv"size={25}
+          color={theme.basicText}/>
         <View
           style={{
             justifyContent: 'center',

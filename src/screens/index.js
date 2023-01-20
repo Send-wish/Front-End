@@ -6,6 +6,7 @@ import Shared from './Shared';
 import SharedCollection from './SharedCollection';
 import Chat from './Chat';
 import ChatRoom from './ChatRoom';
+import LiveChat from './LiveChat';
 
 export {
   SignIn,
@@ -16,4 +17,5 @@ export {
   SharedCollection,
   Chat,
   ChatRoom,
+  LiveChat,
 };
