@@ -28,68 +28,6 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
-import Peer from 'react-native-peerjs';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-// // localPeer
-// const localPeer = new Peer();
-
-// // localPeer.on "error"
-// localPeer.on('error', console.log);
-
-// // localPeer.on "open"
-// localPeer.on('open', localPeerId => {
-//   console.log('Local peer open with ID', localPeerId); // (1)
-
-//   // remotePeer
-//   const remotePeer = new Peer();
-
-//   // remotePeer.on "error"
-//   remotePeer.on('error', console.log);
-
-//   // remotePeer.on "open"
-//   remotePeer.on('open', remotePeerId => {
-//     console.log('Remote peer open with ID', remotePeerId); // (2)
-
-//     // connect
-//     const conn = remotePeer.connect(localPeerId);
-
-//     // connect.on "error"
-//     conn.on('error', console.log);
-
-//     // connect.on "open"
-//     conn.on('open', () => {
-//       console.log('Remote peer has opened connection.'); // (4)
-//       console.log('conn', conn); // (5)
-
-//       // connect.on "Received from local peer"
-//       conn.on('data', data => console.log('Received from local peer', data)); // (11)
-
-//       console.log('Remote peer sending data.'); // (6)
-//       // connection.send "Hello, this is the REMOTE peer!"
-//       conn.send('Hello, this is the REMOTE peer!');
-//     });
-//   });
-// });
-
-// // localPeer.on "connection"
-// localPeer.on('connection', conn => {
-//   console.log('Local peer has received connection.'); // (3)
-//   // connection.on "error"
-//   conn.on('error', console.log);
-//   // connection.on "open"
-//   conn.on('open', () => {
-//     console.log('Local peer has opened connection.'); // (7)
-//     console.log('conn', conn); // (8)
-
-//     // connection.on "Received from remot peer"
-//     conn.on('data', data => console.log('Received from remote peer', data)); // (10)
-
-//     console.log('Local peer sending data.'); // (9)
-//     //connection.send "Hello, this is the LOCAL peer!"
-//     conn.send('Hello, this is the LOCAL peer!');
-//   });
-// });
 
 const Container = styled.View`
   flex: 1;
@@ -147,7 +85,6 @@ const BottomContainer = styled.View`
   flex-wrap: wrap;
   align-items: center;
   margin-right: 15px;
-  width: 100%;
 `;
 
 const MainTitle = styled.Text`
@@ -164,9 +101,8 @@ const InputContainer = styled.View`
   padding-left: 10px;
   padding-right: 6px;
   border-radius: 50px;
-  width: 81%;
-  height: 58%;
-  margin-right: 5px;
+  width: 100%;
+  height: 9%;
 `;
 
 const SendIcon = styled.View`
@@ -361,6 +297,7 @@ const ChatRoom = ({navigation, route}) => {
     setMessage('');
   };
 
+  
   // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
     try {
@@ -410,7 +347,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          // console.log('data : ', data);
+          console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);
@@ -556,62 +493,27 @@ const ChatRoom = ({navigation, route}) => {
           />
         </MiddleContainer>
         <BottomContainer>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                height: 42,
-                width: 42,
-                borderRadius: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 13,
-                paddingBottom: 5,
-                marginLeft: 5,
-                backgroundColor: theme.tintColorGreen,
-              }}>
-              <MaterialIcons
-                name="live-tv"
-                size={27}
-                color={theme.mainBackground}
-                onPress={() => {
-                  navigation.navigate('LiveChat', {
-                    shareCollectionId: shareCollectionId,
-                    nickName: nickName,
-                    shareCollectionName: shareCollectionTitle,
-                    chatRoomId: chatRoomId,
-                    friendList: friendList,
-                  });
-                }}
-              />
-            </View>
-            <InputContainer>
-              <Input
-                ref={refMessage}
-                onChangeText={text => setMessage(text)}
-                value={message}
-                onSubmitEditing={_pressEnter}
-                returnKeyType={'send'}
-                MaxLegnth={200}
-              />
-              <TouchableHighlight onPress={() => _pressEnter()}>
-                <SendIcon>
-                  <Feather
-                    name="arrow-up"
-                    size={30}
-                    style={{
-                      color: theme.mainBackground,
-                    }}
-                  />
-                </SendIcon>
-              </TouchableHighlight>
-            </InputContainer>
-          </View>
+          <InputContainer>
+            <Input
+              ref={refMessage}
+              onChangeText={text => setMessage(text)}
+              value={message}
+              onSubmitEditing={_pressEnter}
+              returnKeyType={'send'}
+              MaxLegnth={200}
+            />
+            <TouchableHighlight onPress={() => _pressEnter()}>
+              <SendIcon>
+                <Feather
+                  name="arrow-up"
+                  size={30}
+                  style={{
+                    color: theme.mainBackground,
+                  }}
+                />
+              </SendIcon>
+            </TouchableHighlight>
+          </InputContainer>
         </BottomContainer>
       </KeyboardAwareScrollView>
     </Container>
