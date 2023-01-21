@@ -25,6 +25,8 @@ target 'SandWish' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+  
+  pod 'react-native-webrtc', :path => '../node_modules/@videosdk.live/react-native-webrtc'
 
   target 'SandWishTests' do
     inherit! :complete
