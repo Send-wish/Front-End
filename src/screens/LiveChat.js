@@ -28,8 +28,6 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 
-// import {createMeeting, token} from '../../api';
-
 // function JoinScreen(props) {
 //   return null;
 // }
