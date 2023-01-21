@@ -30,6 +30,7 @@
     "react-native-sse": "^1.1.0",
     "react-native-theme": "^0.1.8",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-video": "^6.0.0-alpha.4",
     "react-native-view": "^1.1.0",
     "react-native-webrtc": "^106.0.4",
     "react-redux": "^8.0.5",

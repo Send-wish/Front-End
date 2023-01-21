@@ -11,7 +11,7 @@ import {
   SharedCollection,
   Chat,
   ChatRoom,
-  LiveChat
+  LiveChat,
 } from './src/screens';
 import Share from './Share';
 
