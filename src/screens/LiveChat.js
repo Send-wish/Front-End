@@ -12,7 +12,13 @@ import {
 } from '../components/Main';
 import {theme} from '../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Modal, AppState, TouchableHighlight} from 'react-native';
+import {
+  Modal,
+  AppState,
+  TouchableHighlight,
+  findNodeHandle,
+  NativeModules,
+} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
@@ -134,7 +140,21 @@ const LiveChat = ({navigation, route}) => {
     screen,
   } = route.params;
 
-  // const MyPeer = new Peer();
+  const [userStream, setUserStream] = useState();
+  const [otherUserStream, setOtherUserStream] = useState();
+  const [userDisplayStream, setUserDisplayStream] = useState();
+  const userVideo = useRef({});
+  const partnerVideo = useRef();
+  const peerRef = useRef();
+  const [otherUser, setOtherUser] = useState('');
+  const senders = useRef([]);
+  const screenCaptureView = useRef(null);
+  // const isCaptured = useIsCaptured ();
+
+  const MyPeer = new Peer(undefined, {
+    secure: false,
+    debug: 1,
+  });
 
   const _connect = roomId => {
     client.current = new Client({
@@ -162,22 +182,19 @@ const LiveChat = ({navigation, route}) => {
     client.current.deactivate();
   };
 
-  // const _publish = roomId => {
-  //   console.log('here is publish');
-  //   if (!client.current.connected) {
-  //     return;
-  //   }
-  //   client.current.publish({
-  //     destination: '/pub/live',
-  //     body: JSON.stringify({
-  //       roomId: roomId,
-  //       peerId: MyPeer._id,
-  //     }),
-  //   });
-  // };
-
-  // const [localStream, setLocalStream] = useState(null);
-  // const [remoteStream, setRemoteStream] = useState(null);
+  const _publish = roomId => {
+    console.log('here is publish');
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/live',
+      body: JSON.stringify({
+        roomId: roomId,
+        peerId: MyPeer._id,
+      }),
+    });
+  };
 
   // useEffect(() => {
   //   MyPeer.on('error', console.log);
@@ -191,90 +208,84 @@ const LiveChat = ({navigation, route}) => {
   //   client.current.subscribe('/sub/live/' + roomId, msg => {
   //     console.log('connected! and subscribed!');
 
-  //     console.log('body is ', msg.body.peerId);
-  //     let newPeerId = JSON.parse(msg.body).peerId;
-  //     console.log('first newPeerId is ', newPeerId);
+      let newPeerId = JSON.parse(msg.body).peerId;
+      console.log('newPeerId is ', newPeerId);
 
-  //     if (newPeerId === MyPeer._id) {
-  //       console.log('second my peer id is same');
-  //       return;
-  //     }
+      if (newPeerId === MyPeer._id) {
+        console.log('my peer id is same');
+        return;
+      }
 
-  //     console.log('passed newPeerId is : ', newPeerId);
+      setOtherUser(newPeerId);
+      console.log('otherUser is ', otherUser);
+      console.log('passed newPeerId is : ', newPeerId);
 
-  //     const conn = MyPeer.connect(newPeerId);
-  //     conn.on('error', console.log);
-  //     conn.on('open', () => {
-  //       console.log('My peer has opened connection.');
-  //       console.log('conn', conn);
-  //       conn.on('data', data => console.log('Received from Others!', data));
-  //       console.log('My peer sending data.');
-  //       conn.send('Hello, this is the Bulksup!');
-  //     });
+  // 내 화면 공유해주기
+  const _pressVideo = () => {
+    let videoSourceId;
+    mediaDevices.enumerateDevices().then(sourceInfos => {
+      console.log('sourceInfos is : ', sourceInfos);
+      for (let i = 0; i < sourceInfos.length; i++) {
+        const sourceInfo = sourceInfos[i];
+        if (
+          (sourceInfo.kind === 'videoinput' &&
+            sourceInfo.facing === 'environment') ||
+          sourceInfo.facing === 'environment'
+        ) {
+          videoSourceId = sourceInfo.deviceId;
+        }
+      }
+    });
+    mediaDevices
+      .getUserMedia({
+        audio: false,
+        video: {
+          mandatory: {
+            minWidth: 500,
+            minHeight: 300,
+            minFrameRate: 30,
+          },
+          facingMode: 'user',
+          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
+        },
+      })
+      .then(stream => {
+        setUserStream(stream);
+        console.log('*******userStream is : ', userStream);
+        console.log('otherUser is :', otherUser);
+        otherUser ? MyPeer.call(otherUser, stream) : null;
+      });
+  };
 
-  // mediaDevices.enumerateDevices();
+  // 쉐어화면 공유해주기
+  const _pressShare = () => {
+    console.log('<1>');
+    const reactTag = findNodeHandle(screenCaptureView.current);
+    console.log('<2>');
+    NativeModules.ScreenCapturePickerViewManager.show(reactTag);
+    console.log('<3>');
+    mediaDevices.getDisplayMedia({video: true}).then(stream => {
+      console.log('<4>');
+      setUserDisplayStream(stream);
+      console.log('*******userDisplayStream is : ', userDisplayStream);
+      otherUser ? MyPeer.call(otherUser, stream) : null;
+    });
+  };
 
-  // mediaDevices
-  //   .getUserMedia({audio: true, video: true})
-  //   .then(stream => {
-  //     const call = MyPeer.call(newPeerId, stream);
-  //     console.log('***********************!!!!!!!!!!!!!!!!!!', stream);
-  //     console.log('-------------------------');
-  //     call.on('stream', remoteStream => {
-  //       setRemoteStream(remoteStream);
-  //       console.log('stream2', remoteStream);
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log('Failed to get local stream', err);
-  //   });
-
-  // navigator.mediaDevices
-  // .getUserMedia({audio: true, video: true})
-  // .then(stream => {
-  //   console.log('***********************!!!!!!!!!!!!!!!!!!');
-  //   const call = MyPeer.call(newPeerId, stream);
-  //   console.log('-------------------------');
-  //   call.on('stream', remoteStream => {
-  //     // Show stream in some video/canvas element.
-  //     <Video>video.srcObject = remoteStream </Video>;
-  //     console.log('remoteStream', remoteStream);
-  //   });
-  // })
-  // .catch(err => {
-  //   console.log('Failed to get local stream', err);
-  // });
-  // });
-  // };
-
-  // MyPeer.on('connection', conn => {
-  //   console.log('My peer has received connection.');
-  //   conn.on('error', console.log);
-  //   conn.on('open', () => {
-  //     console.log('My peer has opened connection.');
-  //     console.log('conn', conn);
-  //     conn.on('data', data => console.log('Received from Other peer', data));
-  //     console.log('My peer sending data.');
-  //     conn.send('Hello, this is the Bulksup peer!');
-  //   });
-  // });
-
-  // MyPeer.on('call', call => {
-  //   mediaDevices
-  //     .getUserMedia({video: true, audio: true})
-  //     .then(stream => {
-  //       call.answer(stream); // Answer the call with an A/V stream.
-  //       call.on('stream', remoteStream => {
-  //         // Show stream in some <video> element.
-  //         console.log('****************************');
-  //         console.log('remoteStream', remoteStream);
-  //         setRemoteStream(remoteStream);
-  //       });
-  //     })
-  //     .catch(err => {
-  //       console.error('Failed to get local stream', err);
-  //     });
-  // });
+  
+  MyPeer.on('call', call => {
+    (() => {
+      console.log('MyPeer.on');
+      call.send('Hi! I got your stream well :) '); // Answer the call with an A/V stream.
+      call.on('stream', remoteStream => {
+        // Show stream in some <video> element.
+        console.log('remoteStream', remoteStream);
+        setUserDisplayStream(remoteStream);
+      });
+    }).catch(err => {
+      console.error('Failed to get local stream', err);
+    });
+  });
 
   useEffect(() => {
     _connect(chatRoomId);
@@ -318,29 +329,26 @@ const LiveChat = ({navigation, route}) => {
           </TouchableOpacity>
         </>
         <View style={{flexDirection: 'row'}}>
-          <TouchableHighlight onPress={{}}>
+          <TouchableHighlight onPress={_pressVideo}>
             <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>
-              <Text>라이브 시작하기</Text>
+              <Text>영상</Text>
             </View>
           </TouchableHighlight>
-          <TouchableHighlight onPress={{}}>
+          <TouchableHighlight onPress={_pressShare}>
             <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>
-              <Text>라이브 보기</Text>
+              <Text>화면공유</Text>
             </View>
           </TouchableHighlight>
         </View>
-        <Temp />
-        <MeetingProvider
-          config={{
-            meetingId,
-            micEnabled: false,
-            webcamEnabled: true,
-            name: 'Test User',
-          }}
-          token={token}>
-          <MeetingView />
-        </MeetingProvider>
-        <RTCView streamURL={remoteStream} />
+        <RTCView
+          streamURL={userStream?.toURL()}
+          style={{width: 200, height: 200, margin: 10}}
+        />
+        <ScreenCapturePickerView ref={screenCaptureView} />
+        <RTCView
+          streamURL={userDisplayStream?.toURL()}
+          style={{width: 200, height: 200, margin: 10}}
+        />
       </MiddleContainer>
       <BottomContainer></BottomContainer>
     </Container>

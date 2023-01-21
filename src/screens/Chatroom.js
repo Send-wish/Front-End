@@ -28,9 +28,7 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
-// import Peer from 'react-native-peerjs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 
 const Container = styled.View`
   flex: 1;
