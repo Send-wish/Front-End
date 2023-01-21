@@ -28,8 +28,11 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
-import Peer from 'react-native-peerjs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Peer from 'react-native-peerjs';
+
+
+
 
 // // localPeer
 // const localPeer = new Peer();
@@ -90,6 +93,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 //     conn.send('Hello, this is the LOCAL peer!');
 //   });
 // });
+
 
 const Container = styled.View`
   flex: 1;
@@ -586,6 +590,7 @@ const ChatRoom = ({navigation, route}) => {
                     shareCollectionName: shareCollectionTitle,
                     chatRoomId: chatRoomId,
                     friendList: friendList,
+                    screen : screen
                   });
                 }}
               />
