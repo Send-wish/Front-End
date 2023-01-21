@@ -220,8 +220,8 @@ const LiveChat = ({navigation, route}) => {
       .then(stream => {
         setUserStream(stream);
         console.log('*******userStream is : ', userStream);
-        console.log('otherUser is : ', otherUser);
-        // MyPeer.call(otherUser, stream);
+        console.log('otherUser is :', otherUser);
+        otherUser ? MyPeer.call(otherUser, stream) : null;
       });
   };
 
@@ -236,12 +236,14 @@ const LiveChat = ({navigation, route}) => {
       console.log('<4>');
       setUserDisplayStream(stream);
       console.log('*******userDisplayStream is : ', userDisplayStream);
-      MyPeer.call(otherUser, stream);
+      otherUser ? MyPeer.call(otherUser, stream) : null;
     });
   };
 
+  
   MyPeer.on('call', call => {
     (() => {
+      console.log('MyPeer.on');
       call.send('Hi! I got your stream well :) '); // Answer the call with an A/V stream.
       call.on('stream', remoteStream => {
         // Show stream in some <video> element.
