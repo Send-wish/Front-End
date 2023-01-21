@@ -87,4 +87,5 @@
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Microphone permission description</string>
 	</dict>
+
 </plist>
