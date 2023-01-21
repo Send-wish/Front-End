@@ -26,7 +26,17 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
-
+import {useState} from 'react';
+import {
+  SafeAreaView,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  View,
+  FlatList,
+} from 'react-native';
+import Test from './Test';
+import MeetingView from './MeetingView';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -84,28 +94,32 @@ const Navigation = props => {
     </Tab.Navigator>
   );
 };
+
 const App = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-          initialRouteName="SignIn">
-          {/* <Stack.Screen name="App" component={App} /> */}
-          <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="Navigation" component={Navigation} />
-          <Stack.Screen name="Collection" component={Collection} />
-          <Stack.Screen name="SharedCollection" component={SharedCollection} />
-          <Stack.Screen name="Share" component={Share} />
-          <Stack.Screen name="ChatRoom" component={ChatRoom} />
-          <Stack.Screen name="LiveChat" component={LiveChat} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ThemeProvider>
-  );
+  
+  return(
+  <ThemeProvider theme={theme}>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName="Test">
+        {/* <Stack.Screen name="App" component={App} /> */}
+        <Stack.Screen name="Test" component={Test} />
+        <Stack.Screen name="MeetingView" component={MeetingView} />
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Navigation" component={Navigation} />
+        <Stack.Screen name="Collection" component={Collection} />
+        <Stack.Screen name="SharedCollection" component={SharedCollection} />
+        <Stack.Screen name="Share" component={Share} />
+        <Stack.Screen name="ChatRoom" component={ChatRoom} />
+        <Stack.Screen name="LiveChat" component={LiveChat} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </ThemeProvider>
+);
 };
 
 export default App;

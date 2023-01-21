@@ -18,20 +18,54 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {Text, View} from 'react-native';
-import Peer from 'react-native-peerjs';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
-import Video from 'react-native-video';
-import {
-  mediaDevices,
-  MediaStream,
-  MediaStreamConstraints,
-  getDisplayMedia,
-  RTCView,
-} from 'react-native-webrtc';
-import {set} from 'immer/dist/internal';
 
+// import {createMeeting, token} from '../../api';
+
+// function JoinScreen(props) {
+//   return null;
+// }
+
+// function ControlsContainer() {
+//   return null;
+// }
+
+// function MeetingView() {
+//   return null;
+// }
+
+// import {
+//   MeetingProvider,
+//   useMeeting,
+//   useParticipant,
+//   MediaStream,
+//   RTCView,
+// } from '@videosdk.live/react-native-sdk';
+// import VideosdkRPK from '../../VideosdkRPK';
+
+// const {enableScreenShare, disableScreenShare} = useMeeting({});
+
+// useEffect(() => {
+//   VideosdkRPK.addListener('onScreenShare', event => {
+//     if (event === 'START_BROADCAST') {
+//       enableScreenShare();
+//     } else if (event === 'STOP_BROADCAST') {
+//       disableScreenShare();
+//     }
+//   });
+//   return () => {
+//     VideosdkRPK.removeSubscription('onScreenShare');
+//   };
+// }, []);
+
+// const [meetingId, setMeetingId] = useState(null);
+
+// const getMeetingId = async id => {
+//   const meetingId = id == null ? await createMeeting({token}) : id;
+//   setMeetingId(meetingId);
+// };
 
 const Container = styled.View`
   flex: 1;
@@ -100,7 +134,7 @@ const LiveChat = ({navigation, route}) => {
     screen,
   } = route.params;
 
-  const MyPeer = new Peer();
+  // const MyPeer = new Peer();
 
   const _connect = roomId => {
     client.current = new Client({
@@ -128,119 +162,119 @@ const LiveChat = ({navigation, route}) => {
     client.current.deactivate();
   };
 
-  const _publish = roomId => {
-    console.log('here is publish');
-    if (!client.current.connected) {
-      return;
-    }
-    client.current.publish({
-      destination: '/pub/live',
-      body: JSON.stringify({
-        roomId: roomId,
-        peerId: MyPeer._id,
-      }),
-    });
-  };
+  // const _publish = roomId => {
+  //   console.log('here is publish');
+  //   if (!client.current.connected) {
+  //     return;
+  //   }
+  //   client.current.publish({
+  //     destination: '/pub/live',
+  //     body: JSON.stringify({
+  //       roomId: roomId,
+  //       peerId: MyPeer._id,
+  //     }),
+  //   });
+  // };
 
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
+  // const [localStream, setLocalStream] = useState(null);
+  // const [remoteStream, setRemoteStream] = useState(null);
 
-  useEffect(() => {
-    MyPeer.on('error', console.log);
-    MyPeer.on('open', MyPeerId => {
-      console.log('My peer open with ID', MyPeerId);
-      _publish(chatRoomId);
-    });
-  }, []);
+  // useEffect(() => {
+  //   MyPeer.on('error', console.log);
+  //   MyPeer.on('open', MyPeerId => {
+  //     console.log('My peer open with ID', MyPeerId);
+  //     _publish(chatRoomId);
+  //   });
+  // }, []);
 
-  const _subscribe = roomId => {
-    client.current.subscribe('/sub/live/' + roomId, msg => {
-      console.log('connected! and subscribed!');
+  // const _subscribe = roomId => {
+  //   client.current.subscribe('/sub/live/' + roomId, msg => {
+  //     console.log('connected! and subscribed!');
 
-      console.log('body is ', msg.body.peerId);
-      let newPeerId = JSON.parse(msg.body).peerId;
-      console.log('first newPeerId is ', newPeerId);
+  //     console.log('body is ', msg.body.peerId);
+  //     let newPeerId = JSON.parse(msg.body).peerId;
+  //     console.log('first newPeerId is ', newPeerId);
 
-      if (newPeerId === MyPeer._id) {
-        console.log('second my peer id is same');
-        return;
-      }
+  //     if (newPeerId === MyPeer._id) {
+  //       console.log('second my peer id is same');
+  //       return;
+  //     }
 
-      console.log('passed newPeerId is : ', newPeerId);
+  //     console.log('passed newPeerId is : ', newPeerId);
 
-        const conn = MyPeer.connect(newPeerId);
-        conn.on('error', console.log);
-        conn.on('open', () => {
-          console.log('My peer has opened connection.');
-          console.log('conn', conn);
-          conn.on('data', data => console.log('Received from Others!', data));
-          console.log('My peer sending data.');
-          conn.send('Hello, this is the Bulksup!');
-        });
+  //     const conn = MyPeer.connect(newPeerId);
+  //     conn.on('error', console.log);
+  //     conn.on('open', () => {
+  //       console.log('My peer has opened connection.');
+  //       console.log('conn', conn);
+  //       conn.on('data', data => console.log('Received from Others!', data));
+  //       console.log('My peer sending data.');
+  //       conn.send('Hello, this is the Bulksup!');
+  //     });
 
-      mediaDevices.enumerateDevices();
+  // mediaDevices.enumerateDevices();
 
-      mediaDevices
-        .getUserMedia({audio: true, video: true})
-        .then(stream => {
-          const call = MyPeer.call(newPeerId, stream);
-          console.log('***********************!!!!!!!!!!!!!!!!!!', stream);
-          console.log('-------------------------');
-          call.on('stream', remoteStream => {
-            setRemoteStream(remoteStream);
-            console.log('stream2', remoteStream);
-          });
-        })
-        .catch(err => {
-          console.log('Failed to get local stream', err);
-        });
+  // mediaDevices
+  //   .getUserMedia({audio: true, video: true})
+  //   .then(stream => {
+  //     const call = MyPeer.call(newPeerId, stream);
+  //     console.log('***********************!!!!!!!!!!!!!!!!!!', stream);
+  //     console.log('-------------------------');
+  //     call.on('stream', remoteStream => {
+  //       setRemoteStream(remoteStream);
+  //       console.log('stream2', remoteStream);
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log('Failed to get local stream', err);
+  //   });
 
-      // navigator.mediaDevices
-      // .getUserMedia({audio: true, video: true})
-      // .then(stream => {
-      //   console.log('***********************!!!!!!!!!!!!!!!!!!');
-      //   const call = MyPeer.call(newPeerId, stream);
-      //   console.log('-------------------------');
-      //   call.on('stream', remoteStream => {
-      //     // Show stream in some video/canvas element.
-      //     <Video>video.srcObject = remoteStream </Video>;
-      //     console.log('remoteStream', remoteStream);
-      //   });
-      // })
-      // .catch(err => {
-      //   console.log('Failed to get local stream', err);
-      // });
-    });
-  };
+  // navigator.mediaDevices
+  // .getUserMedia({audio: true, video: true})
+  // .then(stream => {
+  //   console.log('***********************!!!!!!!!!!!!!!!!!!');
+  //   const call = MyPeer.call(newPeerId, stream);
+  //   console.log('-------------------------');
+  //   call.on('stream', remoteStream => {
+  //     // Show stream in some video/canvas element.
+  //     <Video>video.srcObject = remoteStream </Video>;
+  //     console.log('remoteStream', remoteStream);
+  //   });
+  // })
+  // .catch(err => {
+  //   console.log('Failed to get local stream', err);
+  // });
+  // });
+  // };
 
-    MyPeer.on('connection', conn => {
-      console.log('My peer has received connection.');
-      conn.on('error', console.log);
-      conn.on('open', () => {
-        console.log('My peer has opened connection.');
-        console.log('conn', conn);
-        conn.on('data', data => console.log('Received from Other peer', data));
-        console.log('My peer sending data.');
-        conn.send('Hello, this is the Bulksup peer!');
-      });
-    });
+  // MyPeer.on('connection', conn => {
+  //   console.log('My peer has received connection.');
+  //   conn.on('error', console.log);
+  //   conn.on('open', () => {
+  //     console.log('My peer has opened connection.');
+  //     console.log('conn', conn);
+  //     conn.on('data', data => console.log('Received from Other peer', data));
+  //     console.log('My peer sending data.');
+  //     conn.send('Hello, this is the Bulksup peer!');
+  //   });
+  // });
 
-  MyPeer.on('call', call => {
-    mediaDevices
-      .getUserMedia({video: true, audio: true})
-      .then(stream => {
-        call.answer(stream); // Answer the call with an A/V stream.
-        call.on('stream', remoteStream => {
-          // Show stream in some <video> element.
-          console.log('****************************');
-          console.log('remoteStream', remoteStream);
-          setRemoteStream(remoteStream);
-        });
-      })
-      .catch(err => {
-        console.error('Failed to get local stream', err);
-      });
-  });
+  // MyPeer.on('call', call => {
+  //   mediaDevices
+  //     .getUserMedia({video: true, audio: true})
+  //     .then(stream => {
+  //       call.answer(stream); // Answer the call with an A/V stream.
+  //       call.on('stream', remoteStream => {
+  //         // Show stream in some <video> element.
+  //         console.log('****************************');
+  //         console.log('remoteStream', remoteStream);
+  //         setRemoteStream(remoteStream);
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.error('Failed to get local stream', err);
+  //     });
+  // });
 
   useEffect(() => {
     _connect(chatRoomId);
@@ -267,6 +301,22 @@ const LiveChat = ({navigation, route}) => {
         />
       </UpperContainer>
       <MiddleContainer>
+        <>
+          <TouchableOpacity
+            onPress={() => {
+              // Calling startBroadcast from iOS Native Module
+              VideosdkRPK.startBroadcast();
+            }}>
+            <Text> Start Screen Share </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              disableScreenShare();
+            }}>
+            <Text> Stop Screen Share </Text>
+          </TouchableOpacity>
+        </>
         <View style={{flexDirection: 'row'}}>
           <TouchableHighlight onPress={{}}>
             <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>
@@ -280,6 +330,16 @@ const LiveChat = ({navigation, route}) => {
           </TouchableHighlight>
         </View>
         <Temp />
+        <MeetingProvider
+          config={{
+            meetingId,
+            micEnabled: false,
+            webcamEnabled: true,
+            name: 'Test User',
+          }}
+          token={token}>
+          <MeetingView />
+        </MeetingProvider>
         <RTCView streamURL={remoteStream} />
       </MiddleContainer>
       <BottomContainer></BottomContainer>
