@@ -34,65 +34,6 @@ import Peer from 'react-native-peerjs';
 
 
 
-// // localPeer
-// const localPeer = new Peer();
-
-// // localPeer.on "error"
-// localPeer.on('error', console.log);
-
-// // localPeer.on "open"
-// localPeer.on('open', localPeerId => {
-//   console.log('Local peer open with ID', localPeerId); // (1)
-
-//   // remotePeer
-//   const remotePeer = new Peer();
-
-//   // remotePeer.on "error"
-//   remotePeer.on('error', console.log);
-
-//   // remotePeer.on "open"
-//   remotePeer.on('open', remotePeerId => {
-//     console.log('Remote peer open with ID', remotePeerId); // (2)
-
-//     // connect
-//     const conn = remotePeer.connect(localPeerId);
-
-//     // connect.on "error"
-//     conn.on('error', console.log);
-
-//     // connect.on "open"
-//     conn.on('open', () => {
-//       console.log('Remote peer has opened connection.'); // (4)
-//       console.log('conn', conn); // (5)
-
-//       // connect.on "Received from local peer"
-//       conn.on('data', data => console.log('Received from local peer', data)); // (11)
-
-//       console.log('Remote peer sending data.'); // (6)
-//       // connection.send "Hello, this is the REMOTE peer!"
-//       conn.send('Hello, this is the REMOTE peer!');
-//     });
-//   });
-// });
-
-// // localPeer.on "connection"
-// localPeer.on('connection', conn => {
-//   console.log('Local peer has received connection.'); // (3)
-//   // connection.on "error"
-//   conn.on('error', console.log);
-//   // connection.on "open"
-//   conn.on('open', () => {
-//     console.log('Local peer has opened connection.'); // (7)
-//     console.log('conn', conn); // (8)
-
-//     // connection.on "Received from remot peer"
-//     conn.on('data', data => console.log('Received from remote peer', data)); // (10)
-
-//     console.log('Local peer sending data.'); // (9)
-//     //connection.send "Hello, this is the LOCAL peer!"
-//     conn.send('Hello, this is the LOCAL peer!');
-//   });
-// });
 
 
 const Container = styled.View`
@@ -257,6 +198,44 @@ const Item = ({
   }
 };
 
+  // 피어 생성
+  // const localPeer = new Peer();
+  // localPeer.on('error', console.log);
+
+  // localPeer.on('open', localPeerId => {
+  //   console.log('Local peer open with ID', localPeerId);
+  
+  //   // const remotePeer = new Peer();
+  //   // remotePeer.on('error', console.log);
+  //   remotePeer.on('open', targetId => {
+  //     console.log('Remote peer open with ID', remotePeerId);
+  
+  //     const conn = remotePeer.connect(localPeerId);
+  //     conn.on('error', console.log);
+  //     conn.on('open', () => {
+  //       console.log('Remote peer has opened connection.');
+  //       console.log('conn', conn);
+  //       conn.on('data', data => console.log('Received from local peer', data));
+  //       console.log('Remote peer sending data.');
+  //       conn.send('Hello, this is the REMOTE peer!');
+  //     });
+  //   });
+  // });
+  
+  // localPeer.on('connection', conn => {
+  //   console.log('Local peer has received connection.');
+  //   conn.on('error', console.log);
+  //   conn.on('open', () => {
+  //     console.log('Local peer has opened connection.');
+  //     console.log('conn', conn);
+  //     conn.on('data', data => console.log('Received from remote peer', data));
+  //     console.log('Local peer sending data.');
+  //     conn.send('Hello, this is the LOCAL peer!');
+  //   });
+  // });
+
+
+
 const ChatRoom = ({navigation, route}) => {
   let flatListRef;
   const insets = useSafeAreaInsets();
@@ -282,6 +261,7 @@ const ChatRoom = ({navigation, route}) => {
   const [img, setImg] = useState(''); // 내이미지 받아오기
   const [isSorted, setIsSorted] = useState(false);
   const [isFolded, setIsFolded] = useState(false);
+  const [targetId, setTargetId]=useState('');
 
   const _connect = roomId => {
     client.current = new Client({
@@ -291,29 +271,29 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
-        console.log('STOMP: ' + str);
+        // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
       },
       onConnect: () => {
         _subscribe(roomId);
-        console.log('connected!');
+        // console.log('connected!');
       },
       onStompError: frame => {
-        console.log('error occur' + frame.body);
+        // console.log('error occur' + frame.body);
       },
     });
     client.current.activate();
   };
 
   const _disconnect = () => {
-    console.log('here is disconnect!');
+    // console.log('here is disconnect!');
     client.current.deactivate();
   };
 
   const _subscribe = roomId => {
     client.current.subscribe('/sub/chat/' + roomId, msg => {
-      console.log('connected! and subscribed!');
+      // console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
       console.log('msg.body: ' + msg.body);
       tempObject.nickName = nickName;
@@ -430,6 +410,7 @@ const ChatRoom = ({navigation, route}) => {
   useEffect(() => {
     _getItemsFromShareCollection();
   }, [isSorted]);
+
 
   return (
     <Container insets={insets}>

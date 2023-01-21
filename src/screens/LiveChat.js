@@ -220,8 +220,8 @@ const LiveChat = ({navigation, route}) => {
       .then(stream => {
         setUserStream(stream);
         console.log('*******userStream is : ', userStream);
-        console.log('otherUser.current is : ', otherUser.current);
-        MyPeer.call(otherUser, stream);
+        console.log('otherUser is : ', otherUser);
+        // MyPeer.call(otherUser, stream);
       });
   };
 
