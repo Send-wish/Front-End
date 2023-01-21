@@ -24,20 +24,54 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {Text, View} from 'react-native';
-import Peer from 'react-native-peerjs';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
-import Video from 'react-native-video';
-import {
-  mediaDevices,
-  MediaStream,
-  MediaStreamConstraints,
-  getDisplayMedia,
-  RTCView,
-  ScreenCapturePickerView,
-} from 'react-native-webrtc';
-import {useIsCaptured} from 'react-native-is-captured';
+
+// import {createMeeting, token} from '../../api';
+
+// function JoinScreen(props) {
+//   return null;
+// }
+
+// function ControlsContainer() {
+//   return null;
+// }
+
+// function MeetingView() {
+//   return null;
+// }
+
+// import {
+//   MeetingProvider,
+//   useMeeting,
+//   useParticipant,
+//   MediaStream,
+//   RTCView,
+// } from '@videosdk.live/react-native-sdk';
+// import VideosdkRPK from '../../VideosdkRPK';
+
+// const {enableScreenShare, disableScreenShare} = useMeeting({});
+
+// useEffect(() => {
+//   VideosdkRPK.addListener('onScreenShare', event => {
+//     if (event === 'START_BROADCAST') {
+//       enableScreenShare();
+//     } else if (event === 'STOP_BROADCAST') {
+//       disableScreenShare();
+//     }
+//   });
+//   return () => {
+//     VideosdkRPK.removeSubscription('onScreenShare');
+//   };
+// }, []);
+
+// const [meetingId, setMeetingId] = useState(null);
+
+// const getMeetingId = async id => {
+//   const meetingId = id == null ? await createMeeting({token}) : id;
+//   setMeetingId(meetingId);
+// };
 
 const Container = styled.View`
   flex: 1;
@@ -162,17 +196,17 @@ const LiveChat = ({navigation, route}) => {
     });
   };
 
-  useEffect(() => {
-    MyPeer.on('error', console.log);
-    MyPeer.on('open', MyPeerId => {
-      console.log('My peer open with ID', MyPeerId);
-      _publish(chatRoomId);
-    });
-  }, []);
+  // useEffect(() => {
+  //   MyPeer.on('error', console.log);
+  //   MyPeer.on('open', MyPeerId => {
+  //     console.log('My peer open with ID', MyPeerId);
+  //     _publish(chatRoomId);
+  //   });
+  // }, []);
 
-  const _subscribe = roomId => {
-    client.current.subscribe('/sub/live/' + roomId, msg => {
-      console.log('connected! and subscribed!');
+  // const _subscribe = roomId => {
+  //   client.current.subscribe('/sub/live/' + roomId, msg => {
+  //     console.log('connected! and subscribed!');
 
       let newPeerId = JSON.parse(msg.body).peerId;
       console.log('newPeerId is ', newPeerId);
@@ -185,8 +219,6 @@ const LiveChat = ({navigation, route}) => {
       setOtherUser(newPeerId);
       console.log('otherUser is ', otherUser);
       console.log('passed newPeerId is : ', newPeerId);
-    });
-  };
 
   // 내 화면 공유해주기
   const _pressVideo = () => {
@@ -280,6 +312,22 @@ const LiveChat = ({navigation, route}) => {
         />
       </UpperContainer>
       <MiddleContainer>
+        <>
+          <TouchableOpacity
+            onPress={() => {
+              // Calling startBroadcast from iOS Native Module
+              VideosdkRPK.startBroadcast();
+            }}>
+            <Text> Start Screen Share </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              disableScreenShare();
+            }}>
+            <Text> Stop Screen Share </Text>
+          </TouchableOpacity>
+        </>
         <View style={{flexDirection: 'row'}}>
           <TouchableHighlight onPress={_pressVideo}>
             <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>

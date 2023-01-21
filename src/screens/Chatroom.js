@@ -29,12 +29,6 @@ import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Peer from 'react-native-peerjs';
-
-
-
-
-
 
 const Container = styled.View`
   flex: 1;

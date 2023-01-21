@@ -77,9 +77,6 @@ PODS:
   - JitsiWebRTC (106.0.0)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
-  - PromisesObjC (2.1.1)
-  - PromisesSwift (2.1.1):
-    - PromisesObjC (= 2.1.1)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -314,11 +311,10 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
-  - react-native-video (6.0.0-alpha.4):
+  - react-native-video (5.2.1):
     - React-Core
-    - react-native-video/Video (= 6.0.0-alpha.4)
-  - react-native-video/Video (6.0.0-alpha.4):
-    - PromisesSwift
+    - react-native-video/Video (= 5.2.1)
+  - react-native-video/Video (5.2.1):
     - React-Core
   - react-native-webrtc (106.0.4):
     - JitsiWebRTC (~> 106.0.0)
@@ -389,8 +385,8 @@ PODS:
     - React-jsi (= 0.70.6)
     - React-logger (= 0.70.6)
     - React-perflogger (= 0.70.6)
-  - ReactNativeIncallManager (4.0.1):
-    - React-Core
+  - ReactNativeIncallManager (0.0.9):
+    - React
   - RNCAsyncStorage (1.17.11):
     - React-Core
   - RNReactNativeSharedGroupPreferences (1.1.23):
@@ -470,7 +466,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - ReactNativeIncallManager (from `../node_modules/react-native-incall-manager`)
+  - "ReactNativeIncallManager (from `../node_modules/@videosdk.live/react-native-incallmanager`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNReactNativeSharedGroupPreferences (from `../node_modules/react-native-shared-group-preferences`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -494,8 +490,6 @@ SPEC REPOS:
     - JitsiWebRTC
     - libevent
     - OpenSSL-Universal
-    - PromisesObjC
-    - PromisesSwift
     - SocketRocket
     - YogaKit
 
@@ -575,7 +569,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeIncallManager:
-    :path: "../node_modules/react-native-incall-manager"
+    :path: "../node_modules/@videosdk.live/react-native-incallmanager"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNReactNativeSharedGroupPreferences:
@@ -610,8 +604,6 @@ SPEC CHECKSUMS:
   JitsiWebRTC: f441eb0e2d67f0588bf24e21c5162e97342714fb
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
-  PromisesSwift: 99fddfe4a0ec88a56486644c0da106694c92a604
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: e1866f61af7049eb3d8e08e8b133abd38bc1ca7a
   RCTTypeSafety: 27c2ac1b00609a432ced1ae701247593f07f901e
@@ -629,7 +621,7 @@ SPEC CHECKSUMS:
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
   react-native-is-captured: fc28fb90be61d8e5dea0ca9fcea7347e2168bd35
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
-  react-native-video: b2a6434fa0cc7a5381985ca2af8f8c570f110743
+  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webrtc: 4522d420ead45fff83c4ecc7e5a706797857a185
   React-perflogger: 8c79399b0500a30ee8152d0f9f11beae7fc36595
   React-RCTActionSheet: 7316773acabb374642b926c19aef1c115df5c466
@@ -643,7 +635,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: c75ceef7aa60a33b2d5731ebe5800ddde40cefc4
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
-  ReactNativeIncallManager: 0d2cf9f4d50359728a30c08549762fe67a2efb81
+  ReactNativeIncallManager: 4bd3287cd449bdd88de93309b462f96ba9f5e64a
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNReactNativeSharedGroupPreferences: de0121a4224c267bc7e9fb16c398f3f087c8da81
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
