@@ -407,6 +407,7 @@ const ChatRoom = ({navigation, route}) => {
     _getItemsFromShareCollection();
   }, [isSorted]);
 
+
   return (
     <Container insets={insets}>
       <UpperContainer>
@@ -422,8 +423,6 @@ const ChatRoom = ({navigation, route}) => {
             })
           }
         />
-        <MaterialIcons name="live-tv"size={25}
-          color={theme.basicText}/>
         <View
           style={{
             justifyContent: 'center',
@@ -568,6 +567,7 @@ const ChatRoom = ({navigation, route}) => {
                     shareCollectionName: shareCollectionTitle,
                     chatRoomId: chatRoomId,
                     friendList: friendList,
+                    screen : screen
                   });
                 }}
               />
