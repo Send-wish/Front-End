@@ -227,13 +227,23 @@ const ChartModalView = styled.View`
   border-radius: 20px;
   flex: 1;
   margin-top: 0;
+  padding-top: 30%;
+`;
+
+const ImageModalView = styled.View`
+  width: 100%;
+  background-color: ${({theme}) => theme.mainBackground};
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const ChartImage = styled.Image`
-  margin-top: 30%;
+  margin-top: 10%;
   width: 100%;
   height: 5%;
   color: ${({theme}) => theme.tintColorGreen};
+  align-items: flex-end;
+  justify-content: flex-end;
 `;
 
 const FriendContainer = styled.View`
@@ -578,7 +588,7 @@ const ChatRoom = ({navigation, route}) => {
         />
       </UpperContainer>
 
-      <CollectionContainer style={{display: isFolded ? 'none' : 'flex'}}>
+      <CollectionContainer style={{display: isFolded ? 'none' : 'flex'}} onBackdropPress={()=>setIsFolded(!isFolded)}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -671,10 +681,13 @@ const ChatRoom = ({navigation, route}) => {
           </ScrollView>
           <Modal visible={chartModal}>
             <ChartModalView insets={insets}>
+              <ImageModalView>
               <ChartImage
                 source={{
                   uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
                 }}
+                // style={{width: length * 80 / 100}}
+
                 // style={{width: length * dataChart[0]?.percentage / 100}}
               />
               <Text
@@ -687,11 +700,11 @@ const ChatRoom = ({navigation, route}) => {
                 {dataChart[0]?.percentage + '%'}
               </Text>
 
-              {/* <ChartImage
+              <ChartImage
                 source={{
                   uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
                 }}
-                style={{width: (length * dataChart[1]?.percentage) / 100}}
+                // style={{width: (length * dataChart[1]?.percentage) / 100}}
               />
               <Text
                 style={{
@@ -706,7 +719,7 @@ const ChatRoom = ({navigation, route}) => {
                 source={{
                   uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
                 }}
-                style={{width: (length * dataChart[2]?.percentage) / 100}}
+                // style={{width: (length * dataChart[2]?.percentage) / 100}}
               />
               <Text
                 style={{
@@ -716,7 +729,8 @@ const ChatRoom = ({navigation, route}) => {
                 }}>
                 {dataChart[2]?.category + ' '}
                 {dataChart[2]?.percentage + '%'}
-              </Text> */}
+              </Text>
+              </ImageModalView>
               <Text style={{color: theme.tintColorGreen}}>
                 친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
               </Text>
