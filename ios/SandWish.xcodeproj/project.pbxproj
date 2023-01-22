@@ -63,6 +63,13 @@
 			remoteGlobalIDString = 3BF9629E297BDE28005606B8;
 			remoteInfo = ScreenBroadcast;
 		};
+		60937E02297DDD55009E0065 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60937DFE297DDD55009E0065 /* RNInCallManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 231CD2561FD68A17004DD25D;
+			remoteInfo = RNInCallManager;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -121,6 +128,7 @@
 		5709B34CF0A7D63546082F79 /* Pods-SandWish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SandWish.release.xcconfig"; path = "Target Support Files/Pods-SandWish/Pods-SandWish.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-SandWish-SandWishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SandWish-SandWishTests.debug.xcconfig"; path = "Target Support Files/Pods-SandWish-SandWishTests/Pods-SandWish-SandWishTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-SandWish.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SandWish.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60937DFE297DDD55009E0065 /* RNInCallManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNInCallManager.xcodeproj; path = "../node_modules/@videosdk.live/react-native-incallmanager/ios/RNInCallManager.xcodeproj"; sourceTree = "<group>"; };
 		66F70F5B309909C9299113C8 /* libPods-Share.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Share.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9AF25DB170EB55FB702562 /* Pods-Share.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Share.debug.xcconfig"; path = "Target Support Files/Pods-Share/Pods-Share.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SandWish/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -202,7 +210,6 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				3BF962CB297BE1FC005606B8 /* VideosdkRPK.swift */,
-				3BF962CA297BE1FC005606B8 /* SandWish-Bridging-Header.h */,
 				3BF962CD297BE39A005606B8 /* VideosdkRPK.m */,
 			);
 			name = SandWish;
@@ -226,8 +233,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-SandWish.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-SandWish-SandWishTests.a */,
 				66F70F5B309909C9299113C8 /* libPods-Share.a */,
+				19F6CBCC0A4E27FBF8BF4A61 /* libPods-SandWish-SandWishTests.a */,
 				3BF962A0297BDE28005606B8 /* ReplayKit.framework */,
 				3BF962AC297BDE28005606B8 /* UIKit.framework */,
 			);
@@ -258,9 +265,18 @@
 			path = ScreenBroadcastSetupUI;
 			sourceTree = "<group>";
 		};
+		60937DFF297DDD55009E0065 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				60937E03297DDD55009E0065 /* libRNInCallManager.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				60937DFE297DDD55009E0065 /* RNInCallManager.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -268,6 +284,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				3BF962CA297BE1FC005606B8 /* SandWish-Bridging-Header.h */,
 				13B07FAE1A68108700A75B9A /* SandWish */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* SandWishTests */,
@@ -451,6 +468,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 60937DFF297DDD55009E0065 /* Products */;
+					ProjectRef = 60937DFE297DDD55009E0065 /* RNInCallManager.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* SandWish */,
@@ -461,6 +484,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		60937E03297DDD55009E0065 /* libRNInCallManager.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNInCallManager.a;
+			remoteRef = 60937E02297DDD55009E0065 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
