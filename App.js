@@ -102,7 +102,7 @@ const App = () => {
         <Stack.Screen name="SharedCollection" component={SharedCollection} />
         <Stack.Screen name="Share" component={Share} />
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
-        {/* <Stack.Screen name="LiveChat" component={LiveChat} /> */}
+        <Stack.Screen name="LiveChat" component={LiveChat} />
       </Stack.Navigator>
     </NavigationContainer>
   </ThemeProvider>
