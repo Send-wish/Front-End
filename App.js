@@ -104,8 +104,8 @@ const App = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Test">
-        <Stack.Screen name="Test" component={Test} />
+        initialRouteName="SignIn">
+        {/* <Stack.Screen name="Test" component={Test} /> */}
         {/* <Stack.Screen name="MeetingView" component={MeetingView} /> */}
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
@@ -114,7 +114,7 @@ const App = () => {
         <Stack.Screen name="SharedCollection" component={SharedCollection} />
         <Stack.Screen name="Share" component={Share} />
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
-        <Stack.Screen name="LiveChat" component={LiveChat} />
+        {/* <Stack.Screen name="LiveChat" component={LiveChat} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   </ThemeProvider>
