@@ -16,8 +16,10 @@ import {
   Modal,
   AppState,
   TouchableHighlight,
+  TouchableOpacity,
   findNodeHandle,
   NativeModules,
+  TextInput,
 } from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -27,49 +29,7 @@ import {Text, View} from 'react-native';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
-
-// function JoinScreen(props) {
-//   return null;
-// }
-
-// function ControlsContainer() {
-//   return null;
-// }
-
-// function MeetingView() {
-//   return null;
-// }
-
-// import {
-//   MeetingProvider,
-//   useMeeting,
-//   useParticipant,
-//   MediaStream,
-//   RTCView,
-// } from '@videosdk.live/react-native-sdk';
-// import VideosdkRPK from '../../VideosdkRPK';
-
-// const {enableScreenShare, disableScreenShare} = useMeeting({});
-
-// useEffect(() => {
-//   VideosdkRPK.addListener('onScreenShare', event => {
-//     if (event === 'START_BROADCAST') {
-//       enableScreenShare();
-//     } else if (event === 'STOP_BROADCAST') {
-//       disableScreenShare();
-//     }
-//   });
-//   return () => {
-//     VideosdkRPK.removeSubscription('onScreenShare');
-//   };
-// }, []);
-
-// const [meetingId, setMeetingId] = useState(null);
-
-// const getMeetingId = async id => {
-//   const meetingId = id == null ? await createMeeting({token}) : id;
-//   setMeetingId(meetingId);
-// };
+import {useFocusEffect} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -146,209 +106,12 @@ const LiveChat = ({navigation, route}) => {
   const peerRef = useRef();
   const [otherUser, setOtherUser] = useState('');
   const senders = useRef([]);
-  const screenCaptureView = useRef(null);
-  // const isCaptured = useIsCaptured ();
-
-  const MyPeer = new Peer(undefined, {
-    secure: false,
-    debug: 1,
-  });
-
-  const _connect = roomId => {
-    client.current = new Client({
-      brokerURL: 'wss://api.sendwish.link:8081/ws',
-      connectHeaders: {},
-      webSocketFactory: () => {
-        return SockJS('https://api.sendwish.link:8081/ws');
-      },
-      debug: str => {
-        console.log('STOMP: ' + str);
-      },
-      onConnect: () => {
-        _subscribe(roomId);
-        console.log('connected!');
-      },
-      onStompError: frame => {
-        console.log('error occur' + frame.body);
-      },
-    });
-    client.current.activate();
-  };
-
-  const _disconnect = () => {
-    console.log('here is disconnect!');
-    client.current.deactivate();
-  };
-
-  const _publish = roomId => {
-    console.log('here is publish');
-    if (!client.current.connected) {
-      return;
-    }
-    client.current.publish({
-      destination: '/pub/live',
-      body: JSON.stringify({
-        roomId: roomId,
-        peerId: MyPeer._id,
-      }),
-    });
-  };
-
-  // useEffect(() => {
-  //   MyPeer.on('error', console.log);
-  //   MyPeer.on('open', MyPeerId => {
-  //     console.log('My peer open with ID', MyPeerId);
-  //     _publish(chatRoomId);
-  //   });
-  // }, []);
-
-  // const _subscribe = roomId => {
-  //   client.current.subscribe('/sub/live/' + roomId, msg => {
-  //     console.log('connected! and subscribed!');
-
-      let newPeerId = JSON.parse(msg.body).peerId;
-      console.log('newPeerId is ', newPeerId);
-
-      if (newPeerId === MyPeer._id) {
-        console.log('my peer id is same');
-        return;
-      }
-
-      setOtherUser(newPeerId);
-      console.log('otherUser is ', otherUser);
-      console.log('passed newPeerId is : ', newPeerId);
-
-  // 내 화면 공유해주기
-  const _pressVideo = () => {
-    let videoSourceId;
-    mediaDevices.enumerateDevices().then(sourceInfos => {
-      console.log('sourceInfos is : ', sourceInfos);
-      for (let i = 0; i < sourceInfos.length; i++) {
-        const sourceInfo = sourceInfos[i];
-        if (
-          (sourceInfo.kind === 'videoinput' &&
-            sourceInfo.facing === 'environment') ||
-          sourceInfo.facing === 'environment'
-        ) {
-          videoSourceId = sourceInfo.deviceId;
-        }
-      }
-    });
-    mediaDevices
-      .getUserMedia({
-        audio: false,
-        video: {
-          mandatory: {
-            minWidth: 500,
-            minHeight: 300,
-            minFrameRate: 30,
-          },
-          facingMode: 'user',
-          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
-        },
-      })
-      .then(stream => {
-        setUserStream(stream);
-        console.log('*******userStream is : ', userStream);
-        console.log('otherUser is :', otherUser);
-        otherUser ? MyPeer.call(otherUser, stream) : null;
-      });
-  };
-
-  // 쉐어화면 공유해주기
-  const _pressShare = () => {
-    console.log('<1>');
-    const reactTag = findNodeHandle(screenCaptureView.current);
-    console.log('<2>');
-    NativeModules.ScreenCapturePickerViewManager.show(reactTag);
-    console.log('<3>');
-    mediaDevices.getDisplayMedia({video: true}).then(stream => {
-      console.log('<4>');
-      setUserDisplayStream(stream);
-      console.log('*******userDisplayStream is : ', userDisplayStream);
-      otherUser ? MyPeer.call(otherUser, stream) : null;
-    });
-  };
-
-  
-  MyPeer.on('call', call => {
-    (() => {
-      console.log('MyPeer.on');
-      call.send('Hi! I got your stream well :) '); // Answer the call with an A/V stream.
-      call.on('stream', remoteStream => {
-        // Show stream in some <video> element.
-        console.log('remoteStream', remoteStream);
-        setUserDisplayStream(remoteStream);
-      });
-    }).catch(err => {
-      console.error('Failed to get local stream', err);
-    });
-  });
-
-  useEffect(() => {
-    _connect(chatRoomId);
-    return () => _disconnect();
-  }, []);
 
   return (
     <Container insets={insets}>
-      <UpperContainer>
-        <Ionic
-          name="chevron-back"
-          size={25}
-          color={theme.basicText}
-          onPress={() =>
-            navigation.navigate('ChatRoom', {
-              shareCollectionId,
-              shareCollectionName,
-              nickName,
-              friendList,
-              chatRoomId,
-              screen,
-            })
-          }
-        />
-      </UpperContainer>
-      <MiddleContainer>
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              // Calling startBroadcast from iOS Native Module
-              VideosdkRPK.startBroadcast();
-            }}>
-            <Text> Start Screen Share </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              disableScreenShare();
-            }}>
-            <Text> Stop Screen Share </Text>
-          </TouchableOpacity>
-        </>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableHighlight onPress={_pressVideo}>
-            <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>
-              <Text>영상</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={_pressShare}>
-            <View style={{backgroundColor: 'red', color: 'white', margin: 10}}>
-              <Text>화면공유</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <RTCView
-          streamURL={userStream?.toURL()}
-          style={{width: 200, height: 200, margin: 10}}
-        />
-        <ScreenCapturePickerView ref={screenCaptureView} />
-        <RTCView
-          streamURL={userDisplayStream?.toURL()}
-          style={{width: 200, height: 200, margin: 10}}
-        />
-      </MiddleContainer>
-      <BottomContainer></BottomContainer>
+      <View>
+        <Text> haha</Text>
+      </View>
     </Container>
   );
 };

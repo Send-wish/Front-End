@@ -20,6 +20,11 @@ import {
   ItemBox,
   MySayingItem,
   OthersSayingItem,
+  Button,
+  AddCollectionCircle,
+  CollectionCircle,
+  ChartButton,
+  ChartItemBox,
 } from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -29,6 +34,9 @@ import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {Modal} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Container = styled.View`
   flex: 1;
@@ -192,43 +200,95 @@ const Item = ({
   }
 };
 
-  // 피어 생성
-  // const localPeer = new Peer();
-  // localPeer.on('error', console.log);
+const ModalView = styled.View`
+  width: 30%;
+  height: 10%;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding-top: ${({insets: {top}}) => top}px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.98;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 26.5%;
+  margin-left: 67%;
+  border-radius: 20px;
+`;
 
-  // localPeer.on('open', localPeerId => {
-  //   console.log('Local peer open with ID', localPeerId);
-  
-  //   // const remotePeer = new Peer();
-  //   // remotePeer.on('error', console.log);
-  //   remotePeer.on('open', targetId => {
-  //     console.log('Remote peer open with ID', remotePeerId);
-  
-  //     const conn = remotePeer.connect(localPeerId);
-  //     conn.on('error', console.log);
-  //     conn.on('open', () => {
-  //       console.log('Remote peer has opened connection.');
-  //       console.log('conn', conn);
-  //       conn.on('data', data => console.log('Received from local peer', data));
-  //       console.log('Remote peer sending data.');
-  //       conn.send('Hello, this is the REMOTE peer!');
-  //     });
-  //   });
-  // });
-  
-  // localPeer.on('connection', conn => {
-  //   console.log('Local peer has received connection.');
-  //   conn.on('error', console.log);
-  //   conn.on('open', () => {
-  //     console.log('Local peer has opened connection.');
-  //     console.log('conn', conn);
-  //     conn.on('data', data => console.log('Received from remote peer', data));
-  //     console.log('Local peer sending data.');
-  //     conn.send('Hello, this is the LOCAL peer!');
-  //   });
-  // });
+const ChartModalView = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: ${({theme}) => theme.mainBackground};
+  padding-top: ${({insets: {top}}) => top}px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  flex: 1;
+  margin-top: 0;
+`;
 
+const ChartImage = styled.Image`
+  margin-top: 30%;
+  width: 100%;
+  height: 5%;
+  color: ${({theme}) => theme.tintColorGreen};
+`;
 
+const FriendContainer = styled.View`
+  height: 15%;
+  width: 94%;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 24px;
+  background-color: ${({theme}) => theme.lightBackground};
+  border-radius: 22px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-top: 27%;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+`;
+
+// 피어 생성
+// const localPeer = new Peer();
+// localPeer.on('error', console.log);
+
+// localPeer.on('open', localPeerId => {
+//   console.log('Local peer open with ID', localPeerId);
+
+//   // const remotePeer = new Peer();
+//   // remotePeer.on('error', console.log);
+//   remotePeer.on('open', targetId => {
+//     console.log('Remote peer open with ID', remotePeerId);
+
+//     const conn = remotePeer.connect(localPeerId);
+//     conn.on('error', console.log);
+//     conn.on('open', () => {
+//       console.log('Remote peer has opened connection.');
+//       console.log('conn', conn);
+//       conn.on('data', data => console.log('Received from local peer', data));
+//       console.log('Remote peer sending data.');
+//       conn.send('Hello, this is the REMOTE peer!');
+//     });
+//   });
+// });
+
+// localPeer.on('connection', conn => {
+//   console.log('Local peer has received connection.');
+//   conn.on('error', console.log);
+//   conn.on('open', () => {
+//     console.log('Local peer has opened connection.');
+//     console.log('conn', conn);
+//     conn.on('data', data => console.log('Received from remote peer', data));
+//     console.log('Local peer sending data.');
+//     conn.send('Hello, this is the LOCAL peer!');
+//   });
+// });
 
 const ChatRoom = ({navigation, route}) => {
   let flatListRef;
@@ -254,8 +314,17 @@ const ChatRoom = ({navigation, route}) => {
   const refMessage = useRef(null);
   const [img, setImg] = useState(''); // 내이미지 받아오기
   const [isSorted, setIsSorted] = useState(false);
-  const [isFolded, setIsFolded] = useState(false);
-  const [targetId, setTargetId]=useState('');
+  const [isFolded, setIsFolded] = useState(true);
+  const [targetId, setTargetId] = useState('');
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [isItemSelected, setIsItemSelected] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [isFriendSelected, setIsFriendSelected] = useState(false);
+  const [chartModal, setChartModal] = useState(false);
+  const [dataChart, setDataChart] = useState([]);
+  const [chartItems, setChartItems] = useState([]);
+
+  const length = 350;
 
   const _connect = roomId => {
     client.current = new Client({
@@ -328,6 +397,7 @@ const ChatRoom = ({navigation, route}) => {
       _getItemsFromShareCollection();
       _getChatHistory();
       setIsEditing(false);
+      _getFriends();
     }
   }, [isFocused]);
 
@@ -395,7 +465,6 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  // console.log('chatList : ', chatList);
 
   const _pressFilter = () => {
     isSorted ? setIsSorted(false) : setIsSorted(true);
@@ -405,9 +474,74 @@ const ChatRoom = ({navigation, route}) => {
     _getItemsFromShareCollection();
   }, [isSorted]);
 
+  const _getFriends = async () => {
+    try {
+      // API 아직 안열림
+      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': `application/json`},
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          setFriends(data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getChart = async friendName => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/items/category/rank/${friendName}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': `application/json`},
+        },
+      )
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          setDataChart(data);
+          console.log('chart data check', data);
+          console.log('카테고리', dataChart[0].category);
+          console.log('퍼센티지', dataChart[0].percentage);
+          console.log('아이템', dataChart[0].itemDtos);
+          setChartItems(dataChart[0].itemDtos);
+          console.log('아이템', chartItems);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container insets={insets}>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={visibleModal}
+        style={{flex: 1}}>
+        <ModalView insets={insets}>
+          <Button
+            title={'아이템 보기'}
+            onPress={() => {
+              setIsFolded(!isFolded);
+              setVisibleModal(!visibleModal);
+            }}
+          />
+          <Button
+            title={'친구 목록 보기'}
+            onPress={() => {
+              setIsFriendSelected(!isFriendSelected);
+              setVisibleModal(!visibleModal);
+            }}
+          />
+        </ModalView>
+      </Modal>
       <UpperContainer>
         <Ionic
           name="chevron-back"
@@ -436,13 +570,14 @@ const ChatRoom = ({navigation, route}) => {
           name="menu"
           size={30}
           style={{
-            color: isFolded ? theme.tintColorPink : theme.basicText,
+            color: visibleModal ? theme.tintColorPink : theme.basicText,
           }}
           onPress={() => {
-            setIsFolded(!isFolded);
+            setVisibleModal(!visibleModal);
           }}
         />
       </UpperContainer>
+
       <CollectionContainer style={{display: isFolded ? 'none' : 'flex'}}>
         <ScrollView
           horizontal
@@ -509,6 +644,144 @@ const ChatRoom = ({navigation, route}) => {
         </View>
         <LineIcon />
       </CollectionContainer>
+      <Modal
+        visible={isFriendSelected}
+        transparent={true}
+        animationType="none"
+        onBackdropPress={() => setIsFriendSelected(false)}>
+        <FriendContainer>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{width: '95%'}}>
+            {friends.error
+              ? null
+              : friends.map(friend => (
+                  <CollectionCircle
+                    key={friend?.friend_id}
+                    frName={friend?.friend_nickname}
+                    activeOpacity={0.6}
+                    image={friend?.friend_img}
+                    onPress={() => {
+                      friendName = friend.friend_nickname;
+                      setChartModal(!chartModal), getChart(friendName);
+                    }}
+                  />
+                ))}
+          </ScrollView>
+          <Modal visible={chartModal}>
+            <ChartModalView insets={insets}>
+              <ChartImage
+                source={{
+                  uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+                }}
+                // style={{width: length * dataChart[0]?.percentage / 100}}
+              />
+              <Text
+                style={{
+                  color: theme.basicText,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}>
+                {dataChart[0]?.category + ' '}
+                {dataChart[0]?.percentage + '%'}
+              </Text>
+
+              {/* <ChartImage
+                source={{
+                  uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+                }}
+                style={{width: (length * dataChart[1]?.percentage) / 100}}
+              />
+              <Text
+                style={{
+                  color: theme.basicText,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}>
+                {dataChart[1]?.category + ' '}
+                {dataChart[1]?.percentage + '%'}
+              </Text>
+              <ChartImage
+                source={{
+                  uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+                }}
+                style={{width: (length * dataChart[2]?.percentage) / 100}}
+              />
+              <Text
+                style={{
+                  color: theme.basicText,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}>
+                {dataChart[2]?.category + ' '}
+                {dataChart[2]?.percentage + '%'}
+              </Text> */}
+              <Text style={{color: theme.tintColorGreen}}>
+                친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{width: '95%'}}>
+                {chartItems.error
+                  ? null
+                  : chartItems.map(chartitem => (
+                      <ChartItemBox
+                        key={chartitem?.itemId}
+                        saleRate="가격"
+                        itemName={chartitem?.name}
+                        itemPrice={new String(chartitem?.price).replace(
+                          /\B(?=(\d{3})+(?!\d))/g,
+                          ',',
+                        )}
+                        itemImage={chartitem?.imgUrl}
+                        itemId={chartitem?.itemId}
+                        onPress={() => {
+                          _openUrl(chartitem?.originUrl);
+                        }}
+                      />
+                    ))}
+              </ScrollView>
+              <ChartButton
+                title={'닫기'}
+                onPress={() => {
+                  setChartModal(false), setChartItems([]);
+                }}
+              />
+            </ChartModalView>
+          </Modal>
+          <View style={{marginLeft: -30}}>
+            <View
+              style={{
+                position: 'absolute',
+                alignItems: 'flex-end',
+                width: 33,
+                paddingTop: 3,
+              }}>
+              <TouchableOpacity
+                onPress={() => setIsFriendSelected(!isFriendSelected)}>
+                <View
+                  style={{
+                    backgroundColor: theme.mainBackground,
+                    width: 38,
+                    height: 38,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 13,
+                    borderColor: theme.basicText,
+                    borderWidth: 2,
+                    marginBottom: 80,
+                  }}>
+                  <FontAwesome name="close" size={22} color={theme.basicText} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* <LineIcon /> */}
+        </FriendContainer>
+      </Modal>
+
       <KeyboardAwareScrollView
         contentContainerStyle={{
           height: 530,
@@ -565,7 +838,7 @@ const ChatRoom = ({navigation, route}) => {
                     shareCollectionName: shareCollectionTitle,
                     chatRoomId: chatRoomId,
                     friendList: friendList,
-                    screen : screen
+                    screen: screen,
                   });
                 }}
               />

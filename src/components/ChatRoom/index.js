@@ -4,5 +4,10 @@ import OthersSaying from './OthersSaying';
 import ItemBox from './ItemBox';
 import MySayingItem from './MySayingItem';
 import OthersSayingItem from './OthersSayingItem';
+import Button from './Button';
+import AddCollectionCircle from './AddCollectionCircle';
+import CollectionCircle from './CollectionCircle';
+import ChartButton from './ChartButton';
+import ChartItemBox from './ChartItemBox';
 
-export {Input, MySaying, OthersSaying, ItemBox, MySayingItem, OthersSayingItem};
+export {Input, MySaying, OthersSaying, ItemBox, MySayingItem, OthersSayingItem, Button, AddCollectionCircle, CollectionCircle, ChartButton, ChartItemBox};
