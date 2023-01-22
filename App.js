@@ -104,10 +104,9 @@ const App = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="SignIn">
-        {/* <Stack.Screen name="App" component={App} /> */}
+        initialRouteName="Test">
         <Stack.Screen name="Test" component={Test} />
-        <Stack.Screen name="MeetingView" component={MeetingView} />
+        {/* <Stack.Screen name="MeetingView" component={MeetingView} /> */}
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Navigation" component={Navigation} />
