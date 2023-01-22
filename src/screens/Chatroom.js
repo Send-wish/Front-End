@@ -229,7 +229,6 @@ const ChartModalView = styled.View`
   margin-top: 0;
 `;
 
-
 const ChartImage = styled.Image`
   margin-top: 30%;
   width: 100%;
@@ -466,7 +465,6 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  // console.log('chatList : ', chatList);
 
   const _pressFilter = () => {
     isSorted ? setIsSorted(false) : setIsSorted(true);
@@ -488,19 +486,21 @@ const ChatRoom = ({navigation, route}) => {
         })
         .then(data => {
           setFriends(data);
-          // console.log('get friends', data);
         });
     } catch (e) {
       console.log(e);
     }
   };
 
-  const getChart = async () => {
+  const getChart = async friendName => {
     try {
-      fetch(`https://api.sendwish.link:8081/items/category/rank/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': `application/json`},
-      })
+      fetch(
+        `https://api.sendwish.link:8081/items/category/rank/${friendName}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': `application/json`},
+        },
+      )
         .then(response => {
           return response.json();
         })
@@ -663,7 +663,8 @@ const ChatRoom = ({navigation, route}) => {
                     activeOpacity={0.6}
                     image={friend?.friend_img}
                     onPress={() => {
-                      setChartModal(!chartModal), getChart();
+                      friendName = friend.friend_nickname;
+                      setChartModal(!chartModal), getChart(friendName);
                     }}
                   />
                 ))}
@@ -685,32 +686,7 @@ const ChatRoom = ({navigation, route}) => {
                 {dataChart[0]?.category + ' '}
                 {dataChart[0]?.percentage + '%'}
               </Text>
-              <Text style={{color: theme.tintColorGreen}}>친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들</Text>
-              <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{width: '95%'}}>
-              {chartItems.error
-                ? null
-                : chartItems.map(chartitem => (
-                    <ChartItemBox
-  
-                      key={chartitem?.itemId}
-                      saleRate="가격"
-                      itemName={chartitem?.name}
-                      itemPrice={new String(chartitem?.price).replace(
-                        /\B(?=(\d{3})+(?!\d))/g,
-                        ',',
-                      )}
-                      itemImage={chartitem?.imgUrl}
-                      itemId={chartitem?.itemId}
-                      onPress={() => {
-                        _openUrl(chartitem?.originUrl);
-                      }}
-                      // isEditing={isEditing}
-                    />
-                  ))}
-                  </ScrollView>
+
               {/* <ChartImage
                 source={{
                   uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
@@ -741,9 +717,37 @@ const ChatRoom = ({navigation, route}) => {
                 {dataChart[2]?.category + ' '}
                 {dataChart[2]?.percentage + '%'}
               </Text> */}
+              <Text style={{color: theme.tintColorGreen}}>
+                친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{width: '95%'}}>
+                {chartItems.error
+                  ? null
+                  : chartItems.map(chartitem => (
+                      <ChartItemBox
+                        key={chartitem?.itemId}
+                        saleRate="가격"
+                        itemName={chartitem?.name}
+                        itemPrice={new String(chartitem?.price).replace(
+                          /\B(?=(\d{3})+(?!\d))/g,
+                          ',',
+                        )}
+                        itemImage={chartitem?.imgUrl}
+                        itemId={chartitem?.itemId}
+                        onPress={() => {
+                          _openUrl(chartitem?.originUrl);
+                        }}
+                      />
+                    ))}
+              </ScrollView>
               <ChartButton
                 title={'닫기'}
-                onPress={() => {setChartModal(false), setChartItems([])}}
+                onPress={() => {
+                  setChartModal(false), setChartItems([]);
+                }}
               />
             </ChartModalView>
           </Modal>
