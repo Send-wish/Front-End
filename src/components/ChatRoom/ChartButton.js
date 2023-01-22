@@ -5,14 +5,14 @@ import styled from 'styled-components/native';
 const Container = styled.View`
   /* flex: 1; */
   background-color: ${({theme}) => theme.tintColorGreen};
-  height: 10%;
+  height: 12%;
   width: 100%;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  margin-bottom: 90%;
+  margin-bottom: 40%;
   padding: 5px;
-  margin-top: 10%;
+  margin-top: 5%;
 `;
 
 const Title = styled.Text`
