@@ -99,6 +99,7 @@ const ChartItemBox = ({
   imageStyle,
   priceStyle,
   isEditing,
+  isItemSelected
 }) => {
   _pressCheckButton = () => {
     setIsChecked(!isChecked);

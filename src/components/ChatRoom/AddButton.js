@@ -10,9 +10,9 @@ const Container = styled.View`
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  margin-bottom: 40%;
+  margin-bottom: 200%;
   padding: 5px;
-  margin-top: 5%;
+  margin-top: 3%;
 `;
 
 const Title = styled.Text`

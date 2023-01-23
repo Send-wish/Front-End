@@ -339,6 +339,7 @@ const ChatRoom = ({navigation, route}) => {
   const length = 350;
   const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
 
+
   const _connect = roomId => {
     client.current = new Client({
       brokerURL: 'wss://api.sendwish.link:8081/ws',
@@ -530,7 +531,7 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  const _addItemToShareCollection = async (collectionId, nickName) => {
+  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -538,8 +539,8 @@ const ChatRoom = ({navigation, route}) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           nickname: nickName,
-          collectionId: collectionId,
-          itemIdList: addToCollection,
+          collectionId: shareCollectionId,
+          itemIdList: addToShareCollection,
         }),
       }).then(response => {
         if (!response.ok) {
@@ -569,6 +570,26 @@ const ChatRoom = ({navigation, route}) => {
       }
     }
   };
+
+
+  const _addItemToShareList = itemId => {
+    if (addToShareCollection.includes(itemId)) {
+      tempArray = addToShareCollection;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddToShareCollection(tempArray);
+    } else {
+      tempArray = addToShareCollection;
+      tempArray.push(itemId);
+      setAddToShareCollection(tempArray);
+    }
+    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
+  };
+
 
   const _pressEditButton = () => {
     if (isShareCollectionEditing) {
@@ -675,7 +696,7 @@ const ChatRoom = ({navigation, route}) => {
                   itemId={item?.itemId}
                   onPress={() => {
                     isEditing
-                      ? _addItemToList(item?.itemId)
+                      ? _addItemToShareCollection(item?.itemId)
                       : _openUrl(item?.originUrl);
                   }}
                   onLongPress={{}}
@@ -791,12 +812,13 @@ const ChatRoom = ({navigation, route}) => {
               <Text style={{color: theme.tintColorGreen}}>
                 친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
               </Text>
-              <EditIcon onPress={() => _pressEditButton()} name={'edit-2'} />
+              <EditIcon onPress={() => setIsItemSelected(!isItemSelected)}
+               name={isItemSelected ? 'x' : 'edit-2'} />
               </Row>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{width: '95%'}}>
+                style={{width: '95%', opacity: isItemSelected ? 0.5 : 1.0}}>
                 {chartItems.error
                   ? null
                   : chartItems.map(chartitem => (
@@ -808,10 +830,13 @@ const ChatRoom = ({navigation, route}) => {
                           /\B(?=(\d{3})+(?!\d))/g,
                           ',',
                         )}
+                        isItemSelected={isItemSelected}
                         itemImage={chartitem?.imgUrl}
                         itemId={chartitem?.itemId}
                         onPress={() => {
-                          _openUrl(chartitem?.originUrl);
+                          isItemSelected
+                          ? _addItemToShareList(chartitem?.itemId)
+                          : _openUrl(chartitem?.originUrl);
                         }}
                       />
                     ))}
@@ -820,9 +845,10 @@ const ChatRoom = ({navigation, route}) => {
               <AddButton
                 title={'추가하기'}
                 onPress={() => {
-                  setChartModal(false), setChartItems([]);
+                  setChartModal(false), setChartItems([]), _addItemToShareCollection();
                 }}
               />
+              <Text>' '</Text>
               <ChartButton
                 title={'닫기'}
                 onPress={() => {
