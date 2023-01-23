@@ -337,8 +337,8 @@ const ChatRoom = ({navigation, route}) => {
   const [chartItems, setChartItems] = useState([]);
   const [addToShareCollection, setAddToShareCollection] = useState([]);
   const length = 350;
-  const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
-
+  const [isShareCollectionEditing, setIsShareCollectionEditing] =
+    useState(false);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -472,7 +472,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          // console.log('data : ', data);
+          console.log('data : ', data);
         });
     } catch (e) {
       console.log(e);
@@ -531,7 +531,7 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
+  const _addItemToShareCollection = async (nickName, shareCollectionId) => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -546,31 +546,17 @@ const ChatRoom = ({navigation, route}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        _getCollections();
+        _getItemsFromShareCollection();
+
         return response.json();
       });
+      // .then(data => {
+      //   console.log('data is : ', data);
+      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }
   };
-
-  const _pressTargetButton = (collectionId, collectionName, nickName) => {
-    setIsCollectionEditing(false);
-    // 콜렉션 수정중이 아닐 때,
-    if (!isCollectionEditing) {
-      if (isEditing) {
-        _addItemToCollection(collectionId, nickName);
-      } else {
-        setIsEditing(false);
-        navigation.navigate('Collection', {
-          collectionId: collectionId,
-          collectionName: collectionName,
-          nickName: nickName,
-        });
-      }
-    }
-  };
-
 
   const _addItemToShareList = itemId => {
     if (addToShareCollection.includes(itemId)) {
@@ -590,16 +576,36 @@ const ChatRoom = ({navigation, route}) => {
     console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
   };
 
-
-  const _pressEditButton = () => {
-    if (isShareCollectionEditing) {
-      setIsShareCollectionEditing(false);
-    } else {
-      if (isEditing) {
-        setIsEditing(false);
-      } else {
-        setIsEditing(true);
-      }
+  const _deleteItems = async itemId => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname: nickName,
+          itemIdList: [itemId],
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getItemsFromShareCollection();
+        setAddToShareCollection([]);
+        return;
+        // return response.json();
+      });
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .then(result => {
+      //   console.log('result', result);
+      // })
+      // .then(_getItems)
+      // .then(setAddToShareCollection([]));
+    } catch (e) {
+      console.log('items delete fail', e);
     }
   };
 
@@ -698,8 +704,9 @@ const ChatRoom = ({navigation, route}) => {
                     isEditing
                       ? _addItemToShareCollection(item?.itemId)
                       : _openUrl(item?.originUrl);
+                    console.log('!!!!!!!!!!!', item.itemId);
                   }}
-                  onLongPress={{}}
+                  onLongPress={() => _deleteItems(item.itemId)}
                   isEditing={isEditing}
                 />
               ))}
@@ -809,11 +816,14 @@ const ChatRoom = ({navigation, route}) => {
                 </Text>
               </ImageModalView>
               <Row>
-              <Text style={{color: theme.tintColorGreen}}>
-                친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
-              </Text>
-              <EditIcon onPress={() => setIsItemSelected(!isItemSelected)}
-               name={isItemSelected ? 'x' : 'edit-2'} />
+                <Text style={{color: theme.tintColorGreen}}>
+                  친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의
+                  상품들
+                </Text>
+                <EditIcon
+                  onPress={() => setIsItemSelected(!isItemSelected)}
+                  name={isItemSelected ? 'x' : 'edit-2'}
+                />
               </Row>
               <ScrollView
                 horizontal
@@ -835,26 +845,32 @@ const ChatRoom = ({navigation, route}) => {
                         itemId={chartitem?.itemId}
                         onPress={() => {
                           isItemSelected
-                          ? _addItemToShareList(chartitem?.itemId)
-                          : _openUrl(chartitem?.originUrl);
+                            ? _addItemToShareList(chartitem?.itemId)
+                            : _openUrl(chartitem?.originUrl);
                         }}
                       />
                     ))}
               </ScrollView>
               <Row>
-              <AddButton
-                title={'추가하기'}
-                onPress={() => {
-                  setChartModal(false), setChartItems([]), _addItemToShareCollection();
-                }}
-              />
-              <Text>' '</Text>
-              <ChartButton
-                title={'닫기'}
-                onPress={() => {
-                  setChartModal(false), setChartItems([]);
-                }}
-              />
+                <AddButton
+                  title={'추가하기'}
+                  onPress={() => {
+                    console.log('nickname:', nickName);
+                    console.log('collectionId:', shareCollectionId);
+                    console.log('itemIdList:', addToShareCollection);
+                    setChartModal(false),
+                      setIsItemSelected(!isItemSelected),
+                      setChartItems([]),
+                      _addItemToShareCollection(nickName, shareCollectionId);
+                  }}
+                />
+                <Text>' '</Text>
+                <ChartButton
+                  title={'닫기'}
+                  onPress={() => {
+                    setIsItemSelected(!isItemSelected), setChartModal(false) , setChartItems([]), setAddToShareCollection([]);
+                  }}
+                />
               </Row>
             </ChartModalView>
           </Modal>
