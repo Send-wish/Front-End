@@ -12,8 +12,13 @@ import {
   Chat,
   ChatRoom,
   LiveChat,
+
 } from './src/screens';
 import Share from './Share';
+
+import Join from "./src/screens/join";
+import Meeting from "./src/screens/meeting";
+import 'react-native-gesture-handler';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -26,9 +31,19 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
-
+import {useState} from 'react';
+import {
+  SafeAreaView,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  View,
+  FlatList,
+} from 'react-native';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+import ParticipantStatsViewer from './src/screens/meeting/Components/ParticipantStatsViewer';
+import {SCREEN_NAMES} from './src/navigators/screenNames';
 
 const Navigation = props => {
   return (
@@ -86,27 +101,29 @@ const Navigation = props => {
 };
 
 const App = () => {
-  
-  return(
-  <ThemeProvider theme={theme}>
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="SignIn">
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Navigation" component={Navigation} />
-        <Stack.Screen name="Collection" component={Collection} />
-        <Stack.Screen name="SharedCollection" component={SharedCollection} />
-        <Stack.Screen name="Share" component={Share} />
-        <Stack.Screen name="ChatRoom" component={ChatRoom} />
-        <Stack.Screen name="LiveChat" component={LiveChat} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  </ThemeProvider>
-);
+  return (
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="SignIn">
+          {/* <Stack.Screen name="App" component={App} /> */}
+          <Stack.Screen name={SCREEN_NAMES.Join} component={Join} />
+          <Stack.Screen name={SCREEN_NAMES.Meeting} component={Meeting} />
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Navigation" component={Navigation} />
+          <Stack.Screen name="Collection" component={Collection} />
+          <Stack.Screen name="SharedCollection" component={SharedCollection} />
+          <Stack.Screen name="Share" component={Share} />
+          <Stack.Screen name="ChatRoom" component={ChatRoom} />
+          <Stack.Screen name="LiveChat" component={LiveChat} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
+  );
 };
 
 export default App;

@@ -26,6 +26,10 @@ target 'SandWish' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-webrtc', :path => '../node_modules/@videosdk.live/react-native-webrtc'
+  # pod 'ReactNativeIncallManager', :path => '../node_modules/@videosdk.live/react-native-incall-manager'
+
+
   target 'SandWishTests' do
     inherit! :complete
     # Pods for testing

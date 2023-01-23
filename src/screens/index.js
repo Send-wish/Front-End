@@ -7,6 +7,8 @@ import SharedCollection from './SharedCollection';
 import Chat from './Chat';
 import ChatRoom from './ChatRoom';
 import LiveChat from './LiveChat';
+import Join from './join'
+import Meeting from './meeting'
 
 export {
   SignIn,
@@ -18,4 +20,6 @@ export {
   Chat,
   ChatRoom,
   LiveChat,
+  Join,
+  Meeting,
 };
