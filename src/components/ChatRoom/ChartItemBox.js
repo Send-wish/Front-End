@@ -13,7 +13,7 @@ import Feather from 'react-native-vector-icons/Feather';
 const Container = styled(Animated.createAnimatedComponent(View))`
   margin-top: 8px;
   width: 90px;
-  height: 120px;
+  height: 130px;
   justify-content: center;
   align-items: center;
   border-radius: 30px;
@@ -37,11 +37,11 @@ const ItemView = styled.View`
   background-color: ${({theme}) => theme.subBackground};
   padding: 10px;
   margin: 3px 3px 3px 3px;
-  width: 70px;
-  height: 70px;
+  width: 73px;
+  height: 73px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  border-radius: 24px;
   flex-wrap: wrap;
   border-style: solid;
   border: ${({theme}) => theme.line};
@@ -113,10 +113,20 @@ const ChartItemBox = ({
     <View>
       <TouchableHighlight
         onPress={onPress}
-        style={{display: isEditing ? 'none' : 'flex'}}
+        style={{display: isItemSelected ? 'none' : 'flex'}}
         onLongPress={onLongPress}>
         <Container>
           <ItemImage source={{uri: itemImage}} style={imageStyle} />
+          <Feather
+              name="check"
+              size={40}
+              color={theme.basicText}
+              style={{
+                position: 'absolute',
+                display: isChecked ? 'flex' : 'none',
+                zIndex: 10,
+              }}
+            />
           <Row>
             <Sale style={priceStyle}>{saleRate}</Sale>
             <Price style={titleStyle}> {itemPrice}원 </Price>
@@ -127,7 +137,7 @@ const ChartItemBox = ({
 
       <TouchableHighlight
         onPress={_pressCheckButton}
-        style={{display: isEditing ? 'flex' : 'none'}}>
+        style={{display: isItemSelected ? 'flex' : 'none'}}>
         <Container>
           <ItemView
             style={{
