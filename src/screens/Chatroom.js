@@ -302,6 +302,8 @@ const ChatRoom = ({ navigation, route }) => {
 
   const _connect = (roomId) => {
 
+
+
     client.current = new Client({
       brokerURL: "wss://api.sendwish.link:8081/ws",
       connectHeaders: {},
@@ -498,65 +500,8 @@ const ChatRoom = ({ navigation, route }) => {
     return roomId;
   };
 
-  const disposeVideoTrack = () => {
-    setTracks((stream) => {
-      stream?.getTracks().forEach((track) => {
-        track.enabled = false;
-        return track;
-      });
-    });
-  };
+  const _addItemToShareCollection = async (shareCollectionId, nickName) => {
 
-  const validateMeeting = async ({ meetingId, token }) => {
-    const url = `${API_BASE_URL}/rooms/validate/${meetingId}`;
-
-    const options = {
-      method: "GET",
-      headers: { Authorization: token },
-    };
-
-    const result = await fetch(url, options)
-      .then((response) => response.json()) //result will have meeting id
-      .catch((error) => console.error("error", error));
-
-    console.log("*********result is : ", result);
-    return result ? result.roomId === meetingId : false;
-  };
-
-  const [liveRoomId, setLiveRoomId] = useState("");
-  const [typedRoomId, setTypedRoomId] = useState("");
-
-  const _makeRoom = async () => {
-    const token = await getToken();
-    console.log("token: ", token);
-    let meetingId = await createMeeting({ token: token });
-    console.log("meetingId: ", meetingId);
-    setLiveRoomId(meetingId);
-    disposeVideoTrack();
-    navigation.navigate("LiveChat", {
-      shareCollectionId: shareCollectionId,
-      nickName: nickName,
-      shareCollectionName: shareCollectionTitle,
-      chatRoomId: chatRoomId,
-      friendList: friendList,
-      screen: screen,
-      name: nickName,
-      token: token,
-      meetingId: meetingId,
-    });
-  };
-
-  const _participateRoom = async () => {
-    const token = await getToken();
-    let valid = await validateMeeting({
-      token: token,
-      meetingId: typedRoomId.trim(),
-    });
-    if (valid) {
-      disposeVideoTrack();
-    }
-  };
-  const _addItemToShareCollection = async (collectionId, nickName) => {
     setIsEditing(false);
     try {
       fetch('https://api.sendwish.link:8081/item/enrollment', {
@@ -564,8 +509,8 @@ const ChatRoom = ({ navigation, route }) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           nickname: nickName,
-          collectionId: collectionId,
-          itemIdList: addToCollection,
+          collectionId: shareCollectionId,
+          itemIdList: addToShareCollection,
         }),
       }).then(response => {
         if (!response.ok) {
@@ -595,6 +540,26 @@ const ChatRoom = ({ navigation, route }) => {
       }
     }
   };
+
+
+  const _addItemToShareList = itemId => {
+    if (addToShareCollection.includes(itemId)) {
+      tempArray = addToShareCollection;
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i] === itemId) {
+          tempArray.splice(i, 1);
+          i--;
+        }
+      }
+      setAddToShareCollection(tempArray);
+    } else {
+      tempArray = addToShareCollection;
+      tempArray.push(itemId);
+      setAddToShareCollection(tempArray);
+    }
+    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
+  };
+
 
   const _pressEditButton = () => {
     if (isShareCollectionEditing) {
@@ -705,7 +670,7 @@ const ChatRoom = ({ navigation, route }) => {
                   itemId={item?.itemId}
                   onPress={() => {
                     isEditing
-                      ? _addItemToList(item?.itemId)
+                      ? _addItemToShareCollection(item?.itemId)
                       : _openUrl(item?.originUrl);
                   }}
                   onLongPress={{}}
@@ -829,13 +794,14 @@ const ChatRoom = ({ navigation, route }) => {
 
                 친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
               </Text>
-              <EditIcon onPress={() => _pressEditButton()} name={'edit-2'} />
+              <EditIcon onPress={() => setIsItemSelected(!isItemSelected)}
+               name={isItemSelected ? 'x' : 'edit-2'} />
               </Row>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{ width: "95%" }}
-              >
+                style={{width: '95%', opacity: isItemSelected ? 0.5 : 1.0}}>
+
                 {chartItems.error
                   ? null
                   : chartItems.map((chartitem) => (
@@ -847,10 +813,13 @@ const ChatRoom = ({ navigation, route }) => {
                           /\B(?=(\d{3})+(?!\d))/g,
                           ","
                         )}
+                        isItemSelected={isItemSelected}
                         itemImage={chartitem?.imgUrl}
                         itemId={chartitem?.itemId}
                         onPress={() => {
-                          _openUrl(chartitem?.originUrl);
+                          isItemSelected
+                          ? _addItemToShareList(chartitem?.itemId)
+                          : _openUrl(chartitem?.originUrl);
                         }}
                       />
                     ))}
@@ -859,9 +828,10 @@ const ChatRoom = ({ navigation, route }) => {
               <AddButton
                 title={'추가하기'}
                 onPress={() => {
-                  setChartModal(false), setChartItems([]);
+                  setChartModal(false), setChartItems([]), _addItemToShareCollection();
                 }}
               />
+              <Text>' '</Text>
               <ChartButton
                 title={"닫기"}
                 onPress={() => {
