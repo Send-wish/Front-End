@@ -45,8 +45,8 @@ const Container = styled.View`
   background-color: ${({theme}) => theme.mainBackground};
   padding-top: ${({insets: {top}}) => top}px;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-end;
   width: 100%;
 `;
 
@@ -206,7 +206,6 @@ const ModalView = styled.View`
   width: 30%;
   height: 10%;
   background-color: ${({theme}) => theme.mainBackground};
-  padding-top: ${({insets: {top}}) => top}px;
   justify-content: center;
   align-items: center;
   opacity: 0.98;
@@ -229,7 +228,6 @@ const ChartModalView = styled.View`
   border-radius: 20px;
   flex: 1;
   margin-top: 0;
-  padding-top: 30%;
 `;
 
 const ImageModalView = styled.View`
@@ -237,15 +235,18 @@ const ImageModalView = styled.View`
   background-color: ${({theme}) => theme.mainBackground};
   justify-content: flex-start;
   align-items: flex-start;
+  padding-top: 10px;
 `;
 
-const ChartImage = styled.Image`
-  margin-top: 10%;
-  width: 100%;
-  height: 5%;
-  color: ${({theme}) => theme.tintColorGreen};
+const ChartImage = styled.View`
+  height: 12%;
+  background-color: ${({theme}) => theme.tintColorPink};
   align-items: flex-end;
   justify-content: flex-end;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 `;
 
 const FriendContainer = styled.View`
@@ -265,42 +266,6 @@ const FriendContainer = styled.View`
 const Row = styled.View`
   flex-direction: row;
 `;
-
-// 피어 생성
-// const localPeer = new Peer();
-// localPeer.on('error', console.log);
-
-// localPeer.on('open', localPeerId => {
-//   console.log('Local peer open with ID', localPeerId);
-
-//   // const remotePeer = new Peer();
-//   // remotePeer.on('error', console.log);
-//   remotePeer.on('open', targetId => {
-//     console.log('Remote peer open with ID', remotePeerId);
-
-//     const conn = remotePeer.connect(localPeerId);
-//     conn.on('error', console.log);
-//     conn.on('open', () => {
-//       console.log('Remote peer has opened connection.');
-//       console.log('conn', conn);
-//       conn.on('data', data => console.log('Received from local peer', data));
-//       console.log('Remote peer sending data.');
-//       conn.send('Hello, this is the REMOTE peer!');
-//     });
-//   });
-// });
-
-// localPeer.on('connection', conn => {
-//   console.log('Local peer has received connection.');
-//   conn.on('error', console.log);
-//   conn.on('open', () => {
-//     console.log('Local peer has opened connection.');
-//     console.log('conn', conn);
-//     conn.on('data', data => console.log('Received from remote peer', data));
-//     console.log('Local peer sending data.');
-//     conn.send('Hello, this is the LOCAL peer!');
-//   });
-// });
 
 const ChatRoom = ({navigation, route}) => {
   let flatListRef;
@@ -328,12 +293,16 @@ const ChatRoom = ({navigation, route}) => {
   const [isSorted, setIsSorted] = useState(false);
   const [isFolded, setIsFolded] = useState(true);
   const [targetId, setTargetId] = useState('');
-  const [visibleModal, setVisibleModal] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isItemSelected, setIsItemSelected] = useState(false);
   const [friends, setFriends] = useState([]);
   const [isFriendSelected, setIsFriendSelected] = useState(false);
   const [chartModal, setChartModal] = useState(false);
-  const [dataChart, setDataChart] = useState([]);
+  const [dataChart, setDataChart] = useState([
+    {category: '', percentage: 1, itemDtos: []},
+    {category: '', percentage: 1, itemDtos: []},
+    {category: '', percentage: 1, itemDtos: []},
+  ]);
   const [chartItems, setChartItems] = useState([]);
   const [addToShareCollection, setAddToShareCollection] = useState([]);
   const length = 350;
@@ -472,7 +441,6 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          console.log('data :ddd ', data);
         });
     } catch (e) {
       console.log(e);
@@ -505,7 +473,7 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  const getChart = async friendName => {
+  const _getChart = async friendName => {
     try {
       fetch(
         `https://api.sendwish.link:8081/items/category/rank/${friendName}`,
@@ -518,13 +486,17 @@ const ChatRoom = ({navigation, route}) => {
           return response.json();
         })
         .then(data => {
-          setDataChart(data);
-          console.log('chart data check', data);
-          console.log('카테고리', dataChart[0].category);
-          console.log('퍼센티지', dataChart[0].percentage);
-          console.log('아이템', dataChart[0].itemDtos);
+          console.log('data ', data);
+          let tempDataChart = data;
+          console.log('tempDataChart.length is :', tempDataChart.length);
+
+          for (let i = 0; i < 3; i = i + 1) {
+            tempDataChart.push({category: '', percentage: 1, itemDtos: []});
+          }
+          console.log('tempDataChart is :', tempDataChart);
+
+          setDataChart(tempDataChart);
           setChartItems(dataChart[0].itemDtos);
-          console.log('아이템', chartItems);
         });
     } catch (e) {
       console.log(e);
@@ -550,9 +522,6 @@ const ChatRoom = ({navigation, route}) => {
 
         return response.json();
       });
-      // .then(data => {
-      //   console.log('data is : ', data);
-      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }
@@ -576,7 +545,7 @@ const ChatRoom = ({navigation, route}) => {
     console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
   };
 
-  const _deleteItemsFromCollection = async (itemId) => {
+  const _deleteItemsFromCollection = async itemId => {
     try {
       fetch(`https://api.sendwish.link:8081/collection/item`, {
         method: 'DELETE',
@@ -590,8 +559,7 @@ const ChatRoom = ({navigation, route}) => {
         }),
       }).then(response => {
         if (response.ok) {
-          _getItemsFromCollection();
-          setDeleteList([]);
+          _getItemsFromShareCollection();
           return;
         }
         throw new Error(`${response.status} 에러발생`);
@@ -600,31 +568,39 @@ const ChatRoom = ({navigation, route}) => {
       console.log('items delete fail', e);
     }
   };
-
   return (
     <Container insets={insets}>
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={visibleModal}
-        style={{flex: 1}}>
-        <ModalView insets={insets}>
-          <Button
-            title={'아이템 보기'}
-            onPress={() => {
-              setIsFolded(!isFolded);
-              setVisibleModal(!visibleModal);
-            }}
-          />
-          <Button
-            title={'친구 목록 보기'}
-            onPress={() => {
-              setIsFriendSelected(!isFriendSelected);
-              setVisibleModal(!visibleModal);
-            }}
-          />
-        </ModalView>
-      </Modal>
+      <View
+        style={{
+          display: isMenuVisible ? 'flex' : 'none',
+          position: 'absolute',
+          height: 90,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 10,
+          backgroundColor: theme.subBackground,
+          marginTop: 80,
+          padding: 5,
+          borderRadius: 10,
+        }}>
+        <Button
+          title={'아이템 보기'}
+          onPress={() => {
+            setIsFolded(false);
+            setIsMenuVisible(false);
+            setIsFriendSelected(false);
+          }}
+        />
+        <Button
+          title={'친구 목록 보기'}
+          onPress={() => {
+            setIsFolded(true);
+            setIsMenuVisible(false);
+            setIsFriendSelected(true);
+          }}
+        />
+      </View>
       <UpperContainer>
         <Ionic
           name="chevron-back"
@@ -653,17 +629,28 @@ const ChatRoom = ({navigation, route}) => {
           name="menu"
           size={30}
           style={{
-            color: visibleModal ? theme.tintColorPink : theme.basicText,
+            color:
+              isMenuVisible || isItemSelected || !isFolded
+                ? theme.tintColorPink
+                : theme.basicText,
           }}
           onPress={() => {
-            setVisibleModal(!visibleModal);
+            if (
+              isMenuVisible === true ||
+              isFriendSelected === true ||
+              isFolded === false
+            ) {
+              setIsMenuVisible(false);
+              setIsFriendSelected(false);
+              setIsFolded(true);
+            } else {
+              setIsMenuVisible(true);
+            }
           }}
         />
       </UpperContainer>
 
-      <CollectionContainer
-        style={{display: isFolded ? 'none' : 'flex'}}
-        onBackdropPress={() => setIsFolded(!isFolded)}>
+      <CollectionContainer style={{display: isFolded ? 'none' : 'flex'}}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -699,7 +686,7 @@ const ChatRoom = ({navigation, route}) => {
                     console.log('!!!!!!!!!!!', item.itemId);
                   }}
                   onLongPress={() => _deleteItemsFromCollection(item.itemId)}
-                  isEditing={isEditing}
+                  isItemSelected={isItemSelected}
                 />
               ))}
         </ScrollView>
@@ -730,172 +717,314 @@ const ChatRoom = ({navigation, route}) => {
         </View>
         <LineIcon />
       </CollectionContainer>
-      <Modal
-        visible={isFriendSelected}
-        transparent={true}
-        animationType="none"
-        onBackdropPress={() => setIsFriendSelected(false)}>
-        <FriendContainer>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{width: '95%'}}>
-            {friends.error
-              ? null
-              : friends.map(friend => (
-                  <CollectionCircle
-                    key={friend?.friend_id}
-                    frName={friend?.friend_nickname}
-                    activeOpacity={0.6}
-                    image={friend?.friend_img}
-                    onPress={() => {
-                      friendName = friend.friend_nickname;
-                      setChartModal(!chartModal), getChart(friendName);
-                    }}
-                  />
-                ))}
-          </ScrollView>
-          <Modal visible={chartModal}>
-            <ChartModalView insets={insets}>
-              <ImageModalView>
-                <ChartImage
-                  source={{
-                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
-                  }}
-                  // style={{width: length * 80 / 100}}
-
-                  // style={{width: length * dataChart[0]?.percentage / 100}}
-                />
-                <Text
-                  style={{
-                    color: theme.basicText,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}>
-                  {dataChart[0]?.category + ' '}
-                  {dataChart[0]?.percentage + '%'}
-                </Text>
-
-                <ChartImage
-                  source={{
-                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
-                  }}
-                  // style={{width: (length * dataChart[1]?.percentage) / 100}}
-                />
-                <Text
-                  style={{
-                    color: theme.basicText,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}>
-                  {dataChart[1]?.category + ' '}
-                  {dataChart[1]?.percentage + '%'}
-                </Text>
-                <ChartImage
-                  source={{
-                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
-                  }}
-                  // style={{width: (length * dataChart[2]?.percentage) / 100}}
-                />
-                <Text
-                  style={{
-                    color: theme.basicText,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}>
-                  {dataChart[2]?.category + ' '}
-                  {dataChart[2]?.percentage + '%'}
-                </Text>
-              </ImageModalView>
-              <Row>
-                <Text style={{color: theme.tintColorGreen}}>
-                  친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의
-                  상품들
-                </Text>
-                <EditIcon
-                  onPress={() => setIsItemSelected(!isItemSelected)}
-                  name={isItemSelected ? 'x' : 'edit-2'}
-                />
-              </Row>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{width: '95%', opacity: isItemSelected ? 0.5 : 1.0}}>
-                {chartItems.error
-                  ? null
-                  : chartItems.map(chartitem => (
-                      <ChartItemBox
-                        key={chartitem?.itemId}
-                        saleRate="가격"
-                        itemName={chartitem?.name}
-                        itemPrice={new String(chartitem?.price).replace(
-                          /\B(?=(\d{3})+(?!\d))/g,
-                          ',',
-                        )}
-                        isItemSelected={isItemSelected}
-                        itemImage={chartitem?.imgUrl}
-                        itemId={chartitem?.itemId}
-                        onPress={() => {
-                          isItemSelected
-                            ? _addItemToShareList(chartitem?.itemId)
-                            : _openUrl(chartitem?.originUrl);
-                        }}
-                      />
-                    ))}
-              </ScrollView>
-              <Row>
-                <AddButton
-                  title={'추가하기'}
+      <CollectionContainer
+        style={{display: isFriendSelected ? 'flex' : 'none'}}>
+        <Text
+          style={{
+            position: 'absolute',
+            marginTop: 5,
+            color: theme.subBackground,
+            fontWeight: 'bold',
+            marginBottom: 5,
+          }}>
+          친구를 클릭하면 취향을 알 수 있어요!
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{width: '95%'}}>
+          {friends.error
+            ? null
+            : friends.map(friend => (
+                <CollectionCircle
+                  key={friend?.friend_id}
+                  frName={friend?.friend_nickname}
+                  image={friend?.friend_img}
                   onPress={() => {
-                    console.log('nickname:', nickName);
-                    console.log('collectionId:', shareCollectionId);
-                    console.log('itemIdList:', addToShareCollection);
-                    setChartModal(false),
-                      setIsItemSelected(!isItemSelected),
-                      setChartItems([]),
-                      _addItemToShareCollection(nickName, shareCollectionId);
+                    friendName = friend.friend_nickname;
+                    setChartModal(!chartModal), _getChart(friendName);
                   }}
                 />
-                <Text>' '</Text>
-                <ChartButton
-                  title={'닫기'}
-                  onPress={() => {
-                    setIsItemSelected(!isItemSelected), setChartModal(false) , setChartItems([]), setAddToShareCollection([]);
-                  }}
-                />
-              </Row>
-            </ChartModalView>
-          </Modal>
-          <View style={{marginLeft: -30}}>
+              ))}
+        </ScrollView>
+        <LineIcon />
+      </CollectionContainer>
+
+      {/* 차트 모달 */}
+      <Modal visible={chartModal}>
+        <ChartModalView insets={insets}>
+          <ImageModalView>
+            {/* 카테고리 순위 */}
+            <View
+              style={{flexDirection: 'row', marginBottom: 13, marginLeft: 10}}>
+              <Text style={{color: theme.basicText, fontSize: 19}}>
+                친구가 선호하는 상품 카테고리
+              </Text>
+            </View>
             <View
               style={{
-                position: 'absolute',
-                alignItems: 'flex-end',
-                width: 33,
-                paddingTop: 3,
+                backgroundColor: theme.componentBackground,
+                width: '100%',
+                padding: 20,
+                paddingLeft: 10,
+                borderRadius: 25,
+                justifyContent: 'center',
+                height: 300,
               }}>
-              <TouchableOpacity
-                onPress={() => setIsFriendSelected(!isFriendSelected)}>
+              <View style={{height: 30}} />
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View
                   style={{
-                    backgroundColor: theme.mainBackground,
-                    width: 38,
-                    height: 38,
+                    width: 36,
+                    height: 23,
+                    borderRadius: 5,
+                    backgroundColor: theme.tintColorPink,
+                    marginRight: 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: 13,
-                    borderColor: theme.basicText,
-                    borderWidth: 2,
-                    marginBottom: 80,
                   }}>
-                  <FontAwesome name="close" size={22} color={theme.basicText} />
+                  <Text
+                    style={{
+                      color: theme.basicText,
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                    }}>
+                    1위
+                  </Text>
                 </View>
-              </TouchableOpacity>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  {dataChart[0].category
+                    ? dataChart[0].category
+                    : '담은 아이템이 없어요 '}
+                </Text>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  ( {dataChart[0].category ? dataChart[0].percentage : '0'}% )
+                </Text>
+              </View>
+              <ChartImage
+                style={{
+                  width: dataChart[0].category ? length : 10,
+                }}
+              />
+
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View
+                  style={{
+                    width: 36,
+                    height: 23,
+                    borderRadius: 5,
+                    backgroundColor: theme.subBackground,
+                    marginRight: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: theme.basicText,
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                    }}>
+                    2위
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  {dataChart[1].category
+                    ? dataChart[1].category
+                    : '담은 아이템이 없어요 '}
+                </Text>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  ( {dataChart[1].category ? dataChart[1].percentage : '0'}% )
+                </Text>
+              </View>
+              <ChartImage
+                style={{
+                  width: dataChart[1].category
+                    ? (length * dataChart[1].percentage) /
+                      dataChart[0].percentage
+                    : 10,
+                  backgroundColor: theme.subBackground,
+                }}
+              />
+
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View
+                  style={{
+                    width: 36,
+                    height: 23,
+                    borderRadius: 5,
+                    backgroundColor: theme.subBackground,
+                    marginRight: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: theme.basicText,
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                    }}>
+                    3위
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  {dataChart[2].category
+                    ? dataChart[2].category
+                    : '담은 아이템이 없어요 '}
+                </Text>
+                <Text
+                  style={{
+                    color: theme.mainBackground,
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
+                  ( {dataChart[2].category ? dataChart[2].percentage : '0'}% )
+                </Text>
+              </View>
+              <ChartImage
+                style={{
+                  width: dataChart[2].category
+                    ? (length * dataChart[2].percentage) /
+                      dataChart[0].percentage
+                    : 10,
+                  backgroundColor: theme.subBackground,
+                }}
+              />
+              <View style={{height: 5}} />
             </View>
+
+            {/* 친구가 선호하는 상품들 */}
+          </ImageModalView>
+          <View
+            style={{
+              alignItems: 'flex-end',
+              width: '100%',
+              marginTop: 30,
+              marginLeft: 15,
+            }}>
+            <Row style={{width: '100%'}}>
+              <Text style={{color: theme.basicText, fontSize: 19}}>
+                친구가 담은
+                {dataChart[0].category ? dataChart[0].category : ''} 카테고리의
+                상품
+              </Text>
+              <EditIcon
+                onPress={() => setIsItemSelected(!isItemSelected)}
+                name={isItemSelected ? 'x' : 'edit-2'}
+              />
+            </Row>
           </View>
-          {/* <LineIcon /> */}
-        </FriendContainer>
+
+          <View
+            style={{
+              width: '100%',
+              backgroundColor: theme.subBackground,
+              borderRadius: 25,
+              alignItems: 'center',
+              height: '18%',
+              marginTop: 13,
+            }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{width: '95%'}}>
+              {chartItems.map(chartitem => (
+                <ChartItemBox
+                  key={chartitem?.itemId}
+                  saleRate="가격"
+                  itemName={chartitem?.name}
+                  itemPrice={new String(chartitem?.price).replace(
+                    /\B(?=(\d{3})+(?!\d))/g,
+                    ',',
+                  )}
+                  isItemSelected={isItemSelected}
+                  itemImage={chartitem?.imgUrl}
+                  itemId={chartitem?.itemId}
+                  onPress={() => {
+                    isItemSelected
+                      ? _addItemToShareList(chartitem?.itemId)
+                      : _openUrl(chartitem?.originUrl);
+                  }}
+                />
+              ))}
+            </ScrollView>
+          </View>
+          <View style={{width: '100%', height: '20%', marginTop: 15}}>
+            <AddButton
+              title={'공유 컬렉션에 가져오기'}
+              onPress={() => {
+                console.log('nickname:', nickName);
+                console.log('collectionId:', shareCollectionId);
+                console.log('itemIdList:', addToShareCollection);
+                setChartModal(false),
+                  setIsItemSelected(false),
+                  setChartItems([]),
+                  _addItemToShareCollection(nickName, shareCollectionId);
+              }}
+            />
+            <ChartButton
+              title={'닫기'}
+              onPress={() => {
+                setIsItemSelected(false),
+                  setChartModal(false),
+                  setChartItems([]),
+                  setAddToShareCollection([]);
+              }}
+            />
+          </View>
+        </ChartModalView>
       </Modal>
+      <View style={{marginLeft: -30}}>
+        <View
+          style={{
+            position: 'absolute',
+            alignItems: 'flex-end',
+            width: 33,
+            paddingTop: 3,
+          }}>
+          <TouchableOpacity
+            onPress={() => setIsFriendSelected(!isFriendSelected)}>
+            <View
+              style={{
+                backgroundColor: theme.mainBackground,
+                width: 38,
+                height: 38,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 13,
+                borderColor: theme.basicText,
+                borderWidth: 2,
+                marginBottom: 80,
+              }}>
+              <FontAwesome name="close" size={22} color={theme.basicText} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <KeyboardAwareScrollView
         contentContainerStyle={{
@@ -907,7 +1036,8 @@ const ChatRoom = ({navigation, route}) => {
         extraScrollHeight={200}
         resetScrollToCoords={{x: 0, y: 0}}
         scrollEnabled={false}>
-        <MiddleContainer style={{height: isFolded ? 638 : 500}}>
+        <MiddleContainer
+          style={{height: !isFolded || isFriendSelected ? 500 : 638}}>
           <FlatList
             data={chatList}
             renderItem={({item}) => <Item item={item} />}
@@ -918,8 +1048,6 @@ const ChatRoom = ({navigation, route}) => {
             }
             showsVerticalScrollIndicator={false}
             extraData={{update, updated}}
-
-            // image={img}
           />
         </MiddleContainer>
         <BottomContainer>

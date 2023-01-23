@@ -338,7 +338,7 @@ const Chat = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          data ? setChatRoomList(data) : null;
+          data.error ? null : setChatRoomList(data)
         });
     } catch (e) {
       console.log(e);

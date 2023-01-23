@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native';
 
 const Container = styled.View`
   padding: 10px;
-  margin: 40px 10px 10px 10px;
+  margin: 38px 10px 10px 10px;
   width: 65px;
   height: 65px;
   justify-content: center;

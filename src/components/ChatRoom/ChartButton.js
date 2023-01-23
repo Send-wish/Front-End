@@ -4,23 +4,22 @@ import styled from 'styled-components/native';
 
 const Container = styled.View`
   /* flex: 1; */
-  background-color: ${({theme}) => theme.tintColorGreen};
-  height: 12%;
+  height: 45px;
   width: 100%;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  margin-bottom: 200%;
   padding: 5px;
   margin-top: 5%;
+  border-color: ${({theme}) => theme.componentBackground};
 `;
 
 const Title = styled.Text`
-  font-size: 18px;
+  font-size: 17px;
   width: 100%;
   text-align: center;
   font-weight: bold;
-  color: ${({theme}) => theme.basicText};
+  color: ${({theme}) => theme.subText};
 `;
 
 const ChartButton = ({title, onPress}) => {
