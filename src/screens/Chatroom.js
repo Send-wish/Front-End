@@ -576,34 +576,26 @@ const ChatRoom = ({navigation, route}) => {
     console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
   };
 
-  const _deleteItems = async itemId => {
+  const _deleteItemsFromCollection = async (itemId) => {
     try {
-      fetch(`https://api.sendwish.link:8081/items`, {
+      fetch(`https://api.sendwish.link:8081/collection/item`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nickname: nickName,
+          collectionId: shareCollectionId,
           itemIdList: [itemId],
+          nickname: nickName,
         }),
       }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
+        if (response.ok) {
+          _getItemsFromCollection();
+          setDeleteList([]);
+          return;
         }
-        _getItemsFromShareCollection();
-        setAddToShareCollection([]);
-        return;
-        // return response.json();
+        throw new Error(`${response.status} 에러발생`);
       });
-      // .then(data => {
-      //   console.log(data);
-      // })
-      // .then(result => {
-      //   console.log('result', result);
-      // })
-      // .then(_getItems)
-      // .then(setAddToShareCollection([]));
     } catch (e) {
       console.log('items delete fail', e);
     }
@@ -706,7 +698,7 @@ const ChatRoom = ({navigation, route}) => {
                       : _openUrl(item?.originUrl);
                     console.log('!!!!!!!!!!!', item.itemId);
                   }}
-                  onLongPress={() => _deleteItems(item.itemId)}
+                  onLongPress={() => _deleteItemsFromCollection(item.itemId)}
                   isEditing={isEditing}
                 />
               ))}
