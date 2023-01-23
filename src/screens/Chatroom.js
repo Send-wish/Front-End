@@ -472,7 +472,7 @@ const ChatRoom = ({navigation, route}) => {
             tempArray.push(tempObject);
             setChatList(tempArray);
           }
-          console.log('data : ', data);
+          console.log('data :ddd ', data);
         });
     } catch (e) {
       console.log(e);
