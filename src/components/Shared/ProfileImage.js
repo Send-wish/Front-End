@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
-import View from 'react-native-view';
 import Feather from 'react-native-vector-icons/Feather';
 import {theme} from '../../theme';
 

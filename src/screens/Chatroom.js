@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   ScrollView,
@@ -7,12 +7,13 @@ import {
   TouchableHighlight,
   FlatList,
   TouchableOpacity,
-} from 'react-native';
-import styled from 'styled-components/native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {theme} from '../theme';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useIsFocused} from '@react-navigation/native';
+  Modal,
+} from "react-native";
+import styled from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { theme } from "../theme";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Input,
   MySaying,
@@ -42,8 +43,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.mainBackground};
-  padding-top: ${({insets: {top}}) => top}px;
+  background-color: ${({ theme }) => theme.mainBackground};
+  padding-top: ${({ insets: { top } }) => top}px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -68,7 +69,7 @@ const CollectionContainer = styled.View`
   padding-top: 10px;
   padding-bottom: 10px;
   z-index: 10;
-  background-color: ${({theme}) => theme.lightBackground};
+  background-color: ${({ theme }) => theme.lightBackground};
   margin-left: 5px;
   margin-right: 5px;
   border-radius: 25px;
@@ -76,7 +77,7 @@ const CollectionContainer = styled.View`
 
 const MiddleContainer = styled.View`
   height: 500px;
-  background-color: ${({theme}) => theme.mainBackground};
+  background-color: ${({ theme }) => theme.mainBackground};
   flex-wrap: wrap;
   width: 100%;
   padding-left: 20px;
@@ -92,7 +93,7 @@ const BottomContainer = styled.View`
   padding-bottom: 5px;
   padding-left: 10px;
   padding-right: 15px;
-  background-color: ${({theme}) => theme.strongBackground};
+  background-color: ${({ theme }) => theme.strongBackground};
   flex-wrap: wrap;
   align-items: center;
   margin-right: 15px;
@@ -102,14 +103,14 @@ const BottomContainer = styled.View`
 const MainTitle = styled.Text`
   font-size: 20px;
   font-weight: bold;
-  color: ${({theme}) => theme.tintColorGreen};
+  color: ${({ theme }) => theme.tintColorGreen};
 `;
 
 const InputContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background-color: ${({theme}) => theme.subBackground};
+  background-color: ${({ theme }) => theme.subBackground};
   padding-left: 10px;
   padding-right: 6px;
   border-radius: 50px;
@@ -121,7 +122,7 @@ const InputContainer = styled.View`
 const SendIcon = styled.View`
   width: 42px;
   height: 42px;
-  background-color: ${({theme}) => theme.tintColorPink};
+  background-color: ${({ theme }) => theme.tintColorPink};
   align-items: center;
   justify-content: center;
   border-radius: 50px;
@@ -132,22 +133,82 @@ const LineIcon = styled.View`
   align-items: center;
   height: 3%;
   width: 15%;
-  background-color: ${({theme}) => theme.strongBackground};
+  background-color: ${({ theme }) => theme.strongBackground};
   border-radius: 20px;
   margin-top: 5px;
 `;
 
-const _openUrl = url => {
+const ModalView = styled.View`
+  width: 30%;
+  height: 10%;
+  background-color: ${({ theme }) => theme.mainBackground};
+  padding-top: ${({ insets: { top } }) => top}px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.98;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 26.5%;
+  margin-left: 67%;
+  border-radius: 20px;
+`;
+
+const FriendContainer = styled.View`
+  height: 15%;
+  width: 94%;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 24px;
+  background-color: ${({ theme }) => theme.lightBackground};
+  border-radius: 22px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-top: 27%;
+`;
+
+const ChartModalView = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.mainBackground};
+  padding-top: ${({ insets: { top } }) => top}px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  flex: 1;
+  margin-top: 0;
+  padding-top: 30%;
+`;
+
+const ImageModalView = styled.View`
+  width: 100%;
+  background-color: ${({ theme }) => theme.mainBackground};
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const ChartImage = styled.Image`
+  margin-top: 10%;
+  width: 100%;
+  height: 5%;
+  color: ${({ theme }) => theme.tintColorGreen};
+  align-items: flex-end;
+  justify-content: flex-end;
+`;
+
+const _openUrl = (url) => {
   Linking.openURL(url);
 };
 
 const Item = ({
-  item: {createAt, message, sender, senderImg, nickName, itemDto},
+  item: { createAt, message, sender, senderImg, nickName, itemDto },
 }) => {
   const parcedCreateAt = createAt.substring(11, 16);
   if (sender === nickName) {
     if (itemDto) {
-      const {imgUrl, itemId, name, originUrl, price} = itemDto;
+      const { imgUrl, itemId, name, originUrl, price } = itemDto;
       return (
         <MySayingItem
           sender={sender}
@@ -157,7 +218,7 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           onPress={_openUrl}
           senderImg={senderImg}
         />
@@ -174,7 +235,7 @@ const Item = ({
     }
   } else {
     if (itemDto) {
-      const {imgUrl, itemId, name, originUrl, price} = itemDto;
+      const { imgUrl, itemId, name, originUrl, price } = itemDto;
       return (
         <OthersSayingItem
           sender={sender}
@@ -184,7 +245,7 @@ const Item = ({
           itemId={itemId}
           name={name}
           originUrl={originUrl}
-          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          price={new String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           onPress={_openUrl}
           senderImg={senderImg}
         />
@@ -202,107 +263,7 @@ const Item = ({
   }
 };
 
-const ModalView = styled.View`
-  width: 30%;
-  height: 10%;
-  background-color: ${({theme}) => theme.mainBackground};
-  padding-top: ${({insets: {top}}) => top}px;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.98;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-top: 26.5%;
-  margin-left: 67%;
-  border-radius: 20px;
-`;
-
-const ChartModalView = styled.View`
-  width: 100%;
-  height: 100%;
-  background-color: ${({theme}) => theme.mainBackground};
-  padding-top: ${({insets: {top}}) => top}px;
-  justify-content: center;
-  align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 20px;
-  flex: 1;
-  margin-top: 0;
-  padding-top: 30%;
-`;
-
-const ImageModalView = styled.View`
-  width: 100%;
-  background-color: ${({theme}) => theme.mainBackground};
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-
-const ChartImage = styled.Image`
-  margin-top: 10%;
-  width: 100%;
-  height: 5%;
-  color: ${({theme}) => theme.tintColorGreen};
-  align-items: flex-end;
-  justify-content: flex-end;
-`;
-
-const FriendContainer = styled.View`
-  height: 15%;
-  width: 94%;
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 24px;
-  background-color: ${({theme}) => theme.lightBackground};
-  border-radius: 22px;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  margin-top: 27%;
-`;
-
-const Row = styled.View`
-  flex-direction: row;
-`;
-
-// 피어 생성
-// const localPeer = new Peer();
-// localPeer.on('error', console.log);
-
-// localPeer.on('open', localPeerId => {
-//   console.log('Local peer open with ID', localPeerId);
-
-//   // const remotePeer = new Peer();
-//   // remotePeer.on('error', console.log);
-//   remotePeer.on('open', targetId => {
-//     console.log('Remote peer open with ID', remotePeerId);
-
-//     const conn = remotePeer.connect(localPeerId);
-//     conn.on('error', console.log);
-//     conn.on('open', () => {
-//       console.log('Remote peer has opened connection.');
-//       console.log('conn', conn);
-//       conn.on('data', data => console.log('Received from local peer', data));
-//       console.log('Remote peer sending data.');
-//       conn.send('Hello, this is the REMOTE peer!');
-//     });
-//   });
-// });
-
-// localPeer.on('connection', conn => {
-//   console.log('Local peer has received connection.');
-//   conn.on('error', console.log);
-//   conn.on('open', () => {
-//     console.log('Local peer has opened connection.');
-//     console.log('conn', conn);
-//     conn.on('data', data => console.log('Received from remote peer', data));
-//     console.log('Local peer sending data.');
-//     conn.send('Hello, this is the LOCAL peer!');
-//   });
-// });
-
-const ChatRoom = ({navigation, route}) => {
+const ChatRoom = ({ navigation, route }) => {
   let flatListRef;
   const insets = useSafeAreaInsets();
   const [chat, setChat] = useState([]);
@@ -319,34 +280,35 @@ const ChatRoom = ({navigation, route}) => {
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [chatList, setChatList] = useState([]);
   const [updated, setUpdated] = useState(false);
-  const [update, setUpdate] = useState('');
+  const [update, setUpdate] = useState("");
   const refMessage = useRef(null);
-  const [img, setImg] = useState(''); // 내이미지 받아오기
+  const [img, setImg] = useState(""); // 내이미지 받아오기
   const [isSorted, setIsSorted] = useState(false);
-  const [isFolded, setIsFolded] = useState(true);
-  const [targetId, setTargetId] = useState('');
+  const [isFolded, setIsFolded] = useState(false);
+  const [targetId, setTargetId] = useState("");
   const [visibleModal, setVisibleModal] = useState(false);
-  const [isItemSelected, setIsItemSelected] = useState(false);
-  const [friends, setFriends] = useState([]);
-  const [isFriendSelected, setIsFriendSelected] = useState(false);
   const [chartModal, setChartModal] = useState(false);
   const [dataChart, setDataChart] = useState([]);
   const [chartItems, setChartItems] = useState([]);
+
   const [addToShareCollection, setAddToShareCollection] = useState([]);
   const length = 350;
   const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
+  const [isFriendSelected, setIsFriendSelected] = useState(false);
+  const [friends, setFriends] = useState([]);
 
-  const _connect = roomId => {
+  const _connect = (roomId) => {
+
     client.current = new Client({
-      brokerURL: 'wss://api.sendwish.link:8081/ws',
+      brokerURL: "wss://api.sendwish.link:8081/ws",
       connectHeaders: {},
       webSocketFactory: () => {
-        return SockJS('https://api.sendwish.link:8081/ws');
+        return SockJS("https://api.sendwish.link:8081/ws");
       },
-      debug: str => {
+      debug: (str) => {
         // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
@@ -355,7 +317,7 @@ const ChatRoom = ({navigation, route}) => {
         _subscribe(roomId);
         // console.log('connected!');
       },
-      onStompError: frame => {
+      onStompError: (frame) => {
         // console.log('error occur' + frame.body);
       },
     });
@@ -367,11 +329,11 @@ const ChatRoom = ({navigation, route}) => {
     client.current.deactivate();
   };
 
-  const _subscribe = roomId => {
-    client.current.subscribe('/sub/chat/' + roomId, msg => {
+  const _subscribe = (roomId) => {
+    client.current.subscribe("/sub/chat/" + roomId, (msg) => {
       // console.log('connected! and subscribed!');
       let tempObject = JSON.parse(msg.body);
-      console.log('msg.body: ' + msg.body);
+      console.log("msg.body: " + msg.body);
       tempObject.nickName = nickName;
       tempArray = chatList;
       tempArray.push(tempObject);
@@ -380,18 +342,18 @@ const ChatRoom = ({navigation, route}) => {
     });
   };
 
-  const _publish = roomId => {
-    console.log('here is publish');
+  const _publish = (roomId) => {
+    console.log("here is publish");
     if (!client.current.connected) {
       return;
     }
     client.current.publish({
-      destination: '/pub/chat',
+      destination: "/pub/chat",
       body: JSON.stringify({
         roomId: roomId,
         sender: nickName,
         message: message,
-        type: 'TALK',
+        type: "TALK",
       }),
     });
   };
@@ -401,7 +363,7 @@ const ChatRoom = ({navigation, route}) => {
     return () => _disconnect();
   }, []);
 
-  const _openUrl = url => {
+  const _openUrl = (url) => {
     Linking.openURL(url);
   };
 
@@ -415,11 +377,29 @@ const ChatRoom = ({navigation, route}) => {
   }, [isFocused]);
 
   _pressEnter = () => {
-    if (message === '') {
+    if (message === "") {
       return;
     }
     _publish(chatRoomId);
-    setMessage('');
+    setMessage("");
+  };
+
+  const _getFriends = async () => {
+    try {
+      // API 아직 안열림
+      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
+        method: "GET",
+        headers: { "Content-Type": `application/json` },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          setFriends(data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   // 공유컬렉션 아이템 렌더링
@@ -428,14 +408,14 @@ const ChatRoom = ({navigation, route}) => {
       fetch(
         `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
         {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
       )
-        .then(res => {
+        .then((res) => {
           return res.json();
         })
-        .then(data => {
+        .then((data) => {
           // data.dtos ? setItems(data.dtos) : setItems([]);
           let temp = [];
           if (data.dtos) {
@@ -457,13 +437,13 @@ const ChatRoom = ({navigation, route}) => {
   const _getChatHistory = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/chats/${chatRoomId}`, {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json'},
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       })
-        .then(res => {
+        .then((res) => {
           return res.json();
         })
-        .then(data => {
+        .then((data) => {
           for (let i = 0; i < data.length; i++) {
             let tempObject = data[i];
             tempObject.nickName = nickName;
@@ -486,50 +466,96 @@ const ChatRoom = ({navigation, route}) => {
     _getItemsFromShareCollection();
   }, [isSorted]);
 
-  const _getFriends = async () => {
-    try {
-      // API 아직 안열림
-      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
-        method: 'GET',
-        headers: {'Content-Type': `application/json`},
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          setFriends(data);
-        });
-    } catch (e) {
-      console.log(e);
+  const getToken = async () => {
+    if (VIDEOSDK_TOKEN && API_AUTH_URL) {
+      console.error(
+        "Error: Provide only ONE PARAMETER - either Token or Auth API"
+      );
+    } else if (VIDEOSDK_TOKEN) {
+      return VIDEOSDK_TOKEN;
+    } else if (API_AUTH_URL) {
+      const res = await fetch(`${API_AUTH_URL}/get-token`, {
+        method: "GET",
+      });
+      const { token } = await res.json();
+      return token;
+    } else {
+      console.error("Error: ", Error("Please add a token or Auth Server URL"));
     }
   };
 
-  const getChart = async friendName => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/items/category/rank/${friendName}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': `application/json`},
-        },
-      )
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          setDataChart(data);
-          console.log('chart data check', data);
-          console.log('카테고리', dataChart[0].category);
-          console.log('퍼센티지', dataChart[0].percentage);
-          console.log('아이템', dataChart[0].itemDtos);
-          setChartItems(dataChart[0].itemDtos);
-          console.log('아이템', chartItems);
-        });
-    } catch (e) {
-      console.log(e);
-    }
+  const createMeeting = async ({ token }) => {
+    const url = `${API_BASE_URL}/rooms`;
+    const options = {
+      method: "POST",
+      headers: { Authorization: token, "Content-Type": "application/json" },
+    };
+
+    const { roomId } = await fetch(url, options)
+      .then((response) => response.json())
+      .catch((error) => console.error("error", error));
+
+    return roomId;
   };
 
+  const disposeVideoTrack = () => {
+    setTracks((stream) => {
+      stream?.getTracks().forEach((track) => {
+        track.enabled = false;
+        return track;
+      });
+    });
+  };
+
+  const validateMeeting = async ({ meetingId, token }) => {
+    const url = `${API_BASE_URL}/rooms/validate/${meetingId}`;
+
+    const options = {
+      method: "GET",
+      headers: { Authorization: token },
+    };
+
+    const result = await fetch(url, options)
+      .then((response) => response.json()) //result will have meeting id
+      .catch((error) => console.error("error", error));
+
+    console.log("*********result is : ", result);
+    return result ? result.roomId === meetingId : false;
+  };
+
+  const [liveRoomId, setLiveRoomId] = useState("");
+  const [typedRoomId, setTypedRoomId] = useState("");
+
+  const _makeRoom = async () => {
+    const token = await getToken();
+    console.log("token: ", token);
+    let meetingId = await createMeeting({ token: token });
+    console.log("meetingId: ", meetingId);
+    setLiveRoomId(meetingId);
+    disposeVideoTrack();
+    navigation.navigate("LiveChat", {
+      shareCollectionId: shareCollectionId,
+      nickName: nickName,
+      shareCollectionName: shareCollectionTitle,
+      chatRoomId: chatRoomId,
+      friendList: friendList,
+      screen: screen,
+      name: nickName,
+      token: token,
+      meetingId: meetingId,
+    });
+  };
+
+  const _participateRoom = async () => {
+    const token = await getToken();
+    let valid = await validateMeeting({
+      token: token,
+      meetingId: typedRoomId.trim(),
+    });
+    if (valid) {
+      disposeVideoTrack();
+    }
+  };
   const _addItemToShareCollection = async (collectionId, nickName) => {
     setIsEditing(false);
     try {
@@ -588,17 +614,18 @@ const ChatRoom = ({navigation, route}) => {
         animationType="none"
         transparent={true}
         visible={visibleModal}
-        style={{flex: 1}}>
+        style={{ flex: 1 }}
+      >
         <ModalView insets={insets}>
           <Button
-            title={'아이템 보기'}
+            title={"아이템 보기"}
             onPress={() => {
               setIsFolded(!isFolded);
               setVisibleModal(!visibleModal);
             }}
           />
           <Button
-            title={'친구 목록 보기'}
+            title={"친구 목록 보기"}
             onPress={() => {
               setIsFriendSelected(!isFriendSelected);
               setVisibleModal(!visibleModal);
@@ -621,13 +648,14 @@ const ChatRoom = ({navigation, route}) => {
         />
         <View
           style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '70%',
-          }}>
+            justifyContent: "center",
+            alignItems: "center",
+            width: "70%",
+          }}
+        >
           <MainTitle>{shareCollectionTitle}</MainTitle>
-          <MainTitle style={{color: theme.basicText, fontSize: 15}}>
-            ({friendList.map(friend => ' ' + friend + ' ')})
+          <MainTitle style={{ color: theme.basicText, fontSize: 15 }}>
+            ({friendList.map((friend) => " " + friend + " ")})
           </MainTitle>
         </View>
         <Feather
@@ -645,13 +673,15 @@ const ChatRoom = ({navigation, route}) => {
       <CollectionContainer
         style={{display: isFolded ? 'none' : 'flex'}}
         onBackdropPress={() => setIsFolded(!isFolded)}>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{width: '95%'}}>
+          style={{ width: "95%" }}
+        >
           {items.error
             ? null
-            : items.map(item => (
+            : items.map((item) => (
                 <ItemBox
                   imageStyle={{
                     opacity: isEditing ? 0.1 : 1,
@@ -669,7 +699,7 @@ const ChatRoom = ({navigation, route}) => {
                   itemName={item?.name}
                   itemPrice={new String(item?.price).replace(
                     /\B(?=(\d{3})+(?!\d))/g,
-                    ',',
+                    ","
                   )}
                   itemImage={item?.imgUrl}
                   itemId={item?.itemId}
@@ -685,11 +715,12 @@ const ChatRoom = ({navigation, route}) => {
         </ScrollView>
         <View
           style={{
-            position: 'absolute',
-            alignItems: 'flex-end',
+            position: "absolute",
+            alignItems: "flex-end",
             width: 353,
             paddingTop: 3,
-          }}>
+          }}
+        >
           <TouchableOpacity onPress={_pressFilter}>
             <View
               style={{
@@ -698,12 +729,13 @@ const ChatRoom = ({navigation, route}) => {
                   : theme.mainBackground,
                 width: 38,
                 height: 38,
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: "center",
+                justifyContent: "center",
                 borderRadius: 13,
                 borderColor: theme.basicText,
                 borderWidth: 2,
-              }}>
+              }}
+            >
               <Foundation name="filter" size={23} color={theme.basicText} />
             </View>
           </TouchableOpacity>
@@ -714,15 +746,17 @@ const ChatRoom = ({navigation, route}) => {
         visible={isFriendSelected}
         transparent={true}
         animationType="none"
-        onBackdropPress={() => setIsFriendSelected(false)}>
+        onBackdropPress={() => setIsFriendSelected(false)}
+      >
         <FriendContainer>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{width: '95%'}}>
+            style={{ width: "95%" }}
+          >
             {friends.error
               ? null
-              : friends.map(friend => (
+              : friends.map((friend) => (
                   <CollectionCircle
                     key={friend?.friend_id}
                     frName={friend?.friend_nickname}
@@ -740,6 +774,7 @@ const ChatRoom = ({navigation, route}) => {
               <ImageModalView>
                 <ChartImage
                   source={{
+
                     uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
                   }}
                   // style={{width: length * 80 / 100}}
@@ -759,6 +794,7 @@ const ChatRoom = ({navigation, route}) => {
                 <ChartImage
                   source={{
                     uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+
                   }}
                   // style={{width: (length * dataChart[1]?.percentage) / 100}}
                 />
@@ -774,6 +810,7 @@ const ChatRoom = ({navigation, route}) => {
                 <ChartImage
                   source={{
                     uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+
                   }}
                   // style={{width: (length * dataChart[2]?.percentage) / 100}}
                 />
@@ -789,6 +826,7 @@ const ChatRoom = ({navigation, route}) => {
               </ImageModalView>
               <Row>
               <Text style={{color: theme.tintColorGreen}}>
+
                 친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
               </Text>
               <EditIcon onPress={() => _pressEditButton()} name={'edit-2'} />
@@ -796,17 +834,18 @@ const ChatRoom = ({navigation, route}) => {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{width: '95%'}}>
+                style={{ width: "95%" }}
+              >
                 {chartItems.error
                   ? null
-                  : chartItems.map(chartitem => (
+                  : chartItems.map((chartitem) => (
                       <ChartItemBox
                         key={chartitem?.itemId}
                         saleRate="가격"
                         itemName={chartitem?.name}
                         itemPrice={new String(chartitem?.price).replace(
                           /\B(?=(\d{3})+(?!\d))/g,
-                          ',',
+                          ","
                         )}
                         itemImage={chartitem?.imgUrl}
                         itemId={chartitem?.itemId}
@@ -824,7 +863,7 @@ const ChatRoom = ({navigation, route}) => {
                 }}
               />
               <ChartButton
-                title={'닫기'}
+                title={"닫기"}
                 onPress={() => {
                   setChartModal(false), setChartItems([]);
                 }}
@@ -832,28 +871,31 @@ const ChatRoom = ({navigation, route}) => {
               </Row>
             </ChartModalView>
           </Modal>
-          <View style={{marginLeft: -30}}>
+          <View style={{ marginLeft: -30 }}>
             <View
               style={{
-                position: 'absolute',
-                alignItems: 'flex-end',
+                position: "absolute",
+                alignItems: "flex-end",
                 width: 33,
                 paddingTop: 3,
-              }}>
+              }}
+            >
               <TouchableOpacity
-                onPress={() => setIsFriendSelected(!isFriendSelected)}>
+                onPress={() => setIsFriendSelected(!isFriendSelected)}
+              >
                 <View
                   style={{
                     backgroundColor: theme.mainBackground,
                     width: 38,
                     height: 38,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: "center",
+                    justifyContent: "center",
                     borderRadius: 13,
                     borderColor: theme.basicText,
                     borderWidth: 2,
                     marginBottom: 80,
-                  }}>
+                  }}
+                >
                   <FontAwesome name="close" size={22} color={theme.basicText} />
                 </View>
               </TouchableOpacity>
@@ -867,23 +909,24 @@ const ChatRoom = ({navigation, route}) => {
         contentContainerStyle={{
           height: 530,
           width: 405,
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
         }}
         extraScrollHeight={200}
-        resetScrollToCoords={{x: 0, y: 0}}
-        scrollEnabled={false}>
-        <MiddleContainer style={{height: isFolded ? 638 : 500}}>
+        resetScrollToCoords={{ x: 0, y: 0 }}
+        scrollEnabled={false}
+      >
+        <MiddleContainer style={{ height: isFolded ? 638 : 500 }}>
           <FlatList
             data={chatList}
-            renderItem={({item}) => <Item item={item} />}
-            key={item => item['createAt']}
-            ref={ref => (flatListRef = ref)}
+            renderItem={({ item }) => <Item item={item} />}
+            key={(item) => item["createAt"]}
+            ref={(ref) => (flatListRef = ref)}
             onContentSizeChange={() =>
-              flatListRef.scrollToEnd({animated: false})
+              flatListRef.scrollToEnd({ animated: false })
             }
             showsVerticalScrollIndicator={false}
-            extraData={{update, updated}}
+            extraData={{ update, updated }}
 
             // image={img}
           />
@@ -891,35 +934,34 @@ const ChatRoom = ({navigation, route}) => {
         <BottomContainer>
           <View
             style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View
               style={{
                 height: 42,
                 width: 42,
                 borderRadius: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: "center",
+                justifyContent: "center",
                 marginRight: 13,
                 paddingBottom: 5,
                 marginLeft: 5,
                 backgroundColor: theme.tintColorGreen,
-              }}>
+              }}
+            >
               <MaterialIcons
                 name="live-tv"
                 size={27}
                 color={theme.mainBackground}
                 onPress={() => {
-                  navigation.navigate('LiveChat', {
+                  navigation.navigate(SCREEN_NAMES.Join, {
                     shareCollectionId: shareCollectionId,
                     nickName: nickName,
                     shareCollectionName: shareCollectionTitle,
-                    chatRoomId: chatRoomId,
-                    friendList: friendList,
-                    screen: screen,
                   });
                 }}
               />
@@ -927,10 +969,10 @@ const ChatRoom = ({navigation, route}) => {
             <InputContainer>
               <Input
                 ref={refMessage}
-                onChangeText={text => setMessage(text)}
+                onChangeText={(text) => setMessage(text)}
                 value={message}
                 onSubmitEditing={_pressEnter}
-                returnKeyType={'send'}
+                returnKeyType={"send"}
                 MaxLegnth={200}
               />
               <TouchableHighlight onPress={() => _pressEnter()}>
