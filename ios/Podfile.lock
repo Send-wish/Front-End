@@ -385,8 +385,8 @@ PODS:
     - React-jsi (= 0.70.6)
     - React-logger (= 0.70.6)
     - React-perflogger (= 0.70.6)
-  - ReactNativeIncallManager (0.0.9):
-    - React
+  - ReactNativeIncallManager (4.0.1):
+    - React-Core
   - RNCAsyncStorage (1.17.11):
     - React-Core
   - RNReactNativeSharedGroupPreferences (1.1.23):
@@ -466,7 +466,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeIncallManager (from `../node_modules/@videosdk.live/react-native-incallmanager`)"
+  - ReactNativeIncallManager (from `../node_modules/react-native-incall-manager`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNReactNativeSharedGroupPreferences (from `../node_modules/react-native-shared-group-preferences`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -569,7 +569,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeIncallManager:
-    :path: "../node_modules/@videosdk.live/react-native-incallmanager"
+    :path: "../node_modules/react-native-incall-manager"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNReactNativeSharedGroupPreferences:
@@ -635,7 +635,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: c75ceef7aa60a33b2d5731ebe5800ddde40cefc4
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
-  ReactNativeIncallManager: 4bd3287cd449bdd88de93309b462f96ba9f5e64a
+  ReactNativeIncallManager: 0d2cf9f4d50359728a30c08549762fe67a2efb81
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNReactNativeSharedGroupPreferences: de0121a4224c267bc7e9fb16c398f3f087c8da81
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
@@ -645,6 +645,6 @@ SPEC CHECKSUMS:
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: d0b9b4719fac3610fda5d9b6ddf244c9d63af2bd
+PODFILE CHECKSUM: 46d6aa74a18dfb844228d2c3a690084477b1fcb4
 
 COCOAPODS: 1.11.3

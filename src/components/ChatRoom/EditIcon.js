@@ -7,8 +7,8 @@ import Feather from 'react-native-vector-icons/Feather';
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
   margin: 0px 0px 0px 10px;
-  width: 25px;
-  height: 25px;
+  width: 26px;
+  height: 26px;
   justify-content: center;
   align-items: center;
   border-radius: 11px;

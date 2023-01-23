@@ -3,24 +3,21 @@ import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
-  flex: 1;
-  background-color: ${({theme}) => theme.tintColorGreen};
-  height: 50%;
-  width: 100%;
+  /* background-color: red; */
+  height: 40px;
+  width: 130px;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  margin-bottom: 35%;
   padding: 5px;
-  margin-top: -25%;
+  margin: 3px;
 `;
 
 const Title = styled.Text`
-  font-size: 18px;
-  width: 100%;
-  text-align: center;
+  font-size: 15px;
+  text-align: left;
   font-weight: bold;
-  color: ${({theme}) => theme.basicText};
+  color: ${({theme}) => theme.line};
 `;
 
 const Button = ({title, onPress}) => {
