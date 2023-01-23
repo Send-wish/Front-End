@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>RTCAppGroupIdentifier </key>
+	<string>group.app.sendwish.jungle</string>
+	<key>RTCScreenSharingExtension</key>
+	<string>app.sendwish.jungle.ScreenBroadcast</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleURLTypes</key>
@@ -12,7 +16,6 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>customscheme</string>
-				<!-- This url scheme doesn't contain :// at the end - E.G. "mycustomscheme"-->
 			</array>
 		</dict>
 	</array>
@@ -82,5 +85,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera permission description</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone permission description</string>
 </dict>
 </plist>

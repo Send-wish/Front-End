@@ -1,18 +1,19 @@
 // Basic React Native App
-import React, {useState, useEffect, useCallback,useLayoutEffect} from 'react';
+import React from 'react';
 
 // Screens
 import {
-  Chat,
-  Collection,
-  Friends,
-  ItemDetail,
-  Main,
-  Shared,
   SignIn,
   SignUp,
-  Start,
+  Main,
+  Collection,
+  Shared,
+  SharedCollection,
+  Chat,
+  ChatRoom,
+  LiveChat,
 } from './src/screens';
+import Share from './Share';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -20,9 +21,8 @@ import {theme} from './src/theme';
 
 // React Native Hooks
 import {NavigationContainer} from '@react-navigation/native';
-import {BottomTabView, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -30,7 +30,7 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Navigation = () => {
+const Navigation = props => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -40,56 +40,73 @@ const Navigation = () => {
         tabBarStyle: {
           height: 70,
           backgroundColor: theme.mainBackground,
-          borderRadius: 20,
-          opacity: 0.9,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          opacity: 0.88,
           position: 'absolute',
+          borderTopWidth: 0,
+          paddingTop: 10,
+          paddingRight: 30,
+          paddingLeft: 30,
         },
         tabBarIcon: ({focused, size}) => {
           let iconName;
-
           if (route.name === 'Main') {
-            iconName = focused ? 'logo-bitbucket' : 'ios-logo-bitbucket';
+            iconName = focused ? 'ios-basket' : 'ios-basket';
           } else if (route.name === 'Shared') {
-            iconName = focused ? 'share-social' : 'share-social-outline';
+            iconName = focused ? 'share-social' : 'share-social';
           } else if (route.name === 'Chat') {
             iconName = focused
               ? 'chatbubble-ellipses-sharp'
-              : 'chatbubble-ellipses-outline';
-          } else if (route.name === 'Friends') {
-            iconName = focused
-              ? 'notifications-sharp'
-              : 'notifications-outline';
+              : 'chatbubble-ellipses-sharp';
           }
-          return <Ionic name={iconName} size={size} color="white" />;
+          let iconSize = focused ? 30 : 23;
+
+          let iconColor = focused ? theme.basicText : theme.subText;
+          return <Ionic name={iconName} size={iconSize} color={iconColor} />;
         },
       })}>
-      <Tab.Screen name="Main" component={Main} />
-      <Tab.Screen name="Shared" component={Shared} />
-      <Tab.Screen name="Chat" component={Chat} />
-      <Tab.Screen name="Friends" component={Friends} />
+      <Tab.Screen
+        name="Main"
+        component={Main}
+        initialParams={props.route.params}
+      />
+      <Tab.Screen
+        name="Shared"
+        component={Shared}
+        initialParams={props.route.params}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={Chat}
+        initialParams={props.route.params}
+      />
     </Tab.Navigator>
   );
 };
 
 const App = () => {
-
-  return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{headerShown: false}}
-          initialRouteName="SignIn">
-          {/* <Stack.Screen name="Start" component={Start} /> */}
-          <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="Navigation" component={Navigation} />
-          <Stack.Screen name="Collection" component={Collection} />
-          {/* <Stack.Screen name="SharedCollection" component={SharedCollection} /> */}
-          {/* <Stack.Screen name="ChatRoom" component={ChatRoom} /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ThemeProvider>
-  );
+  
+  return(
+  <ThemeProvider theme={theme}>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName="SignIn">
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Navigation" component={Navigation} />
+        <Stack.Screen name="Collection" component={Collection} />
+        <Stack.Screen name="SharedCollection" component={SharedCollection} />
+        <Stack.Screen name="Share" component={Share} />
+        <Stack.Screen name="ChatRoom" component={ChatRoom} />
+        <Stack.Screen name="LiveChat" component={LiveChat} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </ThemeProvider>
+);
 };
 
 export default App;

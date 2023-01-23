@@ -1,21 +1,21 @@
-import Chat from './Chat';
-import Collection from './Collection';
-import Friends from './Friends';
-import ItemDetail from './ItemDetail';
-import Main from './Main';
-import Shared from './Shared';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import Start from './Start';
+import Main from './Main';
+import Collection from './Collection';
+import Shared from './Shared';
+import SharedCollection from './SharedCollection';
+import Chat from './Chat';
+import ChatRoom from './ChatRoom';
+import LiveChat from './LiveChat';
 
 export {
-  Chat,
-  Collection,
-  Friends,
-  ItemDetail,
-  Main,
-  Shared,
   SignIn,
   SignUp,
-  Start,
+  Main,
+  Collection,
+  Shared,
+  SharedCollection,
+  Chat,
+  ChatRoom,
+  LiveChat,
 };

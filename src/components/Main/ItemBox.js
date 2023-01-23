@@ -1,7 +1,14 @@
 import styled from 'styled-components';
-import React, {useRef} from 'react';
-import {TouchableOpacity, Animated, PanResponder} from 'react-native';
-import View from 'react-native-view';
+import React, {useRef, useState, useEffect} from 'react';
+import {
+  TouchableOpacity,
+  Animated,
+  PanResponder,
+  View,
+  TouchableHighlight,
+} from 'react-native';
+import {theme} from '../../theme';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
   padding: 10px;
@@ -14,7 +21,21 @@ const Container = styled(Animated.createAnimatedComponent(View))`
 `;
 
 const ItemImage = styled.Image`
-  background-color: ${({theme}) => theme.componentBackground};
+  background-color: ${({theme}) => theme.tintColorPink};
+  padding: 10px;
+  margin: 3px 3px 3px 3px;
+  width: 100px;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+  flex-wrap: wrap;
+  border-style: solid;
+  border: ${({theme}) => theme.line};
+`;
+
+const ItemView = styled.View`
+  background-color: ${({theme}) => theme.subBackground};
   padding: 10px;
   margin: 3px 3px 3px 3px;
   width: 100px;
@@ -67,7 +88,20 @@ const Row = styled.View`
   width: 80%;
 `;
 
-const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
+const ItemBox = ({
+  onPress,
+  onLongPress,
+  saleRate,
+  itemName,
+  itemPrice,
+  itemImage,
+  titleStyle,
+  imageStyle,
+  priceStyle,
+  isEditing,
+  itemId,
+  itemUrl,
+}) => {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
   const position = useRef(new Animated.ValueXY({x: 0, y: 0, z: 5})).current;
@@ -102,19 +136,75 @@ const ItemBox = ({onPress, saleRate, itemName, itemPrice, itemImage}) => {
     }),
   ).current;
 
-  //  State
+  _pressCheckButton = () => {
+    setIsChecked(!isChecked);
+    onPress();
+  };
+
+
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
-    <Container>
-      <TouchableOpacity onPress={onPress}>
-        <ItemImage source={{uri: itemImage}} />
-        <Row>
-          <Sale>{saleRate}</Sale>
-          <Price> {itemPrice} </Price>
-        </Row>
-        <Title>{itemName}</Title>
-      </TouchableOpacity>
-    </Container>
+    <View>
+      <TouchableHighlight
+        onPress={onPress}
+        style={{display: isEditing ? 'none' : 'flex'}}
+        onLongPress={onLongPress}>
+        <Container>
+          <ItemImage source={{uri: itemImage}} style={imageStyle} />
+          <Row>
+            <Sale style={priceStyle}>{saleRate}</Sale>
+            <Price style={titleStyle}> {itemPrice}원 </Price>
+          </Row>
+          <Title style={titleStyle}>{itemName}</Title>
+        </Container>
+      </TouchableHighlight>
+
+      <TouchableHighlight
+        onPress={_pressCheckButton}
+        style={{display: isEditing ? 'flex' : 'none'}}>
+        <Container>
+          <ItemView
+            style={{
+              backgroundColor: isChecked
+                ? theme.tintColorGreen
+                : theme.mainBackground,
+            }}>
+            <Feather
+              name="check"
+              size={40}
+              color={theme.basicText}
+              style={{
+                position: 'absolute',
+                display: isChecked ? 'flex' : 'none',
+                zIndex: 10,
+              }}
+            />
+            <ItemImage
+              source={{uri: itemImage}}
+              style={{opacity: isChecked ? 0.4 : 0.3, position: 'absolute'}}
+            />
+          </ItemView>
+          <Row>
+            <Sale
+              style={{
+                color: isChecked
+                  ? theme.tintColorPink
+                  : theme.tintcolorPalepink,
+              }}>
+              {saleRate}
+            </Sale>
+            <Price style={{color: isChecked ? theme.basicText : theme.subText}}>
+              {' '}
+              {itemPrice}원{' '}
+            </Price>
+          </Row>
+          <Title style={{color: isChecked ? theme.basicText : theme.subText}}>
+            {itemName}
+          </Title>
+        </Container>
+      </TouchableHighlight>
+    </View>
   );
 };
 

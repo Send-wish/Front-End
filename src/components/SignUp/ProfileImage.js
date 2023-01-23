@@ -8,22 +8,22 @@ import {theme} from '../../theme';
 const Container = styled.View`
   padding: 10px;
   margin: 1px 1px 3px 1px;
-  width: 120px;
+  width: 300px;
   height: 160px;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
+  border-radius: 35px;
 `;
 
 const SignUpImage = styled.Image`
   background-color: ${({theme}) => theme.componentBackground};
   padding: 10px;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   justify-content: center;
   align-items: center;
   margin-top: 70px;
-  border-radius: 30px;
+  border-radius: 33px;
   margin-bottom: 10px;
 `;
 
@@ -34,8 +34,8 @@ const Title = styled.Text`
   font-size: 20px;
   font-weight: bold;
   color: ${({theme}) => theme.basicText};
-  justify-content: center
-  align-items : center;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   height: 20px;
   flex-wrap: wrap;
@@ -50,11 +50,11 @@ const Row = styled.View`
 const ProfileImage = ({title, image, onPress}) => {
   return (
     <Container>
-      <SignUpImage source={{uri: image}} />
-      <TouchableOpacity onPress={onPress}>
-        <Row style={{marginBottom: 30}}>
-          <Title>{title}</Title>
-          <Feather name="edit-2" size={18} color={theme.basicText} />
+      <TouchableOpacity onPress={onPress} style={{width: '100%'}}>
+        <Row style={{marginBottom: 30, widht: '100%'}}>
+          {/* <Title>{title}</Title> */}
+          <SignUpImage source={{uri : image? image : null}} />
+          {/* <Feather name="edit-2" size={18} color={theme.basicText} /> */}
         </Row>
       </TouchableOpacity>
     </Container>
