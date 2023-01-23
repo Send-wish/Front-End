@@ -3,7 +3,7 @@ import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {theme} from '../../theme';
 import Entypo from 'react-native-vector-icons/Entypo';
-// check
+// check!
 const Container = styled.View`
   background-color: ${({theme}) => theme.componentBackground};
   margin: 6px 8px 0px 2px;
