@@ -26,26 +26,20 @@ import {
   CollectionCircle,
   ChartButton,
   ChartItemBox,
-} from "../components/ChatRoom";
-import Feather from "react-native-vector-icons/Feather";
-import Ionic from "react-native-vector-icons/Ionicons";
-import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
-import SockJS from "sockjs-client";
-import { Client } from "@stomp/stompjs";
-import * as encoding from "text-encoding";
-import Foundation from "react-native-vector-icons/Foundation";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { useFocusEffect } from "@react-navigation/native";
-import {
-  RTCView,
-  mediaDevices,
-  useParticipant,
-  MeetingProvider,
-  MeetingConsumer,
-} from "@videosdk.live/react-native-sdk";
-import VideosdkRPK from "../../VideosdkRPK";
-import { SCREEN_NAMES } from "../navigators/screenNames";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+  EditIcon,
+  AddButton,
+} from '../components/ChatRoom';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionic from 'react-native-vector-icons/Ionicons';
+import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import * as encoding from 'text-encoding';
+import Foundation from 'react-native-vector-icons/Foundation';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {Modal} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Container = styled.View`
   flex: 1;
@@ -299,10 +293,15 @@ const ChatRoom = ({ navigation, route }) => {
   const [chartModal, setChartModal] = useState(false);
   const [dataChart, setDataChart] = useState([]);
   const [chartItems, setChartItems] = useState([]);
+
+  const [addToShareCollection, setAddToShareCollection] = useState([]);
+  const length = 350;
+  const [isShareCollectionEditing, setIsShareCollectionEditing] = useState(false);
   const [isFriendSelected, setIsFriendSelected] = useState(false);
   const [friends, setFriends] = useState([]);
 
   const _connect = (roomId) => {
+
     client.current = new Client({
       brokerURL: "wss://api.sendwish.link:8081/ws",
       connectHeaders: {},
@@ -557,9 +556,56 @@ const ChatRoom = ({ navigation, route }) => {
       disposeVideoTrack();
     }
   };
+  const _addItemToShareCollection = async (collectionId, nickName) => {
+    setIsEditing(false);
+    try {
+      fetch('https://api.sendwish.link:8081/item/enrollment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          nickname: nickName,
+          collectionId: collectionId,
+          itemIdList: addToCollection,
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} 에러발생`);
+        }
+        _getCollections();
+        return response.json();
+      });
+    } catch (e) {
+      console.log('adding item to collection failed');
+    }
+  };
 
-  const _sharing = () => {
-    VideosdkRPK.startBroadcast();
+  const _pressTargetButton = (collectionId, collectionName, nickName) => {
+    setIsCollectionEditing(false);
+    // 콜렉션 수정중이 아닐 때,
+    if (!isCollectionEditing) {
+      if (isEditing) {
+        _addItemToCollection(collectionId, nickName);
+      } else {
+        setIsEditing(false);
+        navigation.navigate('Collection', {
+          collectionId: collectionId,
+          collectionName: collectionName,
+          nickName: nickName,
+        });
+      }
+    }
+  };
+
+  const _pressEditButton = () => {
+    if (isShareCollectionEditing) {
+      setIsShareCollectionEditing(false);
+    } else {
+      if (isEditing) {
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    }
   };
 
   return (
@@ -625,9 +671,9 @@ const ChatRoom = ({ navigation, route }) => {
       </UpperContainer>
 
       <CollectionContainer
-        style={{ display: isFolded ? "none" : "flex" }}
-        onBackdropPress={() => setIsFolded(!isFolded)}
-      >
+        style={{display: isFolded ? 'none' : 'flex'}}
+        onBackdropPress={() => setIsFolded(!isFolded)}>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -728,7 +774,8 @@ const ChatRoom = ({ navigation, route }) => {
               <ImageModalView>
                 <ChartImage
                   source={{
-                    uri: "https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966",
+
+                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
                   }}
                   // style={{width: length * 80 / 100}}
 
@@ -739,15 +786,15 @@ const ChatRoom = ({ navigation, route }) => {
                     color: theme.basicText,
                     marginTop: 10,
                     marginBottom: 10,
-                  }}
-                >
-                  {dataChart[0]?.category + " "}
-                  {dataChart[0]?.percentage + "%"}
+                  }}>
+                  {dataChart[0]?.category + ' '}
+                  {dataChart[0]?.percentage + '%'}
                 </Text>
 
                 <ChartImage
                   source={{
-                    uri: "https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966",
+                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+
                   }}
                   // style={{width: (length * dataChart[1]?.percentage) / 100}}
                 />
@@ -756,14 +803,14 @@ const ChatRoom = ({ navigation, route }) => {
                     color: theme.basicText,
                     marginTop: 10,
                     marginBottom: 10,
-                  }}
-                >
-                  {dataChart[1]?.category + " "}
-                  {dataChart[1]?.percentage + "%"}
+                  }}>
+                  {dataChart[1]?.category + ' '}
+                  {dataChart[1]?.percentage + '%'}
                 </Text>
                 <ChartImage
                   source={{
-                    uri: "https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966",
+                    uri: 'https://postfiles.pstatic.net/MjAyMzAxMjJfMjgz/MDAxNjc0MzkxMTE1MTg5.uF_FNBj0STqnVC7o7vZ41zieBXQ5F46bVkC0MZzwPHQg.geCzzmDljeZGhjfWBBL05uwe3isSGWWMSPta0zf9Gnsg.JPEG.okrldbs/IMG_0044.jpg?type=w966',
+
                   }}
                   // style={{width: (length * dataChart[2]?.percentage) / 100}}
                 />
@@ -772,15 +819,18 @@ const ChatRoom = ({ navigation, route }) => {
                     color: theme.basicText,
                     marginTop: 10,
                     marginBottom: 10,
-                  }}
-                >
-                  {dataChart[2]?.category + " "}
-                  {dataChart[2]?.percentage + "%"}
+                  }}>
+                  {dataChart[2]?.category + ' '}
+                  {dataChart[2]?.percentage + '%'}
                 </Text>
               </ImageModalView>
-              <Text style={{ color: theme.tintColorGreen }}>
+              <Row>
+              <Text style={{color: theme.tintColorGreen}}>
+
                 친구가 가장 선호하는 {dataChart[0]?.category} 카테고리의 상품들
               </Text>
+              <EditIcon onPress={() => _pressEditButton()} name={'edit-2'} />
+              </Row>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -805,12 +855,20 @@ const ChatRoom = ({ navigation, route }) => {
                       />
                     ))}
               </ScrollView>
+              <Row>
+              <AddButton
+                title={'추가하기'}
+                onPress={() => {
+                  setChartModal(false), setChartItems([]);
+                }}
+              />
               <ChartButton
                 title={"닫기"}
                 onPress={() => {
                   setChartModal(false), setChartItems([]);
                 }}
               />
+              </Row>
             </ChartModalView>
           </Modal>
           <View style={{ marginLeft: -30 }}>
