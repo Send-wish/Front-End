@@ -117,16 +117,6 @@ const ChartItemBox = ({
         onLongPress={onLongPress}>
         <Container>
           <ItemImage source={{uri: itemImage}} style={imageStyle} />
-          <Feather
-              name="check"
-              size={40}
-              color={theme.basicText}
-              style={{
-                position: 'absolute',
-                display: isChecked ? 'flex' : 'none',
-                zIndex: 10,
-              }}
-            />
           <Row>
             <Sale style={priceStyle}>{saleRate}</Sale>
             <Price style={titleStyle}> {itemPrice}원 </Price>
