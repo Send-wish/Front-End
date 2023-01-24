@@ -303,11 +303,12 @@ const ChatRoom = ({navigation, route}) => {
     {category: '', percentage: 1, itemDtos: []},
     {category: '', percentage: 1, itemDtos: []},
   ]);
-  const [chartItems, setChartItems] = useState([]);
+  const [chartItems, setChartItems] = useState([{dtos: {}}]);
   const [addToShareCollection, setAddToShareCollection] = useState([]);
-  const length = 350;
+  const length = 330;
   const [isShareCollectionEditing, setIsShareCollectionEditing] =
     useState(false);
+  const [got, setGot] = useState(false);
 
   const _connect = roomId => {
     client.current = new Client({
@@ -474,6 +475,7 @@ const ChatRoom = ({navigation, route}) => {
   };
 
   const _getChart = async friendName => {
+    console.log('friendName is : ', friendName);
     try {
       fetch(
         `https://api.sendwish.link:8081/items/category/rank/${friendName}`,
@@ -487,6 +489,10 @@ const ChatRoom = ({navigation, route}) => {
         })
         .then(data => {
           console.log('data ', data);
+          if (data.length > 0) {
+            setChartItems(data[0].itemDtos);
+          }
+
           let tempDataChart = data;
           console.log('tempDataChart.length is :', tempDataChart.length);
 
@@ -494,13 +500,15 @@ const ChatRoom = ({navigation, route}) => {
             tempDataChart.push({category: '', percentage: 1, itemDtos: []});
           }
           console.log('tempDataChart is :', tempDataChart);
-
           setDataChart(tempDataChart);
-          setChartItems(dataChart[0].itemDtos);
         });
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const _pressFriend = friend => {
+    _getChart(friend).then(setChartModal(!chartModal));
   };
 
   const _addItemToShareCollection = async (nickName, shareCollectionId) => {
@@ -742,7 +750,7 @@ const ChatRoom = ({navigation, route}) => {
                   image={friend?.friend_img}
                   onPress={() => {
                     friendName = friend.friend_nickname;
-                    setChartModal(!chartModal), _getChart(friendName);
+                    _pressFriend(friend.friend_nickname);
                   }}
                 />
               ))}
@@ -758,7 +766,7 @@ const ChatRoom = ({navigation, route}) => {
             <View
               style={{flexDirection: 'row', marginBottom: 13, marginLeft: 10}}>
               <Text style={{color: theme.basicText, fontSize: 19}}>
-                친구가 선호하는 상품 카테고리
+                친구가 선호하는 아이템 카테고리
               </Text>
             </View>
             <View
@@ -929,8 +937,10 @@ const ChatRoom = ({navigation, route}) => {
             <Row style={{width: '100%'}}>
               <Text style={{color: theme.basicText, fontSize: 19}}>
                 친구가 담은
-                {dataChart[0].category ? dataChart[0].category : ''} 카테고리의
-                상품
+                <Text style={{color: theme.tintColorPink, fontSize: 19}}>
+                  {dataChart[0].category ? ' ' + dataChart[0].category : ''}
+                </Text>{' '}
+                카테고리의 상품
               </Text>
               <EditIcon
                 onPress={() => setIsItemSelected(!isItemSelected)}
