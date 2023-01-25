@@ -314,6 +314,8 @@ const ChatRoom = ({navigation, route}) => {
   const [isShareCollectionEditing, setIsShareCollectionEditing] =
     useState(false);
   const [isVoteVisible, setIsVoteVisible] = useState(false);
+  const [likeNumber, setLikeNumber] = useState(0);
+
 
   const _connect = (roomId, nickName, itemId, isLike) => {
     client.current = new Client({
@@ -826,6 +828,7 @@ const ChatRoom = ({navigation, route}) => {
             onPress={_publishVote}
             friendList={friendList}
             friends={friends}
+            likeNumber = {likeNumber}
           />
         </ChartModalView>
       </Modal>
@@ -1174,24 +1177,23 @@ const ChatRoom = ({navigation, route}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginRight: 13,
-                paddingBottom: 5,
                 marginLeft: 5,
                 backgroundColor: theme.tintColorGreen,
               }}>
-              <MaterialIcons
-                name="live-tv"
-                size={27}
+              <FontAwesome
+                name="microphone"
+                size={25}
                 color={theme.mainBackground}
-                onPress={() => {
-                  navigation.navigate('LiveChat', {
-                    shareCollectionId: shareCollectionId,
-                    nickName: nickName,
-                    shareCollectionName: shareCollectionTitle,
-                    chatRoomId: chatRoomId,
-                    friendList: friendList,
-                    screen: screen,
-                  });
-                }}
+                // onPress={() => {
+                //   navigation.navigate('LiveChat', {
+                //     shareCollectionId: shareCollectionId,
+                //     nickName: nickName,
+                //     shareCollectionName: shareCollectionTitle,
+                //     chatRoomId: chatRoomId,
+                //     friendList: friendList,
+                //     screen: screen,
+                //   });
+                // }}
               />
             </View>
             <InputContainer>
