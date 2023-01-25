@@ -289,7 +289,8 @@ const TimerItemBox = ({
   };
 
   const _disconnect = () => {
-    // console.log('here is disconnect!');
+    console.log('here is disconnect!');
+    _publishVoteExit(chatRoomId, nickName);
     client.current.deactivate();
   };
 
@@ -345,6 +346,21 @@ const TimerItemBox = ({
     }
     client.current.publish({
       destination: '/pub/vote/enter',
+      body: JSON.stringify({
+        roomId: roomId,
+        nickname: nickName,
+      }),
+    });
+  };
+
+  const _publishVoteExit = (roomId, nickName) => {
+    console.log('voteEnter : here is publish');
+
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/vote/exit',
       body: JSON.stringify({
         roomId: roomId,
         nickname: nickName,
@@ -454,7 +470,7 @@ const TimerItemBox = ({
               {' '}
               {nickName}{' '}
             </Text>
-            님 포함 {friendList.length}명 중{' '}
+            님의 친구 {friendList.length - 1}명 중{' '}
             <Text style={{fontSize: 18, color: theme.tintColorPink}}>
               {_friends.length}명
             </Text>
@@ -637,7 +653,7 @@ const TimerItemBox = ({
       </View>
     );
   } else {
-    _startVote()
+    _startVote();
     return (
       <View
         style={{
