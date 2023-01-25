@@ -11,5 +11,8 @@ import ChartButton from './ChartButton';
 import ChartItemBox from './ChartItemBox';
 import EditIcon from './EditIcon';
 import AddButton from './AddButton';
+import VoteItemBox from './VoteItemBox';
+import VoteButton from './VoteButton'
+import TimerItemBox from './TimerItemBox'
 
-export {Input, MySaying, OthersSaying, ItemBox, MySayingItem, OthersSayingItem, Button, AddCollectionCircle, CollectionCircle, ChartButton, ChartItemBox, EditIcon, AddButton};
+export {Input, MySaying, OthersSaying, ItemBox, MySayingItem, OthersSayingItem, Button, AddCollectionCircle, CollectionCircle, ChartButton, ChartItemBox, EditIcon, AddButton, VoteItemBox, VoteButton, TimerItemBox};

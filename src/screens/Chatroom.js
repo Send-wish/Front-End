@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -27,6 +28,9 @@ import {
   ChartItemBox,
   EditIcon,
   AddButton,
+  VoteItemBox,
+  VoteButton,
+  TimerItemBox,
 } from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -39,6 +43,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Modal} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {set} from 'immer/dist/internal';
 
 const Container = styled.View`
   flex: 1;
@@ -308,9 +313,9 @@ const ChatRoom = ({navigation, route}) => {
   const length = 330;
   const [isShareCollectionEditing, setIsShareCollectionEditing] =
     useState(false);
-  const [got, setGot] = useState(false);
+  const [isVoteVisible, setIsVoteVisible] = useState(false);
 
-  const _connect = roomId => {
+  const _connect = (roomId, nickName, itemId, isLike) => {
     client.current = new Client({
       brokerURL: 'wss://api.sendwish.link:8081/ws',
       connectHeaders: {},
@@ -324,6 +329,8 @@ const ChatRoom = ({navigation, route}) => {
       },
       onConnect: () => {
         _subscribe(roomId);
+        // _subscribeVoteEnter(roomId, nickName);
+        // _subscribeVote(roomId, nickName, itemId, isLike);
         // console.log('connected!');
       },
       onStompError: frame => {
@@ -368,7 +375,7 @@ const ChatRoom = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    _connect(chatRoomId);
+    _connect(chatRoomId, nickName);
     return () => _disconnect();
   }, []);
 
@@ -576,13 +583,47 @@ const ChatRoom = ({navigation, route}) => {
       console.log('items delete fail', e);
     }
   };
+
+  const _publishVote = (chatRoomId, nickName, itemId, isLike) => {
+    console.log('vote : here is publish');
+
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/vote',
+      body: JSON.stringify({
+        roomId: chatRoomId,
+        nickname: nickName,
+        itemId: itemId,
+        isLike: isLike,
+      }),
+    });
+  };
+
+  const _publishVoteEnter = (roomId, nickName) => {
+    console.log('voteEnter : here is publish');
+
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/vote/enter',
+      body: JSON.stringify({
+        roomId: roomId,
+        nickname: nickName,
+      }),
+    });
+  };
+
+  // chatRoom 리턴
   return (
     <Container insets={insets}>
       <View
         style={{
           display: isMenuVisible ? 'flex' : 'none',
           position: 'absolute',
-          height: 90,
+          height: 135,
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
@@ -601,11 +642,19 @@ const ChatRoom = ({navigation, route}) => {
           }}
         />
         <Button
-          title={'친구 목록 보기'}
+          title={'내 친구 전체 목록'}
           onPress={() => {
             setIsFolded(true);
             setIsMenuVisible(false);
             setIsFriendSelected(true);
+          }}
+        />
+        <Button
+          title={'투표하기'}
+          onPress={() => {
+            setIsFolded(true);
+            setIsMenuVisible(false);
+            setIsVoteVisible(true);
           }}
         />
       </View>
@@ -758,15 +807,46 @@ const ChatRoom = ({navigation, route}) => {
         <LineIcon />
       </CollectionContainer>
 
+      {/* 투표 모달 */}
+      <Modal visible={isVoteVisible}>
+        <ChartModalView insets={insets} style={{justifyContent: 'flex-start'}}>
+          <View style={{width: '100%', marginRight: 20}}>
+            <Ionic
+              name="chevron-back"
+              size={25}
+              color={theme.basicText}
+              onPress={() => setIsVoteVisible(false)}
+            />
+          </View>
+
+          <TimerItemBox
+            nickName={nickName}
+            chatRoomId={chatRoomId}
+            items={items}
+            onPress={_publishVote}
+            friendList={friendList}
+            friends = {friends}
+          />
+        </ChartModalView>
+      </Modal>
+
       {/* 차트 모달 */}
       <Modal visible={chartModal}>
         <ChartModalView insets={insets}>
           <ImageModalView>
             {/* 카테고리 순위 */}
-            <View
-              style={{flexDirection: 'row', marginBottom: 13, marginLeft: 10}}>
+            <View style={{marginBottom: 13, marginLeft: 10}}>
               <Text style={{color: theme.basicText, fontSize: 19}}>
                 친구가 선호하는 아이템 카테고리
+              </Text>
+              <Text
+                style={{
+                  color: theme.subText,
+                  fontSize: 14,
+                  marginTop: 5,
+                  fontWeight: 'bold',
+                }}>
+                SendWish가 자동으로 카테고리를 생성해서 분류했어요.
               </Text>
             </View>
             <View
@@ -929,7 +1009,6 @@ const ChatRoom = ({navigation, route}) => {
           </ImageModalView>
           <View
             style={{
-              alignItems: 'flex-end',
               width: '100%',
               marginTop: 30,
               marginLeft: 15,
@@ -937,16 +1016,25 @@ const ChatRoom = ({navigation, route}) => {
             <Row style={{width: '100%'}}>
               <Text style={{color: theme.basicText, fontSize: 19}}>
                 친구가 담은
-                <Text style={{color: theme.tintColorPink, fontSize: 19}}>
+                <Text style={{color: theme.tintColorGreen, fontSize: 19}}>
                   {dataChart[0].category ? ' ' + dataChart[0].category : ''}
                 </Text>{' '}
-                카테고리의 상품
+                카테고리의 아이템
               </Text>
               <EditIcon
                 onPress={() => setIsItemSelected(!isItemSelected)}
                 name={isItemSelected ? 'x' : 'edit-2'}
               />
             </Row>
+            <Text
+              style={{
+                color: theme.subText,
+                fontSize: 14,
+                marginTop: 5,
+                fontWeight: 'bold',
+              }}>
+              1위 카테고리 중 친구가 담은 아이템이랍니다.
+            </Text>
           </View>
 
           <View
@@ -961,7 +1049,7 @@ const ChatRoom = ({navigation, route}) => {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{width: '95%'}}>
+              style={{width: '93%'}}>
               {chartItems.map(chartitem => (
                 <ChartItemBox
                   key={chartitem?.itemId}
@@ -996,18 +1084,10 @@ const ChatRoom = ({navigation, route}) => {
                   _addItemToShareCollection(nickName, shareCollectionId);
               }}
             />
-            <ChartButton
-              title={'닫기'}
-              onPress={() => {
-                setIsItemSelected(false),
-                  setChartModal(false),
-                  setChartItems([]),
-                  setAddToShareCollection([]);
-              }}
-            />
           </View>
         </ChartModalView>
       </Modal>
+
       <View style={{marginLeft: -30}}>
         <View
           style={{
