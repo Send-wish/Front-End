@@ -260,7 +260,7 @@ const TimerItemBox = ({
 }) => {
   const [index, setIndex] = useState(0);
   const [tempIndex, setTempIndex] = useState(0);
-  const [leftSecond, setLeftSecond] = useState(5);
+  const [leftSecond, setLeftSecond] = useState(3);
   const [message, setMessage] = useState('');
   const [like, setLike] = useState(0);
   const [isMessageVisible, setIsMessageVisible] = useState(0);
@@ -314,6 +314,8 @@ const TimerItemBox = ({
     });
   };
 
+  console.log(_items);
+
   const _subscribeVoteEnter = roomId => {
     client.current.subscribe('/sub/vote/enter/' + roomId, msg => {
       let tempParticipants = JSON.parse(msg.body);
@@ -356,26 +358,6 @@ const TimerItemBox = ({
   }, []);
 
   useEffect(() => {
-    if (tempIndex === items?.length) {
-      return () => {
-        clearTimeout(indexTimer);
-        clearTimeout(leftSecondTimer);
-        clearTimeout(tempIndexTimer);
-      };
-    }
-    let indexTimer = setTimeout(
-      () => (index === items?.length - 1 ? null : setIndex(index + 1)),
-      5000,
-    );
-    let tempIndexTimer = setTimeout(() => setTempIndex(index + 1), 5000);
-    let leftSecondTimer = setTimeout(
-      () =>
-        leftSecond === 1 ? setLeftSecond(5) : setLeftSecond(leftSecond - 1),
-      1000,
-    );
-  });
-
-  useEffect(() => {
     setIsMessageVisible(false);
   }, [tempIndex]);
 
@@ -399,7 +381,30 @@ const TimerItemBox = ({
     onPress(chatRoomId, nickName, items[index].itemId, false);
   };
 
-  if (voteParticipants?.length !== friendList?.length)
+  const _startVote = () => {
+    if (tempIndex === items?.length) {
+      return () => {
+        clearTimeout(indexTimer);
+        clearTimeout(leftSecondTimer);
+        clearTimeout(tempIndexTimer);
+      };
+    }
+    let indexTimer = setTimeout(
+      () => (index === items?.length - 1 ? null : setIndex(index + 1)),
+      3000,
+    );
+    let tempIndexTimer = setTimeout(() => setTempIndex(index + 1), 3000);
+    let leftSecondTimer = setTimeout(
+      () =>
+        leftSecond === 1 ? setLeftSecond(3) : setLeftSecond(leftSecond - 1),
+      1000,
+    );
+  };
+
+  console.log('friendList is ', friendList);
+  console.log('voteParticipants is ', voteParticipants);
+
+  if (voteParticipants?.length < friendList?.length)
     return (
       <View
         style={{
@@ -444,8 +449,16 @@ const TimerItemBox = ({
               marginBottom: 10,
             }}>
             {' '}
-            (<Text style={{color: theme.basicText, fontSize : 18}}> {nickName} </Text>님의
-            친구 {friendList.length}명 중 <Text style= {{fontSize : 18, color : theme.tintColorPink}}>{_friends.length}명</Text>이 참여했어요! )
+            (
+            <Text style={{color: theme.basicText, fontSize: 18}}>
+              {' '}
+              {nickName}{' '}
+            </Text>
+            님 포함 {friendList.length}명 중{' '}
+            <Text style={{fontSize: 18, color: theme.tintColorPink}}>
+              {_friends.length}명
+            </Text>
+            이 참여했어요! )
           </Text>
         </View>
         <View
@@ -472,7 +485,7 @@ const TimerItemBox = ({
         </View>
       </View>
     );
-  else if (tempIndex === items?.length)
+  else if (tempIndex === items?.length) {
     return (
       <View
         style={{
@@ -623,7 +636,8 @@ const TimerItemBox = ({
         </View>
       </View>
     );
-  else
+  } else {
+    _startVote()
     return (
       <View
         style={{
@@ -747,6 +761,7 @@ const TimerItemBox = ({
         </View>
       </View>
     );
+  }
 };
 
 export default TimerItemBox;
