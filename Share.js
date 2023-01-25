@@ -270,9 +270,9 @@ const Share = () => {
   const [shareCollections, setShareCollections] = useState([]);
   const [sharedUrl, setSharedUrl] = useState('');
 
-  const loadUsernameFromSharedStorage = async () => {
+  const loadUsernameFromSharedStorage =  () => {
     try {
-      const value = await SharedGroupPreferences.getItem(
+      const value =  SharedGroupPreferences.getItem(
         'nickNameData',
         appGroupIdentifier,
       );
