@@ -10,7 +10,7 @@ const Container = styled.View`
   align-items: center;
   border-radius: 10px;
   padding: 5px;
-  margin-top: 5%;
+  margin-top: 3%;
   border-color: ${({theme}) => theme.componentBackground};
 `;
 
