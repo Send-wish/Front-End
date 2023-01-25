@@ -19,6 +19,15 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
+// lazy loading
+import {Component} from 'react-native';
+
+import {
+  LazyloadScrollView,
+  LazyloadView,
+  LazyloadImage,
+} from 'react-native-lazyload';
+
 // 메인 컨테이너
 const Container = styled.View`
   flex: 1;
@@ -120,6 +129,9 @@ const Main = ({navigation, route}) => {
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const lazyItems = [...items];
+  let start = ~~(Math.random() * 900);
+  let list = items.splice(start, 100);
 
   // 아이템 추가 자동 렌더링
   useEffect(() => {
@@ -310,7 +322,6 @@ const Main = ({navigation, route}) => {
         })
         .then(data => {
           setItems(data);
-          // console.log('__________get_____________');
         });
     } catch (e) {
       console.log(e);
@@ -434,6 +445,7 @@ const Main = ({navigation, route}) => {
       _deleteCollection(collectionId, nickName);
     }
   };
+
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
@@ -578,9 +590,11 @@ const Main = ({navigation, route}) => {
             ? theme.strongBackground
             : theme.subBackground,
         }}>
-        <ScrollView scrollEnabled={true}>
+        <LazyloadScrollView name="lazyLoad">
+          {/* <ScrollView scrollEnabled={true}> */}
           <Column>
             <SpackBetweenRow>
+              {/* <LazyloadView host="LazyLoad" style={{marginBottom: 10}}> */}
               <View style={{marginBottom: 10}}>
                 <Title
                   style={{
@@ -595,6 +609,7 @@ const Main = ({navigation, route}) => {
                   총 {items.length}개의 아이템을 컬렉션에 담아주세요 !
                 </SubTitle>
               </View>
+              {/* </LazyloadView> */}
               <Row>
                 {/* <SearchIcon
                   style={{
@@ -611,43 +626,47 @@ const Main = ({navigation, route}) => {
           </Column>
           <FlexRow>
             {/* item rendering  */}
-            {items.error
+            {lazyItems.error
               ? null
-              : items.map(item => (
-                  <ItemBox
-                    onLongPress={() => {
-                      _pressEditButton();
-                    }}
-                    imageStyle={{
-                      opacity: isEditing ? 0.1 : 1,
-                    }}
-                    titleStyle={{
-                      color: isEditing ? theme.subText : theme.basicText,
-                    }}
-                    priceStyle={{
-                      color: isEditing
-                        ? theme.tintcolorPalepink
-                        : theme.tintColorPink,
-                    }}
-                    key={item?.itemId}
-                    saleRate="가격"
-                    itemName={item?.name}
-                    itemPrice={new String(item?.price).replace(
-                      /\B(?=(\d{3})+(?!\d))/g,
-                      ',',
-                    )}
-                    itemImage={item?.imgUrl}
-                    itemId={item?.itemId}
-                    onPress={() => {
-                      isEditing
-                        ? _addItemToList(item?.itemId)
-                        : _openUrl(item?.originUrl);
-                    }}
-                    isEditing={isEditing}
-                  />
+              : lazyItems.map((item, i) => (
+                  // <LazyloadView host="LazyLoad" key={i}>
+                    <ItemBox
+                      onLongPress={() => {
+                        _pressEditButton();
+                      }}
+                      imageStyle={{
+                        opacity: isEditing ? 0.1 : 1,
+                      }}
+                      titleStyle={{
+                        color: isEditing ? theme.subText : theme.basicText,
+                      }}
+                      priceStyle={{
+                        color: isEditing
+                          ? theme.tintcolorPalepink
+                          : theme.tintColorPink,
+                      }}
+                      key={item?.itemId}
+                      saleRate="가격"
+                      itemName={item?.name}
+                      itemPrice={new String(item?.price).replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ',',
+                      )}
+                      itemImage={item?.imgUrl}
+                      itemId={item?.itemId}
+                      onPress={() => {
+                        isEditing
+                          ? _addItemToList(item?.itemId)
+                          : _openUrl(item?.originUrl);
+                      }}
+                      isEditing={isEditing}
+                      host="LazyLoad"
+                    />
+                  // </LazyloadView>
                 ))}
           </FlexRow>
-        </ScrollView>
+          {/* </ScrollView> */}
+        </LazyloadScrollView>
       </BottomContainer>
 
       <View

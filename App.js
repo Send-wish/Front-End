@@ -26,7 +26,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Use Icons
 import Ionic from 'react-native-vector-icons/Ionicons';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
+const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -86,27 +88,31 @@ const Navigation = props => {
 };
 
 const App = () => {
-  
-  return(
-  <ThemeProvider theme={theme}>
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="SignIn">
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Navigation" component={Navigation} />
-        <Stack.Screen name="Collection" component={Collection} />
-        <Stack.Screen name="SharedCollection" component={SharedCollection} />
-        <Stack.Screen name="Share" component={Share} />
-        <Stack.Screen name="ChatRoom" component={ChatRoom} />
-        <Stack.Screen name="LiveChat" component={LiveChat} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  </ThemeProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}
+            initialRouteName="SignIn">
+            <Stack.Screen name="SignIn" component={SignIn} />
+            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="Navigation" component={Navigation} />
+            <Stack.Screen name="Collection" component={Collection} />
+            <Stack.Screen
+              name="SharedCollection"
+              component={SharedCollection}
+            />
+            <Stack.Screen name="Share" component={Share} />
+            <Stack.Screen name="ChatRoom" component={ChatRoom} />
+            <Stack.Screen name="LiveChat" component={LiveChat} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 };
 
 export default App;

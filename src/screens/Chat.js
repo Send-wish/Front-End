@@ -339,6 +339,7 @@ const Chat = ({route, navigation}) => {
         })
         .then(data => {
           data.error ? null : setChatRoomList(data)
+          console.log('채팅목록내놔!',data);
         });
     } catch (e) {
       console.log(e);
