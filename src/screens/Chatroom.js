@@ -825,7 +825,7 @@ const ChatRoom = ({navigation, route}) => {
             items={items}
             onPress={_publishVote}
             friendList={friendList}
-            friends = {friends}
+            friends={friends}
           />
         </ChartModalView>
       </Modal>
@@ -930,6 +930,8 @@ const ChatRoom = ({navigation, route}) => {
                     color: theme.mainBackground,
                     fontSize: 15,
                     fontWeight: 'bold',
+                    justifyContent: 'center',
+                    alignItems : 'center'
                   }}>
                   {dataChart[1].category
                     ? dataChart[1].category
@@ -1013,12 +1015,10 @@ const ChatRoom = ({navigation, route}) => {
               marginTop: 30,
               marginLeft: 15,
             }}>
-            <Row style={{width: '100%'}}>
+            <Row>
               <Text style={{color: theme.basicText, fontSize: 19}}>
-                친구가 담은
-                <Text style={{color: theme.tintColorGreen, fontSize: 19}}>
-                  {dataChart[0].category ? ' ' + dataChart[0].category : ''}
-                </Text>{' '}
+                친구가 담은{' '}
+                {dataChart[0].category ? ' ' + dataChart[0].category : ''}
                 카테고리의 아이템
               </Text>
               <EditIcon

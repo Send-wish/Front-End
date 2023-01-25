@@ -314,6 +314,8 @@ const TimerItemBox = ({
     });
   };
 
+  console.log(_items);
+
   const _subscribeVoteEnter = roomId => {
     client.current.subscribe('/sub/vote/enter/' + roomId, msg => {
       let tempParticipants = JSON.parse(msg.body);
@@ -399,7 +401,7 @@ const TimerItemBox = ({
     onPress(chatRoomId, nickName, items[index].itemId, false);
   };
 
-  if (voteParticipants?.length !== friendList?.length)
+  if (voteParticipants?.length === friendList?.length)
     return (
       <View
         style={{
@@ -444,8 +446,16 @@ const TimerItemBox = ({
               marginBottom: 10,
             }}>
             {' '}
-            (<Text style={{color: theme.basicText, fontSize : 18}}> {nickName} </Text>님의
-            친구 {friendList.length}명 중 <Text style= {{fontSize : 18, color : theme.tintColorPink}}>{_friends.length}명</Text>이 참여했어요! )
+            (
+            <Text style={{color: theme.basicText, fontSize: 18}}>
+              {' '}
+              {nickName}{' '}
+            </Text>
+            님의 친구 {friendList.length}명 중{' '}
+            <Text style={{fontSize: 18, color: theme.tintColorPink}}>
+              {_friends.length}명
+            </Text>
+            이 참여했어요! )
           </Text>
         </View>
         <View
