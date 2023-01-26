@@ -209,7 +209,7 @@ const Shared = ({route, navigation}) => {
     }
   }, [{getShareCollection}?.getShareCollection]);
 
-    // 아이템 렌더
+    // 친구목록 렌더
     const {data:queryFriends} = useQuery(
       ['queryFriends', nickName],
       () => _getFriends(nickName),

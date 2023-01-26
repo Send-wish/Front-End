@@ -6,6 +6,7 @@ import _getShareCollectionItems from "./getShareCollectionItems";
 import _getShareCollections from "./getShareCollection";
 
 import _getFriends from "./getFriends";
+import _getChatList from "./getChatList";
 
 export default {
     _getItems,
@@ -14,4 +15,5 @@ export default {
     _getShareCollectionItems,
     _getShareCollections,
     _getFriends,
+    _getChatList,
 };
