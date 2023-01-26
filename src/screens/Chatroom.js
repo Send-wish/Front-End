@@ -314,6 +314,8 @@ const ChatRoom = ({navigation, route}) => {
   const [isShareCollectionEditing, setIsShareCollectionEditing] =
     useState(false);
   const [isVoteVisible, setIsVoteVisible] = useState(false);
+  const [likeNumber, setLikeNumber] = useState(0);
+
 
   const _connect = (roomId, nickName, itemId, isLike) => {
     client.current = new Client({
@@ -825,7 +827,8 @@ const ChatRoom = ({navigation, route}) => {
             items={items}
             onPress={_publishVote}
             friendList={friendList}
-            friends = {friends}
+            friends={friends}
+            likeNumber = {likeNumber}
           />
         </ChartModalView>
       </Modal>
@@ -835,8 +838,8 @@ const ChatRoom = ({navigation, route}) => {
         <ChartModalView insets={insets}>
           <ImageModalView>
             {/* 카테고리 순위 */}
-            <View style={{marginBottom: 13, marginLeft: 10}}>
-              <Text style={{color: theme.basicText, fontSize: 19}}>
+            <View style={{marginBottom: 13, marginLeft: 10, marginTop : 29}}>
+              <Text style={{color: theme.basicText, fontSize: 19, fontWeight : 'bold'}}>
                 친구가 선호하는 아이템 카테고리
               </Text>
               <Text
@@ -887,7 +890,7 @@ const ChatRoom = ({navigation, route}) => {
                     fontWeight: 'bold',
                   }}>
                   {dataChart[0].category
-                    ? dataChart[0].category
+                    ? dataChart[0].category.replace('\n', '')
                     : '담은 아이템이 없어요 '}
                 </Text>
                 <Text
@@ -930,9 +933,11 @@ const ChatRoom = ({navigation, route}) => {
                     color: theme.mainBackground,
                     fontSize: 15,
                     fontWeight: 'bold',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
                   {dataChart[1].category
-                    ? dataChart[1].category
+                    ? dataChart[1].category.replace('\n', '')
                     : '담은 아이템이 없어요 '}
                 </Text>
                 <Text
@@ -981,7 +986,7 @@ const ChatRoom = ({navigation, route}) => {
                     fontWeight: 'bold',
                   }}>
                   {dataChart[2].category
-                    ? dataChart[2].category
+                    ? dataChart[2].category.replace('\n', '')
                     : '담은 아이템이 없어요 '}
                 </Text>
                 <Text
@@ -1013,12 +1018,19 @@ const ChatRoom = ({navigation, route}) => {
               marginTop: 30,
               marginLeft: 15,
             }}>
-            <Row style={{width: '100%'}}>
-              <Text style={{color: theme.basicText, fontSize: 19}}>
-                친구가 담은
-                <Text style={{color: theme.tintColorGreen, fontSize: 19}}>
-                  {dataChart[0].category ? ' ' + dataChart[0].category : ''}
-                </Text>{' '}
+            <Row>
+              <Text
+                style={{
+                  color: theme.basicText,
+                  fontSize: 19,
+                  fontWeight: 'bold',
+                }}>
+                친구가 담은{' '}
+                <Text style={{color: theme.tintColorPink, fontSize: 19}}>
+                  {dataChart[0].category
+                    ? ' ' + dataChart[0].category.replace('\n', '') + ' '
+                    : ''}
+                </Text>
                 카테고리의 아이템
               </Text>
               <EditIcon
@@ -1082,6 +1094,15 @@ const ChatRoom = ({navigation, route}) => {
                   setIsItemSelected(false),
                   setChartItems([]),
                   _addItemToShareCollection(nickName, shareCollectionId);
+              }}
+            />
+            <ChartButton
+              title={'닫기'}
+              onPress={() => {
+                setIsItemSelected(false),
+                  setChartModal(false),
+                  setChartItems([]),
+                  setAddToShareCollection([]);
               }}
             />
           </View>
@@ -1156,24 +1177,23 @@ const ChatRoom = ({navigation, route}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginRight: 13,
-                paddingBottom: 5,
                 marginLeft: 5,
                 backgroundColor: theme.tintColorGreen,
               }}>
-              <MaterialIcons
-                name="live-tv"
-                size={27}
+              <FontAwesome
+                name="microphone"
+                size={25}
                 color={theme.mainBackground}
-                onPress={() => {
-                  navigation.navigate('LiveChat', {
-                    shareCollectionId: shareCollectionId,
-                    nickName: nickName,
-                    shareCollectionName: shareCollectionTitle,
-                    chatRoomId: chatRoomId,
-                    friendList: friendList,
-                    screen: screen,
-                  });
-                }}
+                // onPress={() => {
+                //   navigation.navigate('LiveChat', {
+                //     shareCollectionId: shareCollectionId,
+                //     nickName: nickName,
+                //     shareCollectionName: shareCollectionTitle,
+                //     chatRoomId: chatRoomId,
+                //     friendList: friendList,
+                //     screen: screen,
+                //   });
+                // }}
               />
             </View>
             <InputContainer>

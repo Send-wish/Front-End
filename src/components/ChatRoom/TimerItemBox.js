@@ -5,6 +5,7 @@ import {theme} from '../../theme';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const FriendsContainer = styled.View`
   padding: 10px;
@@ -118,9 +119,9 @@ const Row = styled.View`
   width: 80%;
 `;
 
-const VoteItemBox = ({saleRate, itemName, itemPrice, itemImage}) => {
+const VoteItemBox = ({saleRate, itemName, itemPrice, itemImage, like}) => {
   return (
-    <View>
+    <View style={{alignItems: 'flex-end'}}>
       <Container>
         <ItemImage source={{uri: itemImage}} />
         <Row>
@@ -257,6 +258,7 @@ const TimerItemBox = ({
   onPress,
   friendList,
   friends,
+  likeNumber,
 }) => {
   const [index, setIndex] = useState(0);
   const [tempIndex, setTempIndex] = useState(0);
@@ -270,6 +272,7 @@ const TimerItemBox = ({
   const [voteParticipants, setVoteParticipants] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
   const [_friends, _setFriends] = useState([]);
+  const [_likeNumber, _setLikeNumber] = useState(likeNumber);
 
   const _connect = (roomId, nickName, itemId, isLike) => {
     client.current = new Client({
@@ -289,7 +292,8 @@ const TimerItemBox = ({
   };
 
   const _disconnect = () => {
-    // console.log('here is disconnect!');
+    console.log('here is disconnect!');
+    _publishVoteExit(chatRoomId, nickName);
     client.current.deactivate();
   };
 
@@ -298,6 +302,7 @@ const TimerItemBox = ({
       console.log('vote : connected! and subscribed!');
       console.log('msg.body', msg.body);
       let tempArray = JSON.parse(msg.body);
+      _setLikeNumber(tempArray.like);
       let tempList = _items;
       for (let i = 0; i < tempList.length; i++) {
         if (tempList[i].itemId === tempArray.itemId) {
@@ -350,30 +355,25 @@ const TimerItemBox = ({
     });
   };
 
+  const _publishVoteExit = (roomId, nickName) => {
+    console.log('voteEnter : here is publish');
+
+    if (!client.current.connected) {
+      return;
+    }
+    client.current.publish({
+      destination: '/pub/vote/exit',
+      body: JSON.stringify({
+        roomId: roomId,
+        nickname: nickName,
+      }),
+    });
+  };
+
   useEffect(() => {
     _connect(chatRoomId, nickName);
     return () => _disconnect();
   }, []);
-
-  useEffect(() => {
-    if (tempIndex === items?.length) {
-      return () => {
-        clearTimeout(indexTimer);
-        clearTimeout(leftSecondTimer);
-        clearTimeout(tempIndexTimer);
-      };
-    }
-    let indexTimer = setTimeout(
-      () => (index === items?.length - 1 ? null : setIndex(index + 1)),
-      5000,
-    );
-    let tempIndexTimer = setTimeout(() => setTempIndex(index + 1), 5000);
-    let leftSecondTimer = setTimeout(
-      () =>
-        leftSecond === 1 ? setLeftSecond(5) : setLeftSecond(leftSecond - 1),
-      1000,
-    );
-  });
 
   useEffect(() => {
     setIsMessageVisible(false);
@@ -399,7 +399,32 @@ const TimerItemBox = ({
     onPress(chatRoomId, nickName, items[index].itemId, false);
   };
 
-  if (voteParticipants?.length !== friendList?.length)
+  const _startVote = () => {
+    if (tempIndex === items?.length) {
+      return () => {
+        clearTimeout(indexTimer);
+        clearTimeout(leftSecondTimer);
+        clearTimeout(tempIndexTimer);
+      };
+    }
+
+    let indexTimer = setTimeout(
+      () => (index === items?.length - 1 ? null : setIndex(index + 1)),
+      5000,
+    );
+    let tempIndexTimer = setTimeout(() => setTempIndex(index + 1), 5000);
+    let leftSecondTimer = setTimeout(
+      () =>
+        leftSecond === 1 ? setLeftSecond(5) : setLeftSecond(leftSecond - 1),
+      1000,
+    );
+  };
+
+  useEffect(() => {
+    _setLikeNumber(0);
+  }, [index]);
+
+  if (voteParticipants?.length < friendList?.length)
     return (
       <View
         style={{
@@ -444,8 +469,16 @@ const TimerItemBox = ({
               marginBottom: 10,
             }}>
             {' '}
-            (<Text style={{color: theme.basicText, fontSize : 18}}> {nickName} </Text>님의
-            친구 {friendList.length}명 중 <Text style= {{fontSize : 18, color : theme.tintColorPink}}>{_friends.length}명</Text>이 참여했어요! )
+            (
+            <Text style={{color: theme.basicText, fontSize: 18}}>
+              {' '}
+              {nickName}{' '}
+            </Text>
+            님의 친구 {friendList.length - 1}명 중{' '}
+            <Text style={{fontSize: 18, color: theme.tintColorPink}}>
+              {_friends.length}명
+            </Text>
+            이 참여했어요! )
           </Text>
         </View>
         <View
@@ -472,7 +505,7 @@ const TimerItemBox = ({
         </View>
       </View>
     );
-  else if (tempIndex === items?.length)
+  else if (tempIndex === items?.length) {
     return (
       <View
         style={{
@@ -623,7 +656,8 @@ const TimerItemBox = ({
         </View>
       </View>
     );
-  else
+  } else {
+    _startVote();
     return (
       <View
         style={{
@@ -699,7 +733,6 @@ const TimerItemBox = ({
               이 아이템이 좋은지 골라주세요.{' '}
             </Text>
           </View>
-
           <View
             style={{
               width: '100%',
@@ -707,6 +740,58 @@ const TimerItemBox = ({
               alignItems: 'center',
               paddingTop: 10,
             }}>
+            {/* 하트 */}
+            <View
+              style={{
+                position: 'absolute',
+                width: '100%',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-start',
+                height: '105%',
+                zIndex: 5,
+              }}>
+              <View
+                style={{
+                  height: 54,
+                  width: 54,
+                  borderRadius: 23,
+                  backgroundColor: theme.basicText,
+                  zIndex: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: theme.mainBackground,
+                  borderWidth: 0.3,
+                  flexDirection: 'row',
+                  marginRight: 75,
+                  zIndex: 50,
+                }}>
+                <Ionicons
+                  name="ios-heart"
+                  size={_likeNumber > 0 ? 27 : 33}
+                  color={
+                    _likeNumber > 0 ? theme.tintColorPink : theme.tintColorGreen
+                  }
+                />
+                <Text
+                  style={{
+                    display: _likeNumber > 0 ? 'flex' : 'none',
+                    color: theme.mainBackground,
+                    fontSize: 14,
+                  }}>
+                  x{' '}
+                </Text>
+                <Text
+                  style={{
+                    display: _likeNumber > 0 ? 'flex' : 'none',
+                    color: theme.mainBackground,
+                    fontSize: 17,
+                    fontWeight: 'bold',
+                  }}>
+                  {_likeNumber}
+                </Text>
+              </View>
+            </View>
+            {/* 하트 끝 */}
             <VoteItemBox
               saleRate="가격"
               itemName={items[index]?.name}
@@ -716,6 +801,7 @@ const TimerItemBox = ({
               )}
               itemImage={items[index]?.imgUrl}
               itemId={items[index]?.itemId}
+              like={_items[index]?.like}
             />
           </View>
           <Row
@@ -747,6 +833,7 @@ const TimerItemBox = ({
         </View>
       </View>
     );
+  }
 };
 
 export default TimerItemBox;

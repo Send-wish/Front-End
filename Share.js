@@ -444,7 +444,6 @@ const Share = () => {
   const _timeoutFunc = () => {
     setTimeout(_setWaitSecond, 1000);
   };
-
   return (
     <ThemeProvider theme={theme}>
       <Container>
