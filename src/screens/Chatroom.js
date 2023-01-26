@@ -34,16 +34,21 @@ import {
 } from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
-import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Modal} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {set} from 'immer/dist/internal';
+
+// RCT 새로 추가
+import {
+  mediaDevices,
+  RTCPeerConnection,
+  RTCIceCandidate,
+  RTCSessionDescription,
+} from 'react-native-webrtc';
+import RNSimplePeer from 'react-native-simple-peer';
 
 const Container = styled.View`
   flex: 1;
@@ -316,7 +321,162 @@ const ChatRoom = ({navigation, route}) => {
   const [isVoteVisible, setIsVoteVisible] = useState(false);
   const [likeNumber, setLikeNumber] = useState(0);
 
+  // webRTC 기능 추가
+  const _client = useRef({});
+  const [userStream, setUserStream] = useState();
+  const [otherStream, setOtherStream] = useState();
+  const [isCalling, setIsCalling] = useState(false);
+  const [liveParticipants, setLiveParticipants] = useState([nickName]);
+  let inOnlyVoice = true;
 
+  // 1) 버튼 클릭시 커넥트
+  const _connectRTC = roomId => {
+    console.log('1) _connectRTC : connect start!');
+    _client.current = new Client({
+      brokerURL: 'wss://api.sendwish.link:8081/ws',
+      connectHeaders: {},
+      webSocketFactory: () => {
+        return SockJS('https://api.sendwish.link:8081/ws');
+      },
+      debug: str => {
+        console.log('_connectRTC_debug_STOMP: ' + str);
+      },
+      onConnect: () => {
+        _subscribeSignal(roomId);
+        _captureAudio();
+        console.log('1) _connectRTC : _captueAudio');
+        // _subscribeEnter();
+      },
+      onStompError: frame => {
+        console.log('_connectRTC error occur' + frame.body);
+      },
+    });
+    _client.current.activate();
+  };
+
+  // 마지막) 나가면 커넥트 해제
+  const _disconnectRTC = () => {
+    console.log('_disconnectRTC : here is disconnect!');
+    _client.current.deactivate();
+    setIsCalling(false);
+    console.log('_disconnectRTC : webRTC 연결 해제');
+    userStream?.getTracks().map(t => t.stop());
+    otherStream?.getTracks().map(t => t.stop());
+    setLiveParticipants([nickName]);
+  };
+
+  // 2) 소켓 커넥트 되면 Media 찾아오고 stream을 userStream으로 설정
+  const _captureAudio = () => {
+    console.log('2) _captureAudio start! ');
+    setIsCalling(true);
+    mediaDevices
+      .enumerateDevices()
+      .then(sourceInfos => {
+        console.log('sourceInfos is : ', sourceInfos);
+        let videoSourceId;
+
+        for (let i = 0; i < sourceInfos.length; i++) {
+          const sourceInfo = sourceInfos[i];
+          if (sourceInfo.kind == 'videoinput' && sourceInfo.facing == 'front') {
+            videoSourceId = sourceInfo.deviceId;
+          }
+        }
+        mediaDevices
+          .getUserMedia({
+            audio: true,
+            video: {
+              width: 640,
+              height: 480,
+              frameRate: 30,
+              facingMode: 'user',
+              deviceId: videoSourceId,
+            },
+          })
+          .then(stream => {
+            console.log('2) _captureAudio : stream is', stream);
+            if (inOnlyVoice === true) {
+              let videoTrack = stream.getVideoTracks()[0];
+              videoTrack.enabled = false;
+            }
+            setUserStream(stream);
+            _createPeer(stream);
+          })
+          .catch(error => {
+            console.log({message: 'Local Stream fetch error'});
+          });
+      })
+      .catch(e => {
+        console.log({message: 'Device List fetch error'});
+      });
+  };
+
+  let myPeer;
+  // 3) userStream 얻고 나서 나의 Peer 아이디 생성
+  const _createPeer = stream => {
+    console.log('3) _createPeer : CreatePeer 호출');
+    myPeer = new RNSimplePeer({
+      initiator: true,
+      stream: stream,
+      webRTC: {RTCPeerConnection, RTCIceCandidate, RTCSessionDescription},
+      trickle: true,
+    });
+
+    myPeer.on('signal', data => {
+      console.log('3) _createPeer : signal정보 소켓에 전달');
+      _publishSignal(chatRoomId, data);
+    });
+
+    myPeer.on('stream', stream => {
+      let peerStream = stream;
+      if (stream.currentTarget && stream.currentTarget._remoteStreams) {
+        peerStream = stream.currentTarget_._remoteStreams[0];
+      }
+      setOtherStream(peerStream);
+    });
+  };
+
+  // 4) 내 시그널 정보를 새로 들어온 사용자에게 보내줌
+  const _publishSignal = (roomId, data) => {
+    console.log('_publishSignal : 새로 들어와서 내 시그널 정보를 보내줌');
+    if (!_client.current.connected) {
+      return;
+    }
+    console.log('_publishSignal : 보낼 시그널 = ', data);
+    _client.current.publish({
+      destination: '/pub/live',
+      body: JSON.stringify({
+        roomId: roomId,
+        nickname: nickName,
+        signal: data,
+      }),
+    });
+  };
+
+  // 5) 다른 사용자로부터 시그널을 받음
+  const _subscribeSignal = roomId => {
+    _client.current.subscribe('/sub/live/' + roomId, msg => {
+      let temp = JSON.parse(msg.body);
+
+      if (nickName === temp.nickname) {
+        console.log(
+          '7) _subscribeEnter : 나 자신이거나, 이미 연결된 사용자의 시그널입니다.',
+          temp.nickname,
+        );
+        return;
+      }
+
+      myPeer.signal(temp.signal);
+    });
+  };
+
+  const _pressLive = () => {
+    _connectRTC(chatRoomId);
+    return () => _disconnectRTC();
+  };
+
+  //
+
+  // 채팅
   const _connect = (roomId, nickName, itemId, isLike) => {
     client.current = new Client({
       brokerURL: 'wss://api.sendwish.link:8081/ws',
@@ -325,25 +485,19 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
-        // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
       },
       onConnect: () => {
         _subscribe(roomId);
-        // _subscribeVoteEnter(roomId, nickName);
-        // _subscribeVote(roomId, nickName, itemId, isLike);
-        // console.log('connected!');
       },
-      onStompError: frame => {
-        // console.log('error occur' + frame.body);
-      },
+      onStompError: frame => {},
     });
     client.current.activate();
   };
 
   const _disconnect = () => {
-    // console.log('here is disconnect!');
+    console.log('disconnect_chat : here is disconnect!');
     client.current.deactivate();
   };
 
@@ -603,21 +757,6 @@ const ChatRoom = ({navigation, route}) => {
     });
   };
 
-  const _publishVoteEnter = (roomId, nickName) => {
-    console.log('voteEnter : here is publish');
-
-    if (!client.current.connected) {
-      return;
-    }
-    client.current.publish({
-      destination: '/pub/vote/enter',
-      body: JSON.stringify({
-        roomId: roomId,
-        nickname: nickName,
-      }),
-    });
-  };
-
   // chatRoom 리턴
   return (
     <Container insets={insets}>
@@ -828,7 +967,7 @@ const ChatRoom = ({navigation, route}) => {
             onPress={_publishVote}
             friendList={friendList}
             friends={friends}
-            likeNumber = {likeNumber}
+            likeNumber={likeNumber}
           />
         </ChartModalView>
       </Modal>
@@ -838,8 +977,13 @@ const ChatRoom = ({navigation, route}) => {
         <ChartModalView insets={insets}>
           <ImageModalView>
             {/* 카테고리 순위 */}
-            <View style={{marginBottom: 13, marginLeft: 10, marginTop : 29}}>
-              <Text style={{color: theme.basicText, fontSize: 19, fontWeight : 'bold'}}>
+            <View style={{marginBottom: 13, marginLeft: 10, marginTop: 29}}>
+              <Text
+                style={{
+                  color: theme.basicText,
+                  fontSize: 19,
+                  fontWeight: 'bold',
+                }}>
                 친구가 선호하는 아이템 카테고리
               </Text>
               <Text
@@ -1178,22 +1322,15 @@ const ChatRoom = ({navigation, route}) => {
                 justifyContent: 'center',
                 marginRight: 13,
                 marginLeft: 5,
-                backgroundColor: theme.tintColorGreen,
+                backgroundColor: isCalling
+                  ? theme.tintColorPink
+                  : theme.tintColorGreen,
               }}>
               <FontAwesome
                 name="microphone"
                 size={25}
                 color={theme.mainBackground}
-                // onPress={() => {
-                //   navigation.navigate('LiveChat', {
-                //     shareCollectionId: shareCollectionId,
-                //     nickName: nickName,
-                //     shareCollectionName: shareCollectionTitle,
-                //     chatRoomId: chatRoomId,
-                //     friendList: friendList,
-                //     screen: screen,
-                //   });
-                // }}
+                onPress={() => (isCalling ? _disconnectRTC() : _pressLive())}
               />
             </View>
             <InputContainer>

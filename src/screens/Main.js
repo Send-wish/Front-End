@@ -224,9 +224,10 @@ const Main = ({navigation, route}) => {
     try {
       fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
         method: 'GET',
-        // headers: {Content_Type: 'application/json'},
+        headers: {Content_Type: 'application/json'},
       })
         .then(res => {
+          // console.log('res is :', res);
           return res.json();
         })
         .then(data => {
