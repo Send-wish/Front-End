@@ -161,7 +161,7 @@ const Shared = ({route, navigation}) => {
   const {isLoading, data, isError} = useQuery(
     ['data', nickName],
     () => _getItems(nickName),
-    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 1000 ,refetchOnWindowFocus: true, retry: 0},
   );
   // console.log( '여기는 쉐어화면입니다.', data);
   useEffect(() => {
@@ -178,7 +178,7 @@ const Shared = ({route, navigation}) => {
     () => _getCollections(nickName),
     {
       cacheTime: 60 * 1000,
-      staleTime: 10000,
+      staleTime: 0,
       refetchOnWindowFocus: false,
       retry: 0,
     },
@@ -197,9 +197,9 @@ const Shared = ({route, navigation}) => {
   const {data: getShareCollection} = useQuery(
     ['getShareCollection', nickName],
     () => _getShareCollections(nickName),
-    {staleTime: 10000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  console.log('getShareCollection', {getShareCollection});
+  // console.log('getShareCollection', {getShareCollection});
 
   useEffect(() => {
     if ({getShareCollection}?.getShareCollection) {
@@ -213,9 +213,9 @@ const Shared = ({route, navigation}) => {
     const {data:queryFriends} = useQuery(
       ['queryFriends', nickName],
       () => _getFriends(nickName),
-      {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+      {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
     );
-    console.log( '쉐어 화면 친구 목록 입니다.', queryFriends);
+    // console.log( '쉐어 화면 친구 목록 입니다.', queryFriends);
     useEffect(() => {
       if (queryFriends) {
         setFriends(queryFriends);
@@ -231,20 +231,20 @@ const Shared = ({route, navigation}) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('App has come to the foreground!');
+        // console.log('App has come to the foreground!');
       }
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      _getItems(nickName);
+      // _getItems(nickName);
       console.log('AppState', appState.current);
     });
   }, [appState]);
 
-  console.log('친구목록확인', addFriendList);
+  // console.log('친구목록확인', addFriendList);
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
-    if (isFocused) console.log('Focused');
+    // if (isFocused) console.log('Focused');
     // _getShareCollections(nickName); // 컬렌션 목록 랜더링
     // _getItems(nickName); // 아이템 목록 랜더링
     // _getFriends(nickName);
@@ -285,7 +285,7 @@ const Shared = ({route, navigation}) => {
         })
         // .then(json => console.log(json))
         .then(data => {
-          console.log('*********공유 컬렉션 생성:', data);
+          // console.log('*********공유 컬렉션 생성:', data);
         })
         // .then(() => _getShareCollections(nickName));
     } catch (e) {
@@ -440,7 +440,7 @@ const Shared = ({route, navigation}) => {
       tempArray.push(itemId);
       setAddToShareCollection(tempArray);
     }
-    console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
+    // console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
   };
 
   // 공유 컬렉션에 아이템 추가

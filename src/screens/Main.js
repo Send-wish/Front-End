@@ -149,7 +149,8 @@ const Main = ({navigation, route}) => {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      _getItems(nickName);
+      // _getItems(nickName);
+      refetch();
       // console.log('AppState', appState.current);
     });
   }, [appState]);
@@ -413,14 +414,15 @@ const Main = ({navigation, route}) => {
   };
 
   // 아이템 렌더링
-  const {isLoading, data, isError} = useQuery(
+  const {isFetching, isLoading, data, isError, refetch} = useQuery(
     ['data', nickName],
     () => _getItems(nickName),
-    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 1000, refetchOnWindowFocus: true, retry: 0},
   );
   // console.log('is loading?', isLoading);
   // console.log('여기는 메인화면입니다. : ', data);
   // console.log('error?', isError);
+  console.log('isFetching?', isFetching);
 
   useEffect(() => {
     if (data) {
@@ -436,7 +438,7 @@ const Main = ({navigation, route}) => {
     () => _getCollections(nickName),
     {
       cacheTime: 60 * 1000,
-      staleTime: 10000,
+      staleTime: 0,
       refetchOnWindowFocus: false,
       retry: 0,
     },

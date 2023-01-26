@@ -118,9 +118,9 @@ const SharedCollection = ({route, navigation}) => {
   const {data: shareCollectionItem} = useQuery(
     ['shareCollectionItem', nickName, shareCollectionId],
     () => _getItemsFromShareCollection(nickName, shareCollectionId),
-    {staleTime: 10000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  console.log('shareCollectionItem', {shareCollectionItem});
+  // console.log('shareCollectionItem', {shareCollectionItem});
 
   useEffect(() => {
     if ({shareCollectionItem}?.shareCollectionItem?.dtos) {
@@ -157,11 +157,10 @@ const SharedCollection = ({route, navigation}) => {
     _getImage();
   }, [isFocused]);
 
-  // console.log('공유컬렉션별 친구 목록!', friendList);
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused) _getItemsFromShareCollection(nickName,shareCollectionId);
+    // if (isFocused) _getItemsFromShareCollection(nickName,shareCollectionId);
     setIsEditing(false);
     // _getFriends();
   }, [isFocused]);
@@ -214,27 +213,6 @@ const SharedCollection = ({route, navigation}) => {
       setDeleteList(tempArray);
     }
   };
-
-  // 공유컬렉션 아이템 렌더링
-  // const _getItemsFromShareCollection = () => {
-  //   try {
-  //     fetch(
-  //       `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
-  //       {
-  //         method: 'GET',
-  //         headers: {'Content-Type': 'application/json'},
-  //       },
-  //     )
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(data => {
-  //         data.dtos ? setItems(data.dtos) : setItems([]);
-  //       });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   // 아이템 개별 링크
   const _openUrl = url => {
@@ -319,9 +297,7 @@ const SharedCollection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);

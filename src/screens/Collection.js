@@ -218,9 +218,9 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!', data);
+          // console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
@@ -230,7 +230,7 @@ const Collection = ({route, navigation}) => {
   const {data: collectionItem} = useQuery(
     ['collectionItem', nickName, collectionId],
     () => _getCollectionItems(nickName, collectionId),
-    {staleTime: 10000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
   // console.log('collectionItem', {collectionItem}.collectionItem.dtos);
 

@@ -202,9 +202,9 @@ const Chat = ({route, navigation}) => {
   const {data: queryFriends} = useQuery(
     ['queryFriends', nickName],
     () => _getFriends(nickName),
-    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  console.log('채팅 화면 친구 목록 입니다.', queryFriends);
+  // console.log('채팅 화면 친구 목록 입니다.', queryFriends);
   useEffect(() => {
     if (queryFriends) {
       setFriends(queryFriends);
@@ -217,9 +217,9 @@ const Chat = ({route, navigation}) => {
   const {data: queryChatList} = useQuery(
     ['queryChatList', nickName],
     () => _getChatList(nickName),
-    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  console.log('채팅 화면 채팅 목록 입니다.', queryChatList);
+  // console.log('채팅 화면 채팅 목록 입니다.', queryChatList);
   useEffect(() => {
     if (queryChatList) {
       setChatRoomList(queryChatList);
@@ -266,7 +266,7 @@ const Chat = ({route, navigation}) => {
   // });
 
   useEffect(() => {
-    if (isFocused) console.log('Chat Focused');
+    // if (isFocused) console.log('Chat Focused');
     // _getFriends(nickName);
     // _getChatList(nickName);
   }, [isFocused]);
@@ -293,7 +293,7 @@ const Chat = ({route, navigation}) => {
           setFrName('');
           return response.json();
         })
-        .then(json => console.log('from server data check', json))
+        // .then(json => console.log('from server data check', json))
         // .then(data => {
         //   console.log('add friend check', data);
         // })
