@@ -16,6 +16,9 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 import {ThemeConsumer} from 'styled-components';
 
+import {useQuery} from 'react-query';
+import _getItemsFromShareCollection from '../ReactQuery/useQuery/getShareCollectionItems';
+
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -112,6 +115,21 @@ const SharedCollection = ({route, navigation}) => {
   const [chatRoomId, setChatRoomId] = useState(0);
   const [img, setImg] = useState(''); // 내이미지 받아오기
 
+  const {data: shareCollectionItem} = useQuery(
+    ['shareCollectionItem', nickName, shareCollectionId],
+    () => _getItemsFromShareCollection(nickName, shareCollectionId),
+    {staleTime: 10000, refetchOnWindowFocus: false, retry: 0},
+  );
+  console.log('shareCollectionItem', {shareCollectionItem});
+
+  useEffect(() => {
+    if ({shareCollectionItem}?.shareCollectionItem?.dtos) {
+      setItems({shareCollectionItem}?.shareCollectionItem?.dtos);
+    } else {
+      return;
+    }
+  }, [{shareCollectionItem}]);
+
   const _getFriends = async () => {
     try {
       // API 아직 안열림
@@ -143,7 +161,7 @@ const SharedCollection = ({route, navigation}) => {
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused) _getItemsFromShareCollection();
+    if (isFocused) _getItemsFromShareCollection(nickName,shareCollectionId);
     setIsEditing(false);
     // _getFriends();
   }, [isFocused]);
@@ -198,25 +216,25 @@ const SharedCollection = ({route, navigation}) => {
   };
 
   // 공유컬렉션 아이템 렌더링
-  const _getItemsFromShareCollection = () => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          data.dtos ? setItems(data.dtos) : setItems([]);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const _getItemsFromShareCollection = () => {
+  //   try {
+  //     fetch(
+  //       `https://api.sendwish.link:8081/collection/${nickName}/${shareCollectionId}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {'Content-Type': 'application/json'},
+  //       },
+  //     )
+  //       .then(res => {
+  //         return res.json();
+  //       })
+  //       .then(data => {
+  //         data.dtos ? setItems(data.dtos) : setItems([]);
+  //       });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   // 아이템 개별 링크
   const _openUrl = url => {
@@ -246,7 +264,7 @@ const SharedCollection = ({route, navigation}) => {
         }),
       }).then(response => {
         if (response.ok) {
-          _getItemsFromShareCollection();
+          _getItemsFromShareCollection(nickName,shareCollectionId);
           setDeleteList([]);
           return;
         }

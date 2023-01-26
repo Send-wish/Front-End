@@ -29,7 +29,8 @@ import {
 } from 'react-native-lazyload';
 
 import {useQuery} from 'react-query';
-// import _getItems from '../ReactQuery/getItem';
+import _getItems from '../ReactQuery/useQuery/getItem';
+import _getCollections from '../ReactQuery/useQuery/getCollection';
 
 // 메인 컨테이너
 const Container = styled.View`
@@ -148,7 +149,7 @@ const Main = ({navigation, route}) => {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      // _getItems();
+      _getItems(nickName);
       // console.log('AppState', appState.current);
     });
   }, [appState]);
@@ -196,8 +197,8 @@ const Main = ({navigation, route}) => {
     if (isFocused) console.log('Focused');
     setIsEditing(false);
     setIsCollectionEditing(false);
-    _getCollections(); // 컬렌션 목록 랜더링
-    // _getItems(); // 아이템 목록 랜더링
+    // _getCollections(nickName); // 컬렌션 목록 랜더링
+    // _getItems(nickName); // 아이템 목록 랜더링
   }, [isFocused]);
 
   // Extension 아이템 자동 추가
@@ -227,29 +228,9 @@ const Main = ({navigation, route}) => {
           return response.json();
         })
         .then(setCollectionName(''))
-        .then(() => _getCollections());
+        .then(() => _getCollections(nickName));
     } catch (e) {
       console.log('collection made fail');
-    }
-  };
-
-  // 컬렉션 렌더링
-  const _getCollections = async () => {
-    setLoading(true);
-    try {
-      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
-        method: 'GET',
-        // headers: {Content_Type: 'application/json'},
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          setCollections(data);
-          setLoading(false);
-        });
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -275,7 +256,7 @@ const Main = ({navigation, route}) => {
           }
           return response.json();
         })
-        .then(() => _getCollections());
+        .then(() => _getCollections(nickName));
     } catch (e) {
       console.log('delete fail', e);
     }
@@ -305,31 +286,13 @@ const Main = ({navigation, route}) => {
           throw new Error(`${response.status} 에러발생`);
         }
         setSharedUrl('');
-        // _getItems();
+        _getItems(nickName);
         return response.json();
       });
     } catch (e) {
       console.log('send url fail');
     }
   };
-
-  // 아이템 렌더링
-  // const _getItems = async () => {
-  //   try {
-  //     fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     })
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(data => {
-  //         setItems(data);
-  //       });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   // 아이템 삭제
   const _deleteItems = async () => {
@@ -356,8 +319,8 @@ const Main = ({navigation, route}) => {
         .then(result => {
           // console.log('result', result);
         })
-        .then(_getItems)
-        .then(_getCollections)
+        .then(() => _getItems(nickName))
+        .then(() => _getCollections(nickName))
         .then(setAddToCollection([]))
         .then(setIsEditing(false));
     } catch (e) {
@@ -421,7 +384,7 @@ const Main = ({navigation, route}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        _getCollections();
+        _getCollections(nickName);
         return response.json();
       });
     } catch (e) {
@@ -449,107 +412,44 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  // const {isLoading, isError, data, error} = useQuery(['queryItem', nickName],() => {return _getItems(nickName)});
-
-  // const _getItems = async () => {
-  //   const data = await fetch(
-  //     `https://api.sendwish.link:8081/items/${nickName}`,
-  //     {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     },
-  //   );
-  //   console.log('----------------------------------', data);
-  //   return data;
-  // };
-
-  // const query = useQuery('users', _getItems, {
-  //   refetchOnWindowFocus: false,
-  //   staleTime: 10000,
-  //   select: data => console.log('가즈아아아아ㅏㅇ', data.data),
-  // });
-  // console.log('쿼리쿠러ㅣ', query, query.data);
-
-  // const _getItems = async(nickName) => {
-  //   try {
-  //     await fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     })
-
-  //       .then(response => {
-  //         if (!response.ok) {
-  //             throw new Error('Network response was not ok')
-  //           }
-  //         // if(res.error){
-  //         //     throw new error;
-  //         // }
-  //         return response.json();
-  //       })
-  //       .then(data => {
-  //         // return data;
-  //         console.log('함수 안쪽', data);
-  //         console.log('실행되는가')
-  //         // return data
-  //       });
-  //   } catch (e) {
-  //     return e;
-  //     // console.log(e);
-  //   }
-  // };
-
-  // const {isLoading, isError, data, error,isSuccess} = useQuery(
-  //   ['queryItem', nickName],
-  //   async() => {const data = await _getItems(nickName)
-  //   return data},
-  //   {
-  //     // refetchInterval: 1000,
-  //     staleTime: 10000,
-  //     refetchOnWindowFocus: false,
-  //     retry: 2,
-  //     keepPreviousData: true,
-  //     enabled: true,
-  //     // initialData: nickName,
-  //     select: data => data,
-  //     onSuccess: data => {
-  //       if (data) {
-  //         console.log(data);
-  //       } else {
-  //         console.log('data가 없습니다.');
-  //       }
-  //       console.log('메인화면 쿼리 데이터 확인', data);
-  //     },
-  //     onError: e => {
-  //       console.log('메인화면 아이템 가져오기 에러', e);
-  //     },
-  //   },
-  // );
-  // console.log('데이터가 있어야돼요',data);
-  // if (isSuccess){
-  //   console.log('성공했다', data);
-  // }
-  // if (isLoading){
-  //   console.log('로딩중이다');
-  // }
-
-  const {status, data, error, isFetching} = useQuery('query', async () => {
-    const {data} = await fetch(
-      `https://api.sendwish.link:8081/items/${nickName}`,
-      {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json'},
-      },
-    )
-      .then(response => {
-        response.json().then(console.log('response', response));
-      })
-      .then(data => console.log('데이터가 있어야돼요', data));
-    return data;
-  });
-
-  console.log('이후에도 보자----------------------', data);
+  // 아이템 렌더링
+  const {isLoading, data, isError} = useQuery(
+    ['data', nickName],
+    () => _getItems(nickName),
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
+  );
   // console.log('is loading?', isLoading);
+  // console.log('여기는 메인화면입니다. : ', data);
   // console.log('error?', isError);
+
+  useEffect(() => {
+    if (data) {
+      setItems(data);
+    } else {
+      return;
+    }
+  }, [data]);
+
+  // 컬렉션 렌더링
+  const {data: collection} = useQuery(
+    ['collection', nickName],
+    () => _getCollections(nickName),
+    {
+      cacheTime: 60 * 1000,
+      staleTime: 10000,
+      refetchOnWindowFocus: false,
+      retry: 0,
+    },
+  );
+  // console.log('collection', {collection}.collection);
+
+  useEffect(() => {
+    if ({collection}.collection) {
+      setCollections({collection}.collection);
+    } else {
+      return;
+    }
+  }, [{collection}.collection]);
 
   return (
     <Container insets={insets}>
@@ -695,8 +595,8 @@ const Main = ({navigation, route}) => {
             ? theme.strongBackground
             : theme.subBackground,
         }}>
-        <LazyloadScrollView name="lazyLoad">
-          {/* <ScrollView scrollEnabled={true}> */}
+        {/* <LazyloadScrollView name="lazyLoad"> */}
+        <ScrollView scrollEnabled={true}>
           <Column>
             <SpackBetweenRow>
               {/* <LazyloadView host="LazyLoad" style={{marginBottom: 10}}> */}
@@ -770,8 +670,8 @@ const Main = ({navigation, route}) => {
                   // </LazyloadView>
                 ))}
           </FlexRow>
-          {/* </ScrollView> */}
-        </LazyloadScrollView>
+        </ScrollView>
+        {/* </LazyloadScrollView> */}
       </BottomContainer>
 
       <View

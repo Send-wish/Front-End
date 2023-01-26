@@ -175,14 +175,14 @@ const ItemBox = ({
         style={{display: isEditing ? 'none' : 'flex'}}
         onLongPress={onLongPress}>
         <Container>
-          <LazyView>
+          {/* <LazyView>
             <LazyloadImage
               host={host}
               source={{uri: itemImage}}
               style={imageStyle}
             />
-          </LazyView>
-          {/* <ItemImage source={{uri: itemImage}} style={imageStyle} /> */}
+          </LazyView> */}
+          <ItemImage source={{uri: itemImage}} style={imageStyle} />
           <Row>
             <Sale style={priceStyle}>{saleRate}</Sale>
             <Price style={titleStyle}> {itemPrice}원 </Price>

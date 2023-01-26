@@ -21,13 +21,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 
 import {useQuery} from 'react-query';
-import {
-  _getItems,
-  _getCollections,
-} from '../ReactQuery/useQuery';
-
-import _getShareCollections from '../ReactQuery/useQuery/getShareCollection';
-import _getFriends from '../ReactQuery/useQuery/getFriends';
+import {_getItems, _getShareCollections, _getCollections} from '../ReactQuery/useQuery';
 
 const Container = styled.View`
   flex: 1;
@@ -126,7 +120,6 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   justify-content: flex-start;
   align-items: flex-start;
 `;
-
 const Shared = ({route, navigation}) => {
   // Tab navigator route params check
   const nickName = route.params.params.nickName;
@@ -157,73 +150,6 @@ const Shared = ({route, navigation}) => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  // 아이템 렌더
-  const {isLoading, data, isError} = useQuery(
-    ['data', nickName],
-    () => _getItems(nickName),
-    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
-  );
-  // console.log( '여기는 쉐어화면입니다.', data);
-  useEffect(() => {
-    if (data) {
-      setItems(data);
-    } else {
-      return;
-    }
-  }, [data]);
-
-  // 개인 컬렉션 렌더링
-  const {data: collection} = useQuery(
-    ['collection', nickName],
-    () => _getCollections(nickName),
-    {
-      cacheTime: 60 * 1000,
-      staleTime: 10000,
-      refetchOnWindowFocus: false,
-      retry: 0,
-    },
-  );
-  // console.log('collection', {collection}.collection);
-
-  useEffect(() => {
-    if ({collection}?.collection) {
-      setCollections({collection}.collection);
-    } else {
-      return;
-    }
-  }, [{collection}?.collection]);
-
-  // 공유 컬렉션 렌더
-  const {data: getShareCollection} = useQuery(
-    ['getShareCollection', nickName],
-    () => _getShareCollections(nickName),
-    {staleTime: 10000, refetchOnWindowFocus: false, retry: 0},
-  );
-  console.log('getShareCollection', {getShareCollection});
-
-  useEffect(() => {
-    if ({getShareCollection}?.getShareCollection) {
-      setShareCollections({getShareCollection}?.getShareCollection);
-    } else {
-      return;
-    }
-  }, [{getShareCollection}?.getShareCollection]);
-
-    // 아이템 렌더
-    const {data:queryFriends} = useQuery(
-      ['queryFriends', nickName],
-      () => _getFriends(nickName),
-      {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
-    );
-    console.log( '쉐어 화면 친구 목록 입니다.', queryFriends);
-    useEffect(() => {
-      if (queryFriends) {
-        setFriends(queryFriends);
-      } else {
-        return;
-      }
-    }, [queryFriends]);
-
   // 아이템 추가 자동 렌더링
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
@@ -236,7 +162,7 @@ const Shared = ({route, navigation}) => {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      _getItems(nickName);
+      _getItems();
       console.log('AppState', appState.current);
     });
   }, [appState]);
@@ -245,10 +171,10 @@ const Shared = ({route, navigation}) => {
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     if (isFocused) console.log('Focused');
-    // _getShareCollections(nickName); // 컬렌션 목록 랜더링
-    // _getItems(nickName); // 아이템 목록 랜더링
-    // _getFriends(nickName);
-    // _getCollections(nickName);
+    _getShareCollections(); // 컬렌션 목록 랜더링
+    _getItems(); // 아이템 목록 랜더링
+    _getFriends();
+    _getCollections();
     setIsEditing(false);
   }, [isFocused]);
 
@@ -262,8 +188,8 @@ const Shared = ({route, navigation}) => {
       return Alert.alert('컬렉션 이름을 입력해주세요!');
     }
     setAddFriendList([nickName]);
-    _getCollections(nickName);
-    _getItems(nickName);
+    _getCollections();
+    _getItems();
     setVisibleModal(false);
     try {
       fetch('https://api.sendwish.link:8081/collection/shared', {
@@ -287,9 +213,36 @@ const Shared = ({route, navigation}) => {
         .then(data => {
           console.log('*********공유 컬렉션 생성:', data);
         })
-        // .then(() => _getShareCollections(nickName));
+        .then(() => _getShareCollections());
     } catch (e) {
       console.log('share collection made fail');
+    }
+  };
+
+  // 공유 컬렉션 렌더링
+  const _getShareCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/shared/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+        // body: JSON.stringify({
+        //   nickName: nickName,
+        // }),
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setShareCollections(data);
+          console.log('get share collections', data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -315,7 +268,7 @@ const Shared = ({route, navigation}) => {
 
           throw new Error(`${response.status} 에러발생`);
         }
-        // _getShareCollections(nickName);
+        _getShareCollections();
         return;
         // return response.json();
       });
@@ -325,9 +278,47 @@ const Shared = ({route, navigation}) => {
       // .then(result => {
       //   console.log('result', result);
       // })
-      // .then(() => _getShareCollections(nickName));
+      // .then(() => _getShareCollections());
     } catch (e) {
       console.log('delete fail', e);
+    }
+  };
+
+  // 개인 컬렉션 렌더링
+  const _getCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setCollections(data);
+          setLoading(false);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // 전체 아이템 렌더링
+  const _getItems = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setItems(data);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -347,9 +338,9 @@ const Shared = ({route, navigation}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        _getItems(nickName);
+        _getItems();
         setAddToShareCollection([]);
-        // _getShareCollections(nickName);
+        _getShareCollections();
         return;
         // return response.json();
       });
@@ -359,10 +350,30 @@ const Shared = ({route, navigation}) => {
       // .then(result => {
       //   console.log('result', result);
       // })
-      // .then(()=>_getItems(nickName))
+      // .then(_getItems)
       // .then(setAddToShareCollection([]));
     } catch (e) {
       console.log('items delete fail', e);
+    }
+  };
+
+  // 친구 목록 렌더링
+  const _getFriends = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
+        method: 'GET',
+        // headers: {'Content-Type': `application/json`},
+      })
+        .then(response => {
+          // console.log('errorcheck!!response Get  friend: ', response);
+          return response.json();
+        })
+        .then(data => {
+          setFriends(data);
+          console.log('get friends', data);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -459,7 +470,7 @@ const Shared = ({route, navigation}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        // _getShareCollections(nickName);
+        _getShareCollections();
         return response.json();
       });
       // .then(data => {
