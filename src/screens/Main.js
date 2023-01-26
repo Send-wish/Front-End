@@ -386,6 +386,7 @@ const Main = ({navigation, route}) => {
           throw new Error(`${response.status} 에러발생`);
         }
         _getCollections(nickName);
+        addrefetch();
         return response.json();
       });
     } catch (e) {
@@ -433,7 +434,7 @@ const Main = ({navigation, route}) => {
   }, [data]);
 
   // 컬렉션 렌더링
-  const {data: collection} = useQuery(
+  const {data: collection, refetch:addrefetch} = useQuery(
     ['collection', nickName],
     () => _getCollections(nickName),
     {
