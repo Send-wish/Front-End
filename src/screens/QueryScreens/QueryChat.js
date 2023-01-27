@@ -15,8 +15,8 @@ import {
   CollectionCircle,
   Button,
   AddCollectionCircle,
-} from '../components/Chat';
-import {theme} from '../theme';
+} from '../../components/Chat';
+import {theme} from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -24,8 +24,8 @@ import {useIsFocused} from '@react-navigation/native';
 import EventSource from 'react-native-sse';
 
 import {useQuery} from 'react-query';
-import _getFriends from '../ReactQuery/useQuery/getFriends';
-import _getChatList from '../ReactQuery/useQuery/getChatList';
+import _getFriends from '../../ReactQuery/useQuery/getFriends';
+import _getChatList from '../../ReactQuery/useQuery/getChatList';
 
 const Item = ({
   item: {chatRoomId, lastMessage, collection, friends},

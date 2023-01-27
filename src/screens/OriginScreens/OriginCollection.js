@@ -11,14 +11,11 @@ import {
   EditIcon,
   Input,
   Button,
-} from '../components/Collection';
+} from '../../components/Collection';
 
-import {theme} from '../theme';
+import {theme} from '../../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
-
-import {useQuery} from 'react-query';
-import _getCollectionItems from '../ReactQuery/useQuery/getCollectionItems';
 
 const Container = styled.View`
   flex: 1;
@@ -115,7 +112,7 @@ const Collection = ({route, navigation}) => {
 
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    // if (isFocused) _getItemsFromCollection();
+    if (isFocused) _getItemsFromCollection();
     setIsEditing(false);
     _getImage();
   }, [isFocused]);
@@ -170,6 +167,27 @@ const Collection = ({route, navigation}) => {
     console.log('****************deleteList is : ', deleteList);
   };
 
+  // 아이템 렌더링
+  const _getItemsFromCollection = () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          data.dtos ? setItems(data.dtos) : setItems([]);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   // 아이템 개별 링크
   const _openUrl = url => {
     Linking.openURL(url);
@@ -198,7 +216,7 @@ const Collection = ({route, navigation}) => {
         }),
       }).then(response => {
         if (response.ok) {
-          // _getItemsFromCollection();
+          _getItemsFromCollection();
           setDeleteList([]);
           return;
         }
@@ -218,30 +236,14 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          // console.log('!!!!!!!!!!!!!!!', data);
+          console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
     }
   };
-
-  const {data: collectionItem} = useQuery(
-    ['collectionItem', nickName, collectionId],
-    () => _getCollectionItems(nickName, collectionId),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
-  );
-  // console.log('collectionItem', {collectionItem}.collectionItem.dtos);
-
-  useEffect(() => {
-    if ({collectionItem}?.collectionItem?.dtos) {
-      setItems({collectionItem}.collectionItem.dtos);
-    } else {
-      return;
-    }
-  }, [{collectionItem}]);
-
   return (
     <Container insets={insets}>
       <Modal

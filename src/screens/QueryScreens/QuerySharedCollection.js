@@ -1,24 +1,23 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, ScrollView, Modal, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
-
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   SearchIcon,
   ItemBox,
   ProfileImage,
   EditIcon,
-  Input,
-  Button,
-} from '../components/Collection';
+} from '../../components/Shared';
+import {Button, Input, ChatButton} from '../../components/SharedCollection';
 
-import {theme} from '../theme';
+import {theme} from '../../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
+import {ThemeConsumer} from 'styled-components';
 
 import {useQuery} from 'react-query';
-import _getCollectionItems from '../ReactQuery/useQuery/getCollectionItems';
+import _getItemsFromShareCollection from '../../ReactQuery/useQuery/getShareCollectionItems';
 
 const Container = styled.View`
   flex: 1;
@@ -101,29 +100,75 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   align-items: flex-start;
 `;
 
-const Collection = ({route, navigation}) => {
-  const {collectionId, collectionName, nickName} = route.params;
+const SharedCollection = ({route, navigation}) => {
+  // console.log('***route.parmas are : ', route.params);
+  const {shareCollectionId, shareCollectionName, nickName} = route.params;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const refCollectionName = useRef(null);
-  const [collectionTitle, setCollectionTitle] = useState(collectionName);
+  const [shareCollectionTitle, setShareCollectionTitle] =
+    useState(shareCollectionName);
   const [items, setItems] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteList, setDeleteList] = useState([]);
-  const isFocused = useIsFocused(); // isFoucesd Define
+  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+  const [friendList, setFriendList] = useState([]);
+  const [chatRoomId, setChatRoomId] = useState(0);
   const [img, setImg] = useState(''); // 내이미지 받아오기
 
-  // 화면 이동시 리랜더링  건들지 말것
+  const {data: shareCollectionItem} = useQuery(
+    ['shareCollectionItem', nickName, shareCollectionId],
+    () => _getItemsFromShareCollection(nickName, shareCollectionId),
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+  );
+  // console.log('shareCollectionItem', {shareCollectionItem});
+
   useEffect(() => {
-    // if (isFocused) _getItemsFromCollection();
-    setIsEditing(false);
+    if ({shareCollectionItem}?.shareCollectionItem?.dtos) {
+      setItems({shareCollectionItem}?.shareCollectionItem?.dtos);
+    } else {
+      return;
+    }
+  }, [{shareCollectionItem}]);
+
+  const _getFriends = async () => {
+    try {
+      // API 아직 안열림
+      fetch(
+        `https://api.sendwish.link:8081/collection/shared/${shareCollectionId}`,
+        {
+          method: 'GET',
+          headers: {'Content-Type': `application/json`},
+        },
+      )
+        .then(response => {
+          // console.log('공유 컬렉션별 친구 목록 불러오기error: ', response);
+          return response.json();
+        })
+        .then(data => {
+          setFriendList(data.memberList);
+          // console.log('공유컬렉션별 친구 목록 확인', data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    _getFriends();
     _getImage();
   }, [isFocused]);
 
-  // 컬렉션 네임 수정
-  const _changeCollectionName = async () => {
-    if (collectionTitle === '') {
-      return Alert.alert('컬렉션 이름을 입력해주세요')
+
+  // 화면 이동시 리랜더링  건들지 말것
+  useEffect(() => {
+    // if (isFocused) _getItemsFromShareCollection(nickName,shareCollectionId);
+    setIsEditing(false);
+    // _getFriends();
+  }, [isFocused]);
+
+  // 공유 컬렉션 이름 수정
+  const _changeShareCollectionName = async () => {
+    if (shareCollectionTitle === '') {
+      return Alert.alert('공유 컬렉션 이름을 입력해주세요');
     }
     setVisibleModal(false);
     try {
@@ -134,8 +179,8 @@ const Collection = ({route, navigation}) => {
         },
         body: JSON.stringify({
           nickname: nickName,
-          collectionId: collectionId,
-          newTitle: collectionTitle,
+          collectionId: shareCollectionId,
+          newTitle: shareCollectionTitle,
         }),
       }).then(response => {
         if (!response.ok) {
@@ -167,7 +212,6 @@ const Collection = ({route, navigation}) => {
       tempArray.push(itemId);
       setDeleteList(tempArray);
     }
-    console.log('****************deleteList is : ', deleteList);
   };
 
   // 아이템 개별 링크
@@ -184,7 +228,7 @@ const Collection = ({route, navigation}) => {
   };
 
   // 아이템 삭제
-  const _deleteItemsFromCollection = async () => {
+  const _deleteItemsFromShareCollection = async () => {
     try {
       fetch(`https://api.sendwish.link:8081/collection/item`, {
         method: 'DELETE',
@@ -192,13 +236,13 @@ const Collection = ({route, navigation}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          collectionId: collectionId,
+          collectionId: shareCollectionId,
           itemIdList: deleteList,
           nickname: nickName,
         }),
       }).then(response => {
         if (response.ok) {
-          // _getItemsFromCollection();
+          _getItemsFromShareCollection(nickName,shareCollectionId);
           setDeleteList([]);
           return;
         }
@@ -207,6 +251,41 @@ const Collection = ({route, navigation}) => {
     } catch (e) {
       console.log('items delete fail', e);
     }
+  };
+
+  // 채팅방 아이디 가져오기
+  const _getChatRoomId = () => {
+    try {
+      fetch(
+        `https://api.sendwish.link:8081/collection/roomId/${shareCollectionId}`,
+        {
+          method: 'GET',
+        },
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setChatRoomId(data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    _getChatRoomId();
+  }, []);
+
+  const _pressChatButton = () => {
+    const screen = 'SharedCollection';
+    navigation.navigate('ChatRoom', {
+      shareCollectionId,
+      shareCollectionTitle,
+      nickName,
+      friendList,
+      chatRoomId,
+      screen,
+    });
   };
 
   const _getImage = async () => {
@@ -218,29 +297,12 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          // console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
     }
   };
-
-  const {data: collectionItem} = useQuery(
-    ['collectionItem', nickName, collectionId],
-    () => _getCollectionItems(nickName, collectionId),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
-  );
-  // console.log('collectionItem', {collectionItem}.collectionItem.dtos);
-
-  useEffect(() => {
-    if ({collectionItem}?.collectionItem?.dtos) {
-      setItems({collectionItem}.collectionItem.dtos);
-    } else {
-      return;
-    }
-  }, [{collectionItem}]);
 
   return (
     <Container insets={insets}>
@@ -250,22 +312,25 @@ const Collection = ({route, navigation}) => {
         visible={visibleModal}
         style={{flex: 1}}>
         <ModalView insets={insets}>
-          <StyledTouchableOpacity onPress={() => _changeCollectionName()}>
+          <StyledTouchableOpacity onPress={() => _changeShareCollectionName()}>
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
           <Input
-            ref={refCollectionName}
-            value={collectionTitle}
-            onChangeText={setCollectionTitle}
-            onBlur={() => setCollectionTitle(collectionTitle)}
+            // ref={refShareCollectionName}
+            value={shareCollectionTitle}
+            onChangeText={setShareCollectionTitle}
+            onBlur={() => setShareCollectionTitle(shareCollectionTitle)}
             maxLength={10}
             onSubmitEditing={() => {
-              _changeCollectionName();
+              _changeShareCollectionName();
             }}
             placeholder="변경할 컬렉션 이름을 입력해주세요 :)"
             returnKeyType="done"
           />
-          <Button title="변경하기" onPress={() => _changeCollectionName()} />
+          <Button
+            title="변경하기"
+            onPress={() => _changeShareCollectionName()}
+          />
         </ModalView>
       </Modal>
       <UpperContainer>
@@ -273,15 +338,16 @@ const Collection = ({route, navigation}) => {
           <Column>
             <TouchableOpacity
               onPress={() => {
-                passData = {nickName, collectionId, collectionTitle};
-                navigation.navigate('Main', {
-                  params: collectionId,
-                  collectionTitle,
-                  nickName,
+                passData = {nickName, shareCollectionId, shareCollectionTitle};
+                navigation.navigate('Shared', {
+                  passData: nickName,
+                  shareCollectionId,
+                  shareCollectionTitle,
                 });
               }}>
               <Ionic name="chevron-back" size={25} color={theme.basicText} />
             </TouchableOpacity>
+
             <WrapRow style={{marginTop: 30}}>
               <Title
                 style={{
@@ -295,7 +361,7 @@ const Collection = ({route, navigation}) => {
                       ? theme.tintcolorPalegreen
                       : theme.tintColorGreen,
                   }}>
-                  {collectionTitle}
+                  {shareCollectionTitle}
                 </Title>
                 컬렉션
               </Title>
@@ -309,7 +375,13 @@ const Collection = ({route, navigation}) => {
                   }}
                 />
               </TouchableOpacity>
+              <TouchableOpacity>
+                <View>
+                  <ChatButton title={'채팅하기'} onPress={_pressChatButton} />
+                </View>
+              </TouchableOpacity>
             </WrapRow>
+
             <WrapRow
               style={{
                 paddingTop: 20,
@@ -322,7 +394,7 @@ const Collection = ({route, navigation}) => {
                   fontSize: 15,
                   color: isEditing ? theme.strongSubText : theme.basicText,
                 }}>
-                {nickName}님이 담았어요!
+                {friendList?.map(friend => friend + ' ')}님이 담았어요!
               </SubTitle>
             </WrapRow>
           </Column>
@@ -336,7 +408,7 @@ const Collection = ({route, navigation}) => {
                 <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
-                {/* <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} /> */}
+                {/* <SearchIcon /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
@@ -400,7 +472,7 @@ const Collection = ({route, navigation}) => {
           buttonStyle={{backgroundColor: theme.tintColorPink}}
           title="삭제하기"
           onPress={() => {
-            _deleteItemsFromCollection();
+            _deleteItemsFromShareCollection();
           }}
         />
       </View>
@@ -408,4 +480,4 @@ const Collection = ({route, navigation}) => {
   );
 };
 
-export default Collection;
+export default SharedCollection;

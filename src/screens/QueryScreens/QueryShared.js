@@ -12,8 +12,8 @@ import {
   TempCircle,
   CollectionCircle,
   MainCollectionCircle,
-} from '../components/Shared';
-import {theme} from '../theme';
+} from '../../components/Shared';
+import {theme} from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Modal, AppState} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -24,10 +24,10 @@ import {useQuery} from 'react-query';
 import {
   _getItems,
   _getCollections,
-} from '../ReactQuery/useQuery';
+} from '../../ReactQuery/useQuery';
 
-import _getShareCollections from '../ReactQuery/useQuery/getShareCollection';
-import _getFriends from '../ReactQuery/useQuery/getFriends';
+import _getShareCollections from '../../ReactQuery/useQuery/getShareCollection';
+import _getFriends from '../../ReactQuery/useQuery/getFriends';
 
 const Container = styled.View`
   flex: 1;

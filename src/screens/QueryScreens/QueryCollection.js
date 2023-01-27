@@ -11,14 +11,14 @@ import {
   EditIcon,
   Input,
   Button,
-} from '../components/Collection';
+} from '../../components/Collection';
 
-import {theme} from '../theme';
+import {theme} from '../../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 
 import {useQuery} from 'react-query';
-import _getCollectionItems from '../ReactQuery/useQuery/getCollectionItems';
+import _getCollectionItems from '../../ReactQuery/useQuery/getCollectionItems';
 
 const Container = styled.View`
   flex: 1;

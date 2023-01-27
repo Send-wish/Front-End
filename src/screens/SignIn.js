@@ -85,7 +85,7 @@ const SignIn = ({navigation}) => {
       const value = await AsyncStorage.getItem('userdata')
 
       if(value !== null){
-        console.log('storage date check userdata!!!', value);
+        // console.log('storage date check userdata!!!', value);
         navigation.navigate('Navigation',{screen:'Main', params:{nickName: JSON.parse(value).nickName, accessToken: JSON.parse(value).accessToken}})
       }
     }

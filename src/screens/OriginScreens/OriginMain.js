@@ -19,19 +19,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
-// lazy loading
-import {Component} from 'react-native';
-
-import {
-  LazyloadScrollView,
-  LazyloadView,
-  LazyloadImage,
-} from 'react-native-lazyload';
-
-import {useQuery} from 'react-query';
-import _getItems from '../ReactQuery/useQuery/getItem';
-import _getCollections from '../ReactQuery/useQuery/getCollection';
-
 // 메인 컨테이너
 const Container = styled.View`
   flex: 1;
@@ -133,9 +120,6 @@ const Main = ({navigation, route}) => {
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const lazyItems = [...items];
-  let start = ~~(Math.random() * 900);
-  let list = items.splice(start, 100);
 
   // 아이템 추가 자동 렌더링
   useEffect(() => {
@@ -149,8 +133,7 @@ const Main = ({navigation, route}) => {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      // _getItems(nickName);
-      refetch();
+      _getItems();
       // console.log('AppState', appState.current);
     });
   }, [appState]);
@@ -198,8 +181,8 @@ const Main = ({navigation, route}) => {
     if (isFocused) console.log('Focused');
     setIsEditing(false);
     setIsCollectionEditing(false);
-    // _getCollections(nickName); // 컬렌션 목록 랜더링
-    // _getItems(nickName); // 아이템 목록 랜더링
+    _getCollections(); // 컬렌션 목록 랜더링
+    _getItems(); // 아이템 목록 랜더링
   }, [isFocused]);
 
   // Extension 아이템 자동 추가
@@ -229,9 +212,31 @@ const Main = ({navigation, route}) => {
           return response.json();
         })
         .then(setCollectionName(''))
-        .then(() => _getCollections(nickName));
+        .then(() => _getCollections());
     } catch (e) {
       console.log('collection made fail');
+    }
+  };
+
+  // 컬렉션 렌더링
+  const _getCollections = async () => {
+    setLoading(true);
+    try {
+      fetch(`https://api.sendwish.link:8081/collections/${nickName}`, {
+        method: 'GET',
+        headers: {Content_Type: 'application/json'},
+      })
+        .then(res => {
+          // console.log('res is :', res);
+          return res.json();
+        })
+        .then(data => {
+          console.log('data is :', data);
+          setCollections(data);
+          setLoading(false);
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -257,7 +262,7 @@ const Main = ({navigation, route}) => {
           }
           return response.json();
         })
-        .then(() => _getCollections(nickName));
+        .then(() => _getCollections());
     } catch (e) {
       console.log('delete fail', e);
     }
@@ -287,11 +292,30 @@ const Main = ({navigation, route}) => {
           throw new Error(`${response.status} 에러발생`);
         }
         setSharedUrl('');
-        _getItems(nickName);
+        _getItems();
         return response.json();
       });
     } catch (e) {
       console.log('send url fail');
+    }
+  };
+
+  // 아이템 렌더링
+  const _getItems = async () => {
+    try {
+      fetch(`https://api.sendwish.link:8081/items/${nickName}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setItems(data);
+          // console.log('__________get_____________');
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -320,8 +344,8 @@ const Main = ({navigation, route}) => {
         .then(result => {
           // console.log('result', result);
         })
-        .then(() => _getItems(nickName))
-        .then(() => _getCollections(nickName))
+        .then(_getItems)
+        .then(_getCollections)
         .then(setAddToCollection([]))
         .then(setIsEditing(false));
     } catch (e) {
@@ -385,8 +409,7 @@ const Main = ({navigation, route}) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        _getCollections(nickName);
-        addrefetch();
+        _getCollections();
         return response.json();
       });
     } catch (e) {
@@ -413,47 +436,6 @@ const Main = ({navigation, route}) => {
       _deleteCollection(collectionId, nickName);
     }
   };
-
-  // 아이템 렌더링
-  const {isFetching, isLoading, data, isError, refetch} = useQuery(
-    ['data', nickName],
-    () => _getItems(nickName),
-    {staleTime: 1000, refetchOnWindowFocus: true, retry: 0},
-  );
-  // console.log('is loading?', isLoading);
-  // console.log('여기는 메인화면입니다. : ', data);
-  // console.log('error?', isError);
-  console.log('isFetching?', isFetching);
-
-  useEffect(() => {
-    if (data) {
-      setItems(data);
-    } else {
-      return;
-    }
-  }, [data]);
-
-  // 컬렉션 렌더링
-  const {data: collection, refetch:addrefetch} = useQuery(
-    ['collection', nickName],
-    () => _getCollections(nickName),
-    {
-      cacheTime: 60 * 1000,
-      staleTime: 0,
-      refetchOnWindowFocus: false,
-      retry: 0,
-    },
-  );
-  // console.log('collection', {collection}.collection);
-
-  useEffect(() => {
-    if ({collection}.collection) {
-      setCollections({collection}.collection);
-    } else {
-      return;
-    }
-  }, [{collection}.collection]);
-
   return (
     <Container insets={insets}>
       <Modal animationType="slide" transparent={true} visible={visibleModal}>
