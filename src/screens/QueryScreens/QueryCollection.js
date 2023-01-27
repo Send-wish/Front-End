@@ -11,17 +11,14 @@ import {
   EditIcon,
   Input,
   Button,
-} from '../components/Collection';
+} from '../../components/Collection';
 
-import {theme} from '../theme';
+import {theme} from '../../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
 
 import {useQuery} from 'react-query';
-import _getCollectionItems from '../ReactQuery/getCollectionItems';
-
-import _getItems from '../ReactQuery/getItem';
-
+import _getCollectionItems from '../../ReactQuery/useQuery/getCollectionItems';
 
 const Container = styled.View`
   flex: 1;
@@ -116,14 +113,9 @@ const Collection = ({route, navigation}) => {
   const isFocused = useIsFocused(); // isFoucesd Define
   const [img, setImg] = useState(''); // 내이미지 받아오기
 
-
-  const query = useQuery(['queryItem',nickName], _getItems(nickName));
-    // query 안에 data, isLoading, isSuccess, isError 등 다양한게 있다.
-    console.log('테스트 해보겠습니다!!!!',query);
-
   // 화면 이동시 리랜더링  건들지 말것
   useEffect(() => {
-    if (isFocused) _getItemsFromCollection();
+    // if (isFocused) _getItemsFromCollection();
     setIsEditing(false);
     _getImage();
   }, [isFocused]);
@@ -178,27 +170,6 @@ const Collection = ({route, navigation}) => {
     console.log('****************deleteList is : ', deleteList);
   };
 
-  // 아이템 렌더링
-  const _getItemsFromCollection = () => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-        {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-        },
-      )
-        .then(res => {
-          return res.json();
-        })
-        .then(data => {
-          data.dtos ? setItems(data.dtos) : setItems([]);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   // 아이템 개별 링크
   const _openUrl = url => {
     Linking.openURL(url);
@@ -227,7 +198,7 @@ const Collection = ({route, navigation}) => {
         }),
       }).then(response => {
         if (response.ok) {
-          _getItemsFromCollection();
+          // _getItemsFromCollection();
           setDeleteList([]);
           return;
         }
@@ -247,30 +218,29 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          console.log('!!!!!!!!!!!!!!!', data);
+          // console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
+          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
     }
   };
 
+  const {data: collectionItem} = useQuery(
+    ['collectionItem', nickName, collectionId],
+    () => _getCollectionItems(nickName, collectionId),
+    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+  );
+  // console.log('collectionItem', {collectionItem}.collectionItem.dtos);
 
-//   const {isLoading, isError, data, error} = useQuery(['queryCollectionItem',nickName, collectionId], _getCollectionItems, {
-//     refetchOnWindowFocus: false,
-//     retry: 1,
-//     onSuccess: data => {
-//       console.log(data);
-//     },
-//     onError: e => {
-//       console.log(e);
-//     },
-//   });
-
-// console.log('is loading?',isLoading);
-// console.log('error?', error);
-// console.log('쿼리 데이터 아이템 적용 확인', items);
+  useEffect(() => {
+    if ({collectionItem}?.collectionItem?.dtos) {
+      setItems({collectionItem}.collectionItem.dtos);
+    } else {
+      return;
+    }
+  }, [{collectionItem}]);
 
   return (
     <Container insets={insets}>
