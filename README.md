@@ -14,5 +14,9 @@ RN for sandwish Project
 ## 데모 및 시연 영상 <a href="https://www.youtube.com/watch?v=kKdQTMBP7dQ">(바로가기)<a>
 
 
+https://user-images.githubusercontent.com/109953972/215479632-b887dd04-9b78-4e7b-9379-84d97ead24f0.MP4
+
+
+
 ## 포스터
 ![SendWish](https://user-images.githubusercontent.com/109953972/215467054-c11c8b96-e085-403f-8047-ef7daeeaadb8.jpg)
