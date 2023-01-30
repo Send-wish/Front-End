@@ -19,6 +19,8 @@ RN for sandwish Project
 
 https://user-images.githubusercontent.com/109953972/215483643-61415d53-f601-44b3-a9de-859305fbfc67.mov 
 
+<br>
+
 ### 2. 쇼핑몰에서 아이템 담아오기
 - 앱이 꺼져있을 때나, 백 그라운드 상태일 때에도 다른 쇼핑몰 앱내에서 공유하기 버튼 하나만으로 쉽게 상품정보를 앱으로 담아올 수 있습니다.<br>
 - IOS의 Share-Extension을 커스터마이징하여 공유하기 모달 창을 직관적으로 변경하고, 서버와 통신할 수 있도록 만들었습니다.
@@ -26,11 +28,15 @@ https://user-images.githubusercontent.com/109953972/215483643-61415d53-f601-44b3
 
 https://user-images.githubusercontent.com/109953972/215481524-7640c2ea-ccd6-4a86-a253-4d61ebfd1f8a.MP4
 
+<br>
+
 ### 3. 장바구니 만들고 아이템 담기
 - 목적이 각기 다른 장바구니들을 만들고 담아온 아이템을 쉽게 담아 분류하여 관리할 수 있습니다.
 <br>
 
 https://user-images.githubusercontent.com/109953972/215481579-ef7f1ff1-1c59-4954-bc08-acfbd0d9d5cd.MP4
+
+<br>
 
 ### 4. 공유 장바구니에서 친구와 소통하고 친구 취향 알아보기
 - 쇼핑의 목적이 동일한 의사결정자들과 같은 장바구니를 공유하고 채팅을 통하여 각자 담은 아이템을 확인하며, 소통할 수 있습니다. <br>
@@ -40,11 +46,15 @@ https://user-images.githubusercontent.com/109953972/215481579-ef7f1ff1-1c59-4954
 
 https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd-88e7-eb3da4bd7d88.MP4
 
+<br>
+
 ### 5. 채팅에서 아이템 확인하기
 - 다른 메신저들과 다르게, 각자 담은 아이템을 한 눈에 모아서 보여주기 때문에 훨씬 의사결정을 손쉽게 할 수 있습니다.
 <br>
 
 https://user-images.githubusercontent.com/109953972/215481790-05384474-8eb1-4e6c-b965-e9d67e0cb90f.MP4
+
+<br>
 
 ### 6. 채팅방에서 투표하기
 - 개인이 하는 쇼핑과 다르게, 그룹이 하는 쇼핑에서는 동시간대에 다 같이 의사결정하는 프로세스가 부족한 면이 있습니다.<br>
