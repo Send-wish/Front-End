@@ -339,13 +339,13 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
-        console.log('_connectRTC_debug_STOMP: ' + str);
+        // console.log('_connectRTC_debug_STOMP: ' + str);
       },
       onConnect: () => {
-        _subscribeSignal(roomId);
         _captureAudio();
         console.log('1) _connectRTC : _captueAudio');
-        // _subscribeEnter();
+        _subscribeEnter();
+        _subscribeSignal(chatRoomId);
       },
       onStompError: frame => {
         console.log('_connectRTC error occur' + frame.body);
@@ -367,7 +367,7 @@ const ChatRoom = ({navigation, route}) => {
 
   // 2) 소켓 커넥트 되면 Media 찾아오고 stream을 userStream으로 설정
   const _captureAudio = () => {
-    console.log('2) _captureAudio start! ');
+    // console.log('2) _captureAudio start! ');
     setIsCalling(true);
     mediaDevices
       .enumerateDevices()
@@ -393,7 +393,7 @@ const ChatRoom = ({navigation, route}) => {
             },
           })
           .then(stream => {
-            console.log('2) _captureAudio : stream is', stream);
+            // console.log('2) _captureAudio : stream is', stream);
             if (inOnlyVoice === true) {
               let videoTrack = stream.getVideoTracks()[0];
               videoTrack.enabled = false;
@@ -411,9 +411,10 @@ const ChatRoom = ({navigation, route}) => {
   };
 
   let myPeer;
+
   // 3) userStream 얻고 나서 나의 Peer 아이디 생성
   const _createPeer = stream => {
-    console.log('3) _createPeer : CreatePeer 호출');
+    // console.log('3) _createPeer : CreatePeer 호출');
     myPeer = new RNSimplePeer({
       initiator: true,
       stream: stream,
@@ -421,27 +422,60 @@ const ChatRoom = ({navigation, route}) => {
       trickle: true,
     });
 
-    myPeer.on('signal', data => {
-      console.log('3) _createPeer : signal정보 소켓에 전달');
-      _publishSignal(chatRoomId, data);
-    });
-
-    myPeer.on('stream', stream => {
-      let peerStream = stream;
-      if (stream.currentTarget && stream.currentTarget._remoteStreams) {
-        peerStream = stream.currentTarget_._remoteStreams[0];
-      }
-      setOtherStream(peerStream);
-    });
+    _publishEnter();
   };
 
-  // 4) 내 시그널 정보를 새로 들어온 사용자에게 보내줌
-  const _publishSignal = (roomId, data) => {
-    console.log('_publishSignal : 새로 들어와서 내 시그널 정보를 보내줌');
+  // 4) myPeerId 생성했으면 소켓에 입장시켜달라고 정보를 보냄
+  const _publishEnter = () => {
+    // console.log('4) _publishEnter Start with myPeer');
     if (!_client.current.connected) {
       return;
     }
-    console.log('_publishSignal : 보낼 시그널 = ', data);
+    _client.current.publish({
+      destination: '/pub/live/enter',
+      body: JSON.stringify({
+        roomId: chatRoomId,
+        nickname: nickName,
+      }),
+    });
+    console.log('4) _publishEnter : before _subscribeEnter');
+
+    myPeer.on('signal', data => {
+      console.log('3) _createPeer : signal정보 소켓에 전달');
+      console.log('***************Data is : ', data);
+      _publishSignal(chatRoomId, data);
+    });
+  };
+
+  // 5) 소켓으로부터 다른 사용자의 정보를 받음 (내 것을 받을 수도 있음)
+  const _subscribeEnter = () => {
+    _client.current.subscribe('/sub/live/enter/' + chatRoomId, msg => {
+      let temp = JSON.parse(msg.body);
+      // console.log('5) _subscribeEnter : 새로 입장한 사용자 = ', temp.nickname);
+
+      for (let i = 0; i < liveParticipants.length; i++) {
+        if (liveParticipants[i] === temp.nickname) {
+          return;
+        }
+      }
+
+      console.log(
+        // '5) _subscribeEnter : 통화에 참여 요청을 받았습니다..',
+        'from ',
+        temp.nickname,
+        ' to ',
+        nickName,
+      );
+    });
+  };
+
+  // 6) 내 시그널 정보를 새로 들어온 사용자에게 보내줌
+  const _publishSignal = (roomId, data) => {
+    // console.log('_publishSignal : 새로 들어와서 내 시그널 정보를 보내줌');
+    if (!_client.current.connected) {
+      return;
+    }
+    // console.log('_publishSignal : 보낼 시그널 = ', data);
     _client.current.publish({
       destination: '/pub/live',
       body: JSON.stringify({
@@ -452,20 +486,39 @@ const ChatRoom = ({navigation, route}) => {
     });
   };
 
-  // 5) 다른 사용자로부터 시그널을 받음
+  // 7) 다른 사용자로부터 시그널을 받음
   const _subscribeSignal = roomId => {
     _client.current.subscribe('/sub/live/' + roomId, msg => {
       let temp = JSON.parse(msg.body);
 
+      // let Temp = liveParticipants;
       if (nickName === temp.nickname) {
-        console.log(
-          '7) _subscribeEnter : 나 자신이거나, 이미 연결된 사용자의 시그널입니다.',
-          temp.nickname,
-        );
+        // console.log(
+        //   '7) _subscribeEnter : 나 자신이거나, 이미 연결된 사용자의 시그널입니다.',
+        //   temp.nickname,
+        // );
         return;
       }
 
+      for (let i = 0; i < liveParticipants.length; i++) {
+        if (liveParticipants[i] === temp.nickname) {
+          return;
+        }
+      }
+
       myPeer.signal(temp.signal);
+
+      myPeer.on('signal', data => {
+        _publishSignal(chatRoomId, data);
+      });
+
+      myPeer.on('stream', stream => {
+        let peerStream = stream;
+        if (stream.currentTarget && stream.currentTarget._remoteStreams) {
+          peerStream = stream.currentTarget_._remoteStreams[0];
+        }
+        setOtherStream(peerStream);
+      });
     });
   };
 
@@ -485,13 +538,19 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
+        // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
       },
       onConnect: () => {
         _subscribe(roomId);
+        // _subscribeVoteEnter(roomId, nickName);
+        // _subscribeVote(roomId, nickName, itemId, isLike);
+        // console.log('connected!');
       },
-      onStompError: frame => {},
+      onStompError: frame => {
+        // console.log('error occur' + frame.body);
+      },
     });
     client.current.activate();
   };

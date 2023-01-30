@@ -329,9 +329,36 @@ const ChatRoom = ({navigation, route}) => {
   const [liveParticipants, setLiveParticipants] = useState([nickName]);
   let inOnlyVoice = true;
 
-  // 1) 버튼 클릭시 커넥트
+  const _connect = (roomId, nickName, itemId, isLike) => {
+    client.current = new Client({
+      brokerURL: 'wss://api.sendwish.link:8081/ws',
+      connectHeaders: {},
+      webSocketFactory: () => {
+        return SockJS('https://api.sendwish.link:8081/ws');
+      },
+      debug: str => {
+        // console.log('STOMP: ' + str);
+        setUpdate(str);
+        _getItemsFromShareCollection();
+      },
+      onConnect: () => {
+        _subscribe(roomId);
+      },
+      onStompError: frame => {},
+    });
+    client.current.activate();
+  };
+
+  const _disconnect = () => {
+    console.log('disconnect_chat : here is disconnect!');
+    client.current.deactivate();
+  };
+
+  // RTC 기능 추가
+  let myPeer;
+
   const _connectRTC = roomId => {
-    console.log('1) _connectRTC : connect start!');
+    console.log('_connectRTC : connect start!');
     _client.current = new Client({
       brokerURL: 'wss://api.sendwish.link:8081/ws',
       connectHeaders: {},
@@ -342,10 +369,11 @@ const ChatRoom = ({navigation, route}) => {
         console.log('_connectRTC_debug_STOMP: ' + str);
       },
       onConnect: () => {
-        _subscribeSignal(roomId);
-        _captureAudio();
-        console.log('1) _connectRTC : _captueAudio');
-        // _subscribeEnter();
+        _liveSubs(roomId);
+        console.log('_connectRTC : _enterSubs ');
+        _enterSubs();
+        console.log('_connectRTC : _captueAudio');
+        _captureAudio(); //해당 peer의 정보 publish
       },
       onStompError: frame => {
         console.log('_connectRTC error occur' + frame.body);
@@ -354,7 +382,6 @@ const ChatRoom = ({navigation, route}) => {
     _client.current.activate();
   };
 
-  // 마지막) 나가면 커넥트 해제
   const _disconnectRTC = () => {
     console.log('_disconnectRTC : here is disconnect!');
     _client.current.deactivate();
@@ -365,9 +392,62 @@ const ChatRoom = ({navigation, route}) => {
     setLiveParticipants([nickName]);
   };
 
-  // 2) 소켓 커넥트 되면 Media 찾아오고 stream을 userStream으로 설정
+  const _enterSubs = () => {
+    _client.current.subscribe('/sub/live/enter/' + chatRoomId, msg => {
+      let tempParticipant = msg.body;
+      console.log('_enterSubs : 통화에 참여중인 사용자 = ', tempParticipant);
+
+      let Temp = liveParticipants;
+      for (let i = 0; i < liveParticipants.length; i++) {
+        if (liveParticipants[i] === tempParticipant) {
+          console.log(
+            '_enterSubs : 나 자신이거나, 이미 연결된 websocket 연결입니다.',
+            tempParticipant,
+          );
+          return;
+        }
+      }
+      Temp.push(tempParticipant);
+      setLiveParticipants(Temp);
+
+      console.log(
+        '_enterSubs : 통화에 참여 요청을 받았습니다..',
+        tempParticipant,
+      );
+      myPeer.on('signal', data => {
+        console.log('_enterSubs : My Peer On, Signal Data 전송');
+        _publishSignal(chatRoomId, data);
+      });
+    });
+  };
+
+  const _liveSubs = roomId => {
+    _client.current.subscribe('/sub/live/' + roomId, msg => {
+      console.log('_liveSubs : connected! and subscribed!');
+      let temp = JSON.parse(msg.body);
+      console.log('_liveSubs : 시그널 : ', JSON.parse(msg.body).signal);
+
+      if (nickName === temp.nickname) {
+        console.log(
+          '_liveSubs : 내 자신의 websocket 연결입니다.',
+          temp.nickname,
+        );
+        return;
+      }
+      console.log('_liveSubs : My Peer On, Stream 수신');
+      myPeer.signal(temp.signal);
+      myPeer.on('stream', stream => {
+        let peerStream = stream;
+        if (stream.currentTarget && stream.currentTarget._remoteStreams) {
+          peerStream = stream.currentTarget_._remoteStreams[0];
+        }
+        setOtherStream(peerStream);
+      });
+    });
+  };
+
   const _captureAudio = () => {
-    console.log('2) _captureAudio start! ');
+    console.log('_captureAudio start! ');
     setIsCalling(true);
     mediaDevices
       .enumerateDevices()
@@ -393,7 +473,6 @@ const ChatRoom = ({navigation, route}) => {
             },
           })
           .then(stream => {
-            console.log('2) _captureAudio : stream is', stream);
             if (inOnlyVoice === true) {
               let videoTrack = stream.getVideoTracks()[0];
               videoTrack.enabled = false;
@@ -410,34 +489,39 @@ const ChatRoom = ({navigation, route}) => {
       });
   };
 
-  let myPeer;
-  // 3) userStream 얻고 나서 나의 Peer 아이디 생성
   const _createPeer = stream => {
-    console.log('3) _createPeer : CreatePeer 호출');
+    console.log('_createPeer : CreatePeer 호출');
     myPeer = new RNSimplePeer({
       initiator: true,
       stream: stream,
       webRTC: {RTCPeerConnection, RTCIceCandidate, RTCSessionDescription},
       trickle: true,
     });
+    console.log('_createPeer : My Peer = ', myPeer);
+    _publishEnterLive();
+  };
 
-    myPeer.on('signal', data => {
-      console.log('3) _createPeer : signal정보 소켓에 전달');
-      _publishSignal(chatRoomId, data);
+  const _publishEnterLive = () => {
+    console.log(' _publishEnterLive : here is publish');
+    if (!_client.current.connected) {
+      return;
+    }
+    /* 새롭게 들어왔다는 신호 */
+    _client.current.publish({
+      destination: '/pub/live/enter',
+      body: JSON.stringify({
+        roomId: chatRoomId,
+        nickname: nickName,
+      }),
     });
-
-    myPeer.on('stream', stream => {
-      let peerStream = stream;
-      if (stream.currentTarget && stream.currentTarget._remoteStreams) {
-        peerStream = stream.currentTarget_._remoteStreams[0];
-      }
-      setOtherStream(peerStream);
+    myPeer.on('signal', data => {
+      console.log('_publishEnterLive : My Peer On 시작');
+      _publishSignal(chatRoomId, data);
     });
   };
 
-  // 4) 내 시그널 정보를 새로 들어온 사용자에게 보내줌
   const _publishSignal = (roomId, data) => {
-    console.log('_publishSignal : 새로 들어와서 내 시그널 정보를 보내줌');
+    console.log('_publishSignal : here is publish');
     if (!_client.current.connected) {
       return;
     }
@@ -452,54 +536,12 @@ const ChatRoom = ({navigation, route}) => {
     });
   };
 
-  // 5) 다른 사용자로부터 시그널을 받음
-  const _subscribeSignal = roomId => {
-    _client.current.subscribe('/sub/live/' + roomId, msg => {
-      let temp = JSON.parse(msg.body);
-
-      if (nickName === temp.nickname) {
-        console.log(
-          '7) _subscribeEnter : 나 자신이거나, 이미 연결된 사용자의 시그널입니다.',
-          temp.nickname,
-        );
-        return;
-      }
-
-      myPeer.signal(temp.signal);
-    });
-  };
-
   const _pressLive = () => {
     _connectRTC(chatRoomId);
     return () => _disconnectRTC();
   };
 
   //
-
-  // 채팅
-  const _connect = (roomId, nickName, itemId, isLike) => {
-    client.current = new Client({
-      brokerURL: 'wss://api.sendwish.link:8081/ws',
-      connectHeaders: {},
-      webSocketFactory: () => {
-        return SockJS('https://api.sendwish.link:8081/ws');
-      },
-      debug: str => {
-        setUpdate(str);
-        _getItemsFromShareCollection();
-      },
-      onConnect: () => {
-        _subscribe(roomId);
-      },
-      onStompError: frame => {},
-    });
-    client.current.activate();
-  };
-
-  const _disconnect = () => {
-    console.log('disconnect_chat : here is disconnect!');
-    client.current.deactivate();
-  };
 
   const _subscribe = roomId => {
     client.current.subscribe('/sub/chat/' + roomId, msg => {

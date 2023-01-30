@@ -62,48 +62,56 @@ const SignIn = ({navigation}) => {
 
   // 첫 로그인 시 async storage token 저장 + nickName 저장
   const storeData = async (nickName, accessToken) => {
-    try{
-      await AsyncStorage.setItem("userdata",JSON.stringify({
-        nickName: nickName,
-        accessToken: accessToken,
-      }));
-      console.log('토큰 스토리지 저장확인:', accessToken)
-      console.log('닉네임 스토리지 저장확인', nickName)
-      await AsyncStorage.getItem('userdata').then((value) => {
+    try {
+      await AsyncStorage.setItem(
+        'userdata',
+        JSON.stringify({
+          nickName: nickName,
+          accessToken: accessToken,
+        }),
+      );
+      console.log('토큰 스토리지 저장확인:', accessToken);
+      console.log('닉네임 스토리지 저장확인', nickName);
+      await AsyncStorage.getItem('userdata').then(value => {
         console.log('getdata check in main!!!', value);
         getData();
-      })
-    }
-    catch(e){
+      });
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   // 처음 로그인 하면 자동 로그인 되도록 token 체크 후 넘겨준다. (nickName 도 같이 넘겨줘야함)
-   const getData = async () => {
-    try{
-      const value = await AsyncStorage.getItem('userdata')
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userdata');
 
-      if(value !== null){
+      if (value !== null) {
         console.log('storage date check userdata!!!', value);
-        navigation.navigate('Navigation',{screen:'Main', params:{nickName: JSON.parse(value).nickName, accessToken: JSON.parse(value).accessToken}})
+        navigation.navigate('Navigation', {
+          screen: 'Main',
+          params: {
+            nickName: JSON.parse(value).nickName,
+            accessToken: JSON.parse(value).accessToken,
+          },
+        });
       }
-    }
-    catch(e){
+    } catch (e) {
       console.log(e);
     }
-  }
-  getData();
+  };
+  useEffect(() => {
+    getData();
+  });
 
   // 토큰이 없으면 로그인 화면으로 가는지 확인용으로 storage clear test
   // const clearData = async () => {
-  //   try{
+  //   try {
   //     await AsyncStorage.clear();
-  //   }
-  //   catch(e){
+  //   } catch (e) {
   //     console.log(e);
   //   }
-  // }
+  // };
   // clearData();
 
   useEffect(() => {
@@ -144,9 +152,9 @@ const SignIn = ({navigation}) => {
         .then(result => {
           console.log('===== result : ', result);
           storeData(nickName, result.tokenInfo.accessToken); // storage 토큰 저장
-          console.log("checkt token", result.tokenInfo.accessToken);
+          console.log('checkt token', result.tokenInfo.accessToken);
           accessToken = result.tokenInfo.accessToken;
-          console.log("store data check!!", nickName, accessToken);
+          console.log('store data check!!', nickName, accessToken);
           {
             if (result.error) {
               Alert.alert('아이디와 비밀번호를 확인해주세요 :)');
