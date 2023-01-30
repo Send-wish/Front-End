@@ -9,8 +9,7 @@ RN for sandwish Project
 
 ### npm install 주의 사항
 - npm insatll 시 항상 `--save` 옵션을 붙어주여야,RN과 해당 모듈이 링킹이 됩니다.
-
-## 데모 및 시연 영상 <a href="https://www.youtube.com/watch?v=kKdQTMBP7dQ">바로가기<a>
+### 데모 및 시연 영상 <a href="https://www.youtube.com/watch?v=kKdQTMBP7dQ">(바로가기)<a>
 
 
 
