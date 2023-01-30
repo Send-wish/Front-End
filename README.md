@@ -1,4 +1,4 @@
-## 간편하고 똑똑한 통합 장바구니 SendWish
+# 간편하고 똑똑한 통합 장바구니 SendWish
 여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션
 ## 설치법
 ## 설치하기 전 [공식문서](https://reactnative.dev/docs/environment-setup)의 RN CLI 설치에 필요한 것들(watchman,ruby 등등)을 설치해야 합니다.
