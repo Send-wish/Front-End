@@ -13,6 +13,9 @@ RN for sandwish Project
 
 ## 데모 및 시연 영상
 
+### 화면 구성
+https://user-images.githubusercontent.com/109953972/215483643-61415d53-f601-44b3-a9de-859305fbfc67.mov
+
 ### 쇼핑몰에서 아이템 담아오기
 https://user-images.githubusercontent.com/109953972/215481524-7640c2ea-ccd6-4a86-a253-4d61ebfd1f8a.MP4
 
