@@ -11,12 +11,21 @@ RN for sandwish Project
 - npm insatll 시 항상 `--save` 옵션을 붙어주여야,RN과 해당 모듈이 링킹이 됩니다.
 
 
-## 데모 및 시연 영상 <a href="https://www.youtube.com/watch?v=kKdQTMBP7dQ">(바로가기)<a>
+## 데모 및 시연 영상
+
+### 쇼핑몰에서 아이템 담아오기
+https://user-images.githubusercontent.com/109953972/215481524-7640c2ea-ccd6-4a86-a253-4d61ebfd1f8a.MP4
+
+### 장바구니 만들고 아이템 담기
+https://user-images.githubusercontent.com/109953972/215481579-ef7f1ff1-1c59-4954-bc08-acfbd0d9d5cd.MP4
+
+### 공유 장바구니에서 친구와 소통하고 친구 취향 알아보기
+https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd-88e7-eb3da4bd7d88.MP4
+
+### 채팅에서 아이템 확인하기
+https://user-images.githubusercontent.com/109953972/215481790-05384474-8eb1-4e6c-b965-e9d67e0cb90f.MP4
+
+### 채팅방에서 투표하기
+https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70-8303-adb57099f400.MP4
 
 
-https://user-images.githubusercontent.com/109953972/215479632-b887dd04-9b78-4e7b-9379-84d97ead24f0.MP4
-
-
-
-## 포스터
-![SendWish](https://user-images.githubusercontent.com/109953972/215467054-c11c8b96-e085-403f-8047-ef7daeeaadb8.jpg)
