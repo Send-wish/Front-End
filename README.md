@@ -1,5 +1,5 @@
-## Front-End
-RN for sandwish Project
+## 간편하고 똑똑한 통합 장바구니 SendWish
+여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션
 ## 설치법
 ## 설치하기 전 [공식문서](https://reactnative.dev/docs/environment-setup)의 RN CLI 설치에 필요한 것들(watchman,ruby 등등)을 설치해야 합니다.
 1. `git clone https://github.com/Send-wish/Front-End.git`으로 dir 생성
@@ -63,5 +63,10 @@ https://user-images.githubusercontent.com/109953972/215481790-05384474-8eb1-4e6c
 <br>
 
 https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70-8303-adb57099f400.MP4
+
+<br>
+
+### 기술적 아키텍처
+![아키텍처](https://user-images.githubusercontent.com/109953972/215490903-2a1c40bf-f8d8-41e0-abd0-eda8151e3f19.png)
 
 
