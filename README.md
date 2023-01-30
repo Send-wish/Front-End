@@ -9,3 +9,6 @@ RN for sandwish Project
 
 ### npm install 주의 사항
 - npm insatll 시 항상 `--save` 옵션을 붙어주여야,RN과 해당 모듈이 링킹이 됩니다.
+
+
+[SendWish.pdf](https://github.com/Send-wish/Front-End/files/10535333/SendWish.pdf)
