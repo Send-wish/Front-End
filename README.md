@@ -37,15 +37,6 @@ https://user-images.githubusercontent.com/109953972/215481579-ef7f1ff1-1c59-4954
 
 https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd-88e7-eb3da4bd7d88.MP4
 
-
-![화면구성_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031465-2e2dc94e-bfd7-4fdb-9948-8a8920860d8e.gif)
-
-<img src="https://user-images.githubusercontent.com/109953972/216032867-71741583-4613-4e99-8260-b5e686ea5915.gif" width="400" height="600"/>
-
-
-
-
-
 <br>
 
 ### 5. 채팅에서 아이템 확인하기
