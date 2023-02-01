@@ -40,7 +40,8 @@ https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd
 
 ![화면구성_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031465-2e2dc94e-bfd7-4fdb-9948-8a8920860d8e.gif)
 
-![공유_장바구니에서_친구와_소통하고_친구_취향_추천_MP4_AdobeExpress (1)](https://user-images.githubusercontent.com/109953972/216032229-895374ef-cd9a-4c67-8d90-5fcbe44d6528.gif)
+<img src="[이미지주소.png](https://user-images.githubusercontent.com/109953972/216032229-895374ef-cd9a-4c67-8d90-5fcbe44d6528.gif)" width="200" height="400"/>
+
 
 
 
