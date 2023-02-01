@@ -37,7 +37,9 @@ https://user-images.githubusercontent.com/109953972/215481579-ef7f1ff1-1c59-4954
 
 https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd-88e7-eb3da4bd7d88.MP4
 
-![공유_장바구니에서_친구와_소통하고_친구_취향_추천_MP4_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031070-2c78675c-462f-4082-a8c5-a4b82b504e61.gif)
+
+![화면구성_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031465-2e2dc94e-bfd7-4fdb-9948-8a8920860d8e.gif)
+
 
 
 <br>
