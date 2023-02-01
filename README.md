@@ -1,16 +1,5 @@
 # 간편하고 똑똑한 통합 장바구니 SendWish
 여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션
-## 설치법
-## 설치하기 전 [공식문서](https://reactnative.dev/docs/environment-setup)의 RN CLI 설치에 필요한 것들(watchman,ruby 등등)을 설치해야 합니다.
-1. `git clone https://github.com/Send-wish/Front-End.git`으로 dir 생성
-2. 해당 dir에서 `npm install --force`로 node_modules 설치
-3. 해당 dir에서 `cd ios`한 뒤,`pod install`
-4. 원래 dir로 돌아온뒤, 하나의 터미널에는 `npx react-native run-ios`로 Xcode 시뮬레이터를 또 다른 하나에는 `npx react-native start`로 로깅용 watchman을 실행시킵니다.
-
-### npm install 주의 사항
-- npm insatll 시 항상 `--save` 옵션을 붙어주여야,RN과 해당 모듈이 링킹이 됩니다.
-
-
 ## 서비스 설명
 
 ### 1. 화면 구성
@@ -67,7 +56,7 @@ https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70
 <br>
 
 ### 기술적 아키텍처
-![아키텍처](https://user-images.githubusercontent.com/109953972/215986953-8b2ca6c9-c9de-4574-8985-799685171462.png)
+![아키텍처](https://user-images.githubusercontent.com/109953972/216001021-50a322fe-aa4c-4ce1-989f-a787f6edb6c9.png)
 
 
 
