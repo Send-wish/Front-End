@@ -67,6 +67,7 @@ https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70
 <br>
 
 ### 기술적 아키텍처
-![아키텍처](https://user-images.githubusercontent.com/109953972/215490903-2a1c40bf-f8d8-41e0-abd0-eda8151e3f19.png)
+![아키텍처](https://user-images.githubusercontent.com/109953972/215986953-8b2ca6c9-c9de-4574-8985-799685171462.png)
+
 
 
