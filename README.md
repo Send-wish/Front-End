@@ -40,7 +40,7 @@ https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd
 
 ![화면구성_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031465-2e2dc94e-bfd7-4fdb-9948-8a8920860d8e.gif)
 
-<img src="(https://user-images.githubusercontent.com/109953972/216032229-895374ef-cd9a-4c67-8d90-5fcbe44d6528.gif)" width="200" height="400"/>
+<img src="https://user-images.githubusercontent.com/109953972/216032229-895374ef-cd9a-4c67-8d90-5fcbe44d6528.gif" width="200" height="400"/>
 
 
 
