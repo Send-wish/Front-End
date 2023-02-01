@@ -1,5 +1,5 @@
 # 간편하고 똑똑한 통합 장바구니 SendWish
-여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션
+여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션<br>
 2022.12.22 ~ 2023.01.28
 
 ## 서비스 설명
@@ -60,5 +60,5 @@ https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70
 ### 기술적 아키텍처
 ![아키텍처](https://user-images.githubusercontent.com/109953972/216001021-50a322fe-aa4c-4ce1-989f-a787f6edb6c9.png)
 
-
-
+### 포스터
+![SendWish](https://user-images.githubusercontent.com/109953972/216033775-cd232540-380e-42fe-a51c-52abed8d650a.jpg)
