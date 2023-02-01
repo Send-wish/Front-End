@@ -40,6 +40,9 @@ https://user-images.githubusercontent.com/109953972/215481637-d6ebc7fb-e9af-41bd
 
 ![화면구성_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031465-2e2dc94e-bfd7-4fdb-9948-8a8920860d8e.gif)
 
+![공유_장바구니에서_친구와_소통하고_친구_취향_추천_MP4_AdobeExpress](https://user-images.githubusercontent.com/109953972/216031829-88f09460-1b34-454c-85e8-377cc588827a.gif)
+
+
 
 
 <br>
