@@ -22,4 +22,4 @@
 
 
 ## 포스터
-![SendWish](https://user-images.githubusercontent.com/109953972/215467054-c11c8b96-e085-403f-8047-ef7daeeaadb8.jpg)
+![포스터-센드위시](https://user-images.githubusercontent.com/109953972/216086942-6d0dee2b-2ba8-49e0-b682-c7a80b4e5360.jpeg)
