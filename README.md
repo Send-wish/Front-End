@@ -13,6 +13,9 @@
 - 스토리지 & 상태 관리
 
 ## 데모 및 시연 영상 <a href="https://www.youtube.com/watch?v=kKdQTMBP7dQ">(바로가기)<a>
+[![시연동영상]](https://user-images.githubusercontent.com/96214306/215988388-8cd30df1-07b9-41d4-8fba-0d9aa4584e4c.mp4)
+
+[발표영상으로 보기](https://youtu.be/iwOKAPlsYRA)
 
 ## 포스터
 ![SendWish](https://user-images.githubusercontent.com/109953972/215467054-c11c8b96-e085-403f-8047-ef7daeeaadb8.jpg)
