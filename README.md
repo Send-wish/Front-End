@@ -61,5 +61,5 @@ https://user-images.githubusercontent.com/109953972/215481852-9073cdd7-6854-4e70
 ![아키텍처](https://user-images.githubusercontent.com/109953972/216001021-50a322fe-aa4c-4ce1-989f-a787f6edb6c9.png)
 
 ### 포스터
-![포스터-센드위시](https://user-images.githubusercontent.com/109953972/216086683-865e0669-55c3-4d5e-9e21-f5c907633052.jpeg)
+![sendwish 최종 포스터](https://user-images.githubusercontent.com/77164776/217215375-b64b7a7d-4f57-46d2-aea8-63589ff5b3d6.png)
 
