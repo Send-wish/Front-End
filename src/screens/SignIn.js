@@ -96,15 +96,15 @@ const SignIn = ({navigation}) => {
   getData();
 
   // 토큰이 없으면 로그인 화면으로 가는지 확인용으로 storage clear test
-  // const clearData = async () => {
-  //   try{
-  //     await AsyncStorage.clear();
-  //   }
-  //   catch(e){
-  //     console.log(e);
-  //   }
-  // }
-  // clearData();
+    // const clearData = async () => {
+    //   try{
+    //     await AsyncStorage.clear();
+    //   }
+    //   catch(e){
+    //     console.log(e);
+    //   }
+    // }
+    // clearData();
 
   useEffect(() => {
     setDisabled(!(nickName && password && !errorMessage));
