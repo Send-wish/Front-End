@@ -4,10 +4,9 @@ import {Alert, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
-import {Button, Input} from '../components/SignIn';
+import {Button, Input, ErrorMessage} from '../components/SignIn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
-import ErrorMessage from '../components/SignIn/ErrorMessage';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -92,8 +91,8 @@ const SignIn = ({navigation}) => {
   getData();
 
   // 토큰이 없으면 로그인 화면으로 가는지 확인용으로 storage clear test
-    const clearData = async () => {await AsyncStorage.clear();}
-    clearData();
+    // const clearData = async () => {await AsyncStorage.clear();}
+    // clearData();
 
   useEffect(() => {
     setDisabled(!(nickName && password && !errorMessage));

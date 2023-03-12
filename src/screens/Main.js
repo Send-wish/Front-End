@@ -6,7 +6,6 @@ import {
   ItemBox,
   CollectionCircle,
   AddCollectionCircle,
-  SearchIcon,
   EditIcon,
   Input,
   Button,
@@ -166,7 +165,6 @@ const Main = ({navigation, route}) => {
         appGroupIdentifier,
       );
       // this.loadUsernameFromSharedStorage()
-      // console.log('share data saved==========', nickName);
     } catch (errorCode) {
       // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
       // errorCode 1 = there is no value for that key
@@ -314,12 +312,6 @@ const Main = ({navigation, route}) => {
           }
           return response.json();
         })
-        .then(data => {
-          // console.log(data);
-        })
-        .then(result => {
-          // console.log('result', result);
-        })
         .then(() => _getItems(nickName))
         .then(() => _getCollections(nickName))
         .then(setAddToCollection([]))
@@ -366,7 +358,6 @@ const Main = ({navigation, route}) => {
       tempArray.push(itemId);
       setAddToCollection(tempArray);
     }
-    // console.log('****************addToCollection is : ', addToCollection);
   };
 
   // 컬렌션에 아이템 추가
@@ -420,10 +411,6 @@ const Main = ({navigation, route}) => {
     () => _getItems(nickName),
     {staleTime: 1000, refetchOnWindowFocus: true, retry: 0},
   );
-  // console.log('is loading?', isLoading);
-  // console.log('여기는 메인화면입니다. : ', data);
-  // console.log('error?', isError);
-  console.log('isFetching?', isFetching);
 
   useEffect(() => {
     if (data) {
@@ -444,7 +431,6 @@ const Main = ({navigation, route}) => {
       retry: 0,
     },
   );
-  // console.log('collection', {collection}.collection);
 
   useEffect(() => {
     if ({collection}.collection) {
