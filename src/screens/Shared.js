@@ -8,7 +8,6 @@ import {
   EditIcon,
   Input,
   ItemBox,
-  SearchIcon,
   TempCircle,
   CollectionCircle,
   MainCollectionCircle,
@@ -163,7 +162,6 @@ const Shared = ({route, navigation}) => {
     () => _getItems(nickName),
     {staleTime: 1000 ,refetchOnWindowFocus: true, retry: 0},
   );
-  // console.log( '여기는 쉐어화면입니다.', data);
   useEffect(() => {
     if (data) {
       setItems(data);
@@ -183,7 +181,6 @@ const Shared = ({route, navigation}) => {
       retry: 0,
     },
   );
-  // console.log('collection', {collection}.collection);
 
   useEffect(() => {
     if ({collection}?.collection) {
@@ -199,7 +196,6 @@ const Shared = ({route, navigation}) => {
     () => _getShareCollections(nickName),
     {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  // console.log('getShareCollection', {getShareCollection});
 
   useEffect(() => {
     if ({getShareCollection}?.getShareCollection) {
@@ -215,7 +211,6 @@ const Shared = ({route, navigation}) => {
       () => _getFriends(nickName),
       {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
     );
-    // console.log( '쉐어 화면 친구 목록 입니다.', queryFriends);
     useEffect(() => {
       if (queryFriends) {
         setFriends(queryFriends);
@@ -283,10 +278,6 @@ const Shared = ({route, navigation}) => {
             return response.json();
           }
         })
-        // .then(json => console.log(json))
-        .then(data => {
-          // console.log('*********공유 컬렉션 생성:', data);
-        })
         // .then(() => _getShareCollections(nickName));
     } catch (e) {
       console.log('share collection made fail');
@@ -310,21 +301,12 @@ const Shared = ({route, navigation}) => {
         },
       ).then(response => {
         if (!response.ok) {
-          console.log('delete nickname chekc!!!!!', nickName);
-          console.log('delete ㅑ야야e chekc!!!!!', shareCollectionId);
-
           throw new Error(`${response.status} 에러발생`);
         }
         // _getShareCollections(nickName);
         return;
         // return response.json();
       });
-      // .then(data => {
-      //   console.log(data);
-      // })
-      // .then(result => {
-      //   console.log('result', result);
-      // })
       // .then(() => _getShareCollections(nickName));
     } catch (e) {
       console.log('delete fail', e);
@@ -353,12 +335,6 @@ const Shared = ({route, navigation}) => {
         return;
         // return response.json();
       });
-      // .then(data => {
-      //   console.log(data);
-      // })
-      // .then(result => {
-      //   console.log('result', result);
-      // })
       // .then(()=>_getItems(nickName))
       // .then(setAddToShareCollection([]));
     } catch (e) {
@@ -440,7 +416,6 @@ const Shared = ({route, navigation}) => {
       tempArray.push(itemId);
       setAddToShareCollection(tempArray);
     }
-    // console.log('쉐어 컬렉션 담기 : ', addToShareCollection);
   };
 
   // 공유 컬렉션에 아이템 추가
@@ -462,9 +437,6 @@ const Shared = ({route, navigation}) => {
         // _getShareCollections(nickName);
         return response.json();
       });
-      // .then(data => {
-      //   console.log('data is : ', data);
-      // });
     } catch (e) {
       console.log('adding item to collection failed');
     }

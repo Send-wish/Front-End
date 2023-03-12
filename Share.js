@@ -1,265 +1,13 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
 import {ShareMenuReactView} from 'react-native-share-menu';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
-import {ThemeProvider} from 'styled-components';
-import {theme} from './src/theme';
-import styled from 'styled-components';
-import Feather from 'react-native-vector-icons/Feather';
 
-const Button = ({onPress, title, style}) => (
-  <Pressable onPress={onPress}>
-    <Text style={[{fontSize: 16, margin: 16}, style]}>{title}</Text>
-  </Pressable>
-);
-
-const Container = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: transparent;
-`;
-
-const BottomContainer = styled.View`
-  padding-left: 20px;
-  padding-right: 20px;
-  align-items: center;
-  height: 58%;
-  width: 100%;
-  background-color: ${({theme}) => theme.basicText};
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-`;
-
-const Row = styled.View`
-  flex: 1;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  flex-direction: row;
-`;
-
-const SaveStatus = styled.View`
-  justify-content: center;
-  height: 11%;
-  width: 100%;
-`;
-
-const CollectionList = styled.View`
-  border-radius: 30px;
-  margin-top: 5px;
-  margin-bottom: 13px;
-  padding-top: 9px;
-  padding-left: 10px;
-  padding-right: 10px;
-  flex-direction: row;
-  height: 33%;
-  width: 100%;
-  background-color: ${({theme}) => theme.line};
-`;
-const DividingLine = styled.View`
-  justify-content: center;
-  align-items: center;
-  height: 0.2%;
-  width: 96%;
-  background-color: ${({theme}) => theme.componentBackground};
-  border-radius: 20px;
-  z-index: 1;
-`;
-
-const LineIcon = styled.View`
-  justify-content: center;
-  align-items: center;
-  height: 1%;
-  width: 15%;
-  background-color: ${({theme}) => theme.subText};
-  border-radius: 20px;
-  margin-top: 10px;
-  margin-bottom: 33px;
-`;
-
-const SectionTitle = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
-  color: ${({theme}) => theme.mainBackground};
-  margin-left: 8px;
-`;
-
-const ContiuneInApp = ({onPress}) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          height: 33,
-          width: 120,
-          borderRadius: 10,
-          backgroundColor: theme.tintColorPink,
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignContent: 'center',
-        }}>
-        <Text
-          style={{color: theme.basicText, fontSize: 16, fontWeight: 'bold'}}>
-          어플로 이동하기
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const MainTitle = styled.Text`
-  font-size: 25px;
-  font-weight: bold;
-  color: ${({theme}) => theme.mainBackground};
-`;
-
-const CircleContainer = styled.View`
-  padding: 10px;
-  margin: 22px 10px 10px 10px;
-  width: 65px;
-  height: 65px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 75px;
-`;
-
-const CircleCollectionImage = styled.Image`
-  background-color: ${({theme}) => theme.subBackground};
-  margin: 0.2px;
-  width: 35px;
-  height: 35px;
-  border-width: 1px;
-  border-color: ${({theme}) => theme.componentBackground};
-`;
-
-const CircleRow = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const CircleTitle = styled.Text`
-  font-size: 13px;
-  font-weight: bold;
-  color: ${({theme}) => theme.strongSubText};
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 80px;
-  margin-top: 6px;
-`;
-
-const CollectionCircle = ({
-  onPress,
-  title,
-  defaultImage,
-  collectionId,
-  sharedUrl,
-}) => {
-  const _onPress = () => {
-    onPress(collectionId, nickName, sharedUrl);
-  };
-  return (
-    <CircleContainer>
-      <TouchableOpacity onPress={_onPress}>
-        <View
-          style={{
-            width: 72,
-            height: 72,
-            backgroundColor: theme.mainBackground,
-            borderRadius: 21,
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            zIndex: 1,
-          }}>
-          <CircleCollectionImage
-            source={{uri: defaultImage[0]}}
-            style={{borderTopLeftRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[1]}}
-            style={{borderBottomLeftRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[2]}}
-            style={{borderTopRightRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[3]}}
-            style={{borderBottomRightRadius: 20}}
-          />
-        </View>
-        <CircleRow>
-          <CircleTitle>{title}</CircleTitle>
-        </CircleRow>
-      </TouchableOpacity>
-    </CircleContainer>
-  );
-};
-
-const ShareCollectionCircle = ({
-  onPress,
-  title,
-  defaultImage,
-  collectionId,
-  sharedUrl,
-}) => {
-  const _onPress = () => {
-    onPress(collectionId, nickName, sharedUrl);
-  };
-
-  return (
-    <CircleContainer>
-      <TouchableOpacity onPress={_onPress}>
-        <View
-          style={{
-            width: 72,
-            height: 72,
-            backgroundColor: theme.mainBackground,
-            borderRadius: 21,
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            zIndex: 1,
-          }}>
-          <CircleCollectionImage
-            source={{uri: defaultImage[0]}}
-            style={{borderTopLeftRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[1]}}
-            style={{borderBottomLeftRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[2]}}
-            style={{borderTopRightRadius: 20}}
-          />
-          <CircleCollectionImage
-            source={{uri: defaultImage[3]}}
-            style={{borderBottomRightRadius: 20}}
-          />
-        </View>
-
-        <CircleRow>
-          <CircleTitle>{title}</CircleTitle>
-        </CircleRow>
-      </TouchableOpacity>
-    </CircleContainer>
-  );
-};
+import {
+  CollectionCircle,
+  ShareCollectionCircle,
+  ContiuneInApp,
+} from './src/components/AppShare';
 
 const Share = () => {
   const [sending, setSending] = useState(false);
@@ -270,16 +18,14 @@ const Share = () => {
   const [shareCollections, setShareCollections] = useState([]);
   const [sharedUrl, setSharedUrl] = useState('');
 
+  // 공유 스토리지에서 닉네임 가져오기
   const loadUsernameFromSharedStorage = async () => {
     try {
       const value = await SharedGroupPreferences.getItem(
         'nickNameData',
         appGroupIdentifier,
       );
-      // console.log('share check data==in share', value);
       nickName = value;
-      // console.log('nickName check in share', nickName);
-      // this.setState({username:value.name})
     } catch (errorCode) {
       // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
       // errorCode 1 = there is no value for that key
@@ -297,23 +43,8 @@ const Share = () => {
         postItem(data[0].data);
         setSharedUrl(data[0].data);
         _timeoutFunc();
-        console.log('************************sharedUrl is', sharedUrl);
       })
       .catch(error => {
-        if (error.response) {
-          // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // 요청이 이루어 졌으나 응답을 받지 못했습니다.
-          // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
-          // Node.js의 http.ClientRequest 인스턴스입니다.
-          console.log(error.request);
-        } else {
-          // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
-          console.log('Error', error.message);
-        }
         console.log(error.config);
       });
   }, []);
@@ -350,11 +81,7 @@ const Share = () => {
         })
         .then(data => {
           setShareCollections(data);
-          console.log('get share collections', data);
           setLoading(false);
-        })
-        .catch(error => {
-          console.log(error);
         });
     } catch (e) {
       console.log(e);
@@ -374,18 +101,11 @@ const Share = () => {
         .then(response => {
           return response.json();
         })
-        // .then(json => console.log(json))
         .then(() => {
-          console.log('아이템 등록 완료 [URL] : ', url);
           setSending(true);
-        })
-        .catch(error => {
-          console.log('아이템저장서버통신에러');
-          console.error(error);
         });
     } catch (e) {
       console.log(e);
-      console.log('send url fail');
     }
   };
 
@@ -445,42 +165,36 @@ const Share = () => {
     setTimeout(_setWaitSecond, 1000);
   };
   return (
-    <ThemeProvider theme={theme}>
-      <Container>
+      <View style = {styles.Container}>
         <TouchableOpacity
           style={{width: '100%', height: '60%'}}
           onPress={() => {
             ShareMenuReactView.dismissExtension();
           }}></TouchableOpacity>
 
-        <BottomContainer>
-          <LineIcon />
-          <SaveStatus>
-            <Row>
-              <MainTitle style={{marginLeft: 10}}>
+        <View style = {styles.BottomContainer}>
+          <View style = {styles.LineIcon} />
+          <View style = {styles.SaveStatus}>
+            <View style = {styles.Row}>
+              <Text style={styles.MainTitle}>
                 {waitSecond ? '저장 완료!' : '아이템 저장 중 ... !'}
-              </MainTitle>
+              </Text>
               <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: '39%',
-                  flexWrap: 'wrap',
-                }}>
+                style={styles.InnerView}>
                 <ContiuneInApp
                   onPress={() => {
                     ShareMenuReactView.continueInApp();
                   }}
                 />
               </View>
-            </Row>
-          </SaveStatus>
-          <DividingLine />
+            </View>
+          </View>
+          <View style = {styles.DividingLine} />
           <View style={{padding: 8, marginTop: 10}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <SectionTitle> 컬렉션에 담기</SectionTitle>
+              <Text style = {styles.SectionTitle}> 컬렉션에 담기</Text>
             </View>
-            <CollectionList>
+            <View style = {styles.CollectionList}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {collections.error
                   ? null
@@ -496,10 +210,9 @@ const Share = () => {
                       />
                     ))}
               </ScrollView>
-            </CollectionList>
-
-            <SectionTitle> 공유컬렉션에 담기</SectionTitle>
-            <CollectionList>
+            </View>
+            <Text style = {styles.SectionTitle}> 공유컬렉션에 담기</Text>
+            <View style = {styles.CollectionList}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {shareCollections.error
                   ? null
@@ -515,12 +228,92 @@ const Share = () => {
                       />
                     ))}
               </ScrollView>
-            </CollectionList>
+            </View>
           </View>
-        </BottomContainer>
-      </Container>
-    </ThemeProvider>
+        </View>
+      </View>
   );
 };
 
 export default Share;
+
+const styles = StyleSheet.create({
+  Container: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  BottomContainer: {
+    width: '100%',
+    height: '58%',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  Row: {
+    flex : 1,
+    width : '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  SaveStatus: {
+    width: '100%',
+    height: '11$',
+    justifyContent: 'center',
+  },
+  CollectionList: {
+    width: '100%',
+    height: '33%',
+    borderRadius: 30,
+    marginTop: 5,
+    marginBottom: 13,
+    paddingTop: 9,
+    paddingLeft: 10,
+    paddingRight: 10,
+    flexDirection: 'row',
+    backgroundColor: '#d5d5d5'
+  },
+  DividingLine: {
+    width: '96%',
+    height: '0.2%',
+    backgroundColor: '#a6a6a6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    zIndex: 1,
+  },
+  LineIcon: {
+    width: '15%',
+    height: '1%',
+    backgroundColor: '#a6a6a6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 33,
+  },
+  SectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#111111',
+    marginLeft: 8,
+  },
+  InnerView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '39%',
+    flexWrap: 'wrap',
+  },
+  MainTitle: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: '#111111',
+    marginLeft: 10,
+  },
+});

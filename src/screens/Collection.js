@@ -5,7 +5,6 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  SearchIcon,
   ItemBox,
   ProfileImage,
   EditIcon,
@@ -143,10 +142,6 @@ const Collection = ({route, navigation}) => {
         }
         return response.json();
       });
-      // .then(data => {
-      // })
-      // .then(result => {
-      // }); //for debug
     } catch (e) {
       console.log('change fail', e);
     }
@@ -167,7 +162,6 @@ const Collection = ({route, navigation}) => {
       tempArray.push(itemId);
       setDeleteList(tempArray);
     }
-    console.log('****************deleteList is : ', deleteList);
   };
 
   // 아이템 개별 링크
@@ -218,9 +212,7 @@ const Collection = ({route, navigation}) => {
           return res.json();
         })
         .then(data => {
-          // console.log('!!!!!!!!!!!!!!!', data);
           setImg(data.img);
-          // console.log('이미지 확인!!!!!!!!!!!!!!!!!!!!!!!!', img);
         });
     } catch (e) {
       console.log(e);
@@ -232,7 +224,6 @@ const Collection = ({route, navigation}) => {
     () => _getCollectionItems(nickName, collectionId),
     {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  // console.log('collectionItem', {collectionItem}.collectionItem.dtos);
 
   useEffect(() => {
     if ({collectionItem}?.collectionItem?.dtos) {
@@ -336,8 +327,6 @@ const Collection = ({route, navigation}) => {
                 <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
-                {/* <SearchIcon onPress={() => console.log('touched!!!!!!!!!')} /> */}
-                {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
                   name={isEditing ? 'x' : 'edit-2'}

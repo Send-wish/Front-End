@@ -3,12 +3,10 @@ import {
   View,
   ScrollView,
   FlatList,
-  TouchableOpacity,
   Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Input,
   ListFriend,
@@ -204,7 +202,6 @@ const Chat = ({route, navigation}) => {
     () => _getFriends(nickName),
     {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  // console.log('채팅 화면 친구 목록 입니다.', queryFriends);
   useEffect(() => {
     if (queryFriends) {
       setFriends(queryFriends);
@@ -219,7 +216,6 @@ const Chat = ({route, navigation}) => {
     () => _getChatList(nickName),
     {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  // console.log('채팅 화면 채팅 목록 입니다.', queryChatList);
   useEffect(() => {
     if (queryChatList) {
       setChatRoomList(queryChatList);
@@ -273,7 +269,6 @@ const Chat = ({route, navigation}) => {
 
   // 친구 추가
   const _addFriends = async () => {
-    // console.log('nickname check!!!!', nickName);
     try {
       // 아직 안열림
       await fetch('https://api.sendwish.link:8081/friend', {
@@ -293,10 +288,6 @@ const Chat = ({route, navigation}) => {
           setFrName('');
           return response.json();
         })
-        // .then(json => console.log('from server data check', json))
-        // .then(data => {
-        //   console.log('add friend check', data);
-        // })
         .catch(error => {
           console.error(error);
         })
@@ -305,26 +296,6 @@ const Chat = ({route, navigation}) => {
       console.log('add friend fail');
     }
   };
-
-  // 친구 목록 렌더링
-  // const _getFriends = async () => {
-  //   try {
-  //     // API 아직 안열림
-  //     fetch(`https://api.sendwish.link:8081/friend/${nickName}`, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': `application/json`},
-  //     })
-  //       .then(response => {
-  //         return response.json();
-  //       })
-  //       .then(data => {
-  //         setFriends(data);
-  //         // console.log('get friends', data);
-  //       });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   // 친구 삭제
   const _deleteFriend = async frName => {
@@ -341,7 +312,6 @@ const Chat = ({route, navigation}) => {
       }).then(response => {
         console.log('errorcheck!!response: ', response);
         if (!response.ok) {
-          // throw new Error(`${response.status} 에러발생`);
           Alert.alert('등록되지 않은 친구입니다 :(');
           throw new Error('등록되지 않은 친구입니다 :)');
         }
@@ -349,35 +319,10 @@ const Chat = ({route, navigation}) => {
         return;
         // return response.json();
       });
-      // .then(data => {
-      //   console.log(data);
-      // })
-      // .then(result => {
-      //   console.log('result', result);
-      //   _getFriends(nickName);
-      // });
     } catch (e) {
       console.log('friend delete fail', e);
     }
   };
-
-  // const _getChatList = async () => {
-  //   try {
-  //     fetch(`https://api.sendwish.link:8081/chat/rooms/${nickName}`, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     })
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(data => {
-  //         data.error ? null : setChatRoomList(data);
-  //         console.log('채팅목록내놔!', data);
-  //       });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   const screen = 'Chat';
 
@@ -402,7 +347,6 @@ const Chat = ({route, navigation}) => {
     setLength(chatRoomList.length * 70 + 80);
   }, [chatRoomList]);
 
-  // console.log('length', length);
 
   return (
     <Container insets={insets}>

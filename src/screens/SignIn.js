@@ -4,10 +4,9 @@ import {Alert, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../theme';
-import {Button, Input} from '../components/SignIn';
+import {Button, Input, ErrorMessage} from '../components/SignIn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
-import ErrorMessage from '../components/SignIn/ErrorMessage';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -67,10 +66,7 @@ const SignIn = ({navigation}) => {
         nickName: nickName,
         accessToken: accessToken,
       }));
-      console.log('토큰 스토리지 저장확인:', accessToken)
-      console.log('닉네임 스토리지 저장확인', nickName)
-      await AsyncStorage.getItem('userdata').then((value) => {
-        console.log('getdata check in main!!!', value);
+      await AsyncStorage.getItem('userdata').then(() => {
         getData();
       })
     }
@@ -85,7 +81,6 @@ const SignIn = ({navigation}) => {
       const value = await AsyncStorage.getItem('userdata')
 
       if(value !== null){
-        // console.log('storage date check userdata!!!', value);
         navigation.navigate('Navigation',{screen:'Main', params:{nickName: JSON.parse(value).nickName, accessToken: JSON.parse(value).accessToken}})
       }
     }
@@ -96,15 +91,8 @@ const SignIn = ({navigation}) => {
   getData();
 
   // 토큰이 없으면 로그인 화면으로 가는지 확인용으로 storage clear test
-  // const clearData = async () => {
-  //   try{
-  //     await AsyncStorage.clear();
-  //   }
-  //   catch(e){
-  //     console.log(e);
-  //   }
-  // }
-  // clearData();
+    // const clearData = async () => {await AsyncStorage.clear();}
+    // clearData();
 
   useEffect(() => {
     setDisabled(!(nickName && password && !errorMessage));
@@ -142,34 +130,17 @@ const SignIn = ({navigation}) => {
       })
         .then(response => response.json())
         .then(result => {
-          console.log('===== result : ', result);
           storeData(nickName, result.tokenInfo.accessToken); // storage 토큰 저장
-          console.log("checkt token", result.tokenInfo.accessToken);
           accessToken = result.tokenInfo.accessToken;
-          console.log("store data check!!", nickName, accessToken);
           {
             if (result.error) {
               Alert.alert('아이디와 비밀번호를 확인해주세요 :)');
-              console.log('===== result.error : ', result.error);
               throw new Error(`로그인 에러발생`);
             }
           }
         })
-        // result  값이 유효하지 않으면 (토큰이 발급되지 않으면 알람 메시지 띄우고 로그인 화면 유지)
-        .then(json => {
-          // passName = {nickName}; // {nickName:UserNickName} object 형식으로 넘겨줌
-          // navigation.navigate('Navigation', {
-          //   screen: 'Main',
-          //   params: passName,
-          // });
-          console.log(json);
-        })
-        .catch(error => {
-          console.error(error);
-        });
     } catch (e) {
       Alert.alert('로그인 실패', '아이디와 비밀번호를 확인해주세요.');
-      console.log(error);
     }
   };
 

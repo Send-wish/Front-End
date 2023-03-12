@@ -4,7 +4,6 @@ import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  SearchIcon,
   ItemBox,
   ProfileImage,
   EditIcon,
@@ -14,10 +13,10 @@ import {Button, Input, ChatButton} from '../components/SharedCollection';
 import {theme} from '../theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {useIsFocused} from '@react-navigation/native';
-import {ThemeConsumer} from 'styled-components';
 
 import {useQuery} from 'react-query';
 import _getItemsFromShareCollection from '../ReactQuery/useQuery/getShareCollectionItems';
+import _getShareCollections from '../ReactQuery/useQuery/getShareCollection';
 
 const Container = styled.View`
   flex: 1;
@@ -120,7 +119,7 @@ const SharedCollection = ({route, navigation}) => {
     () => _getItemsFromShareCollection(nickName, shareCollectionId),
     {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
   );
-  // console.log('shareCollectionItem', {shareCollectionItem});
+  console.log('shareCollectionItem', {shareCollectionItem});
 
   useEffect(() => {
     if ({shareCollectionItem}?.shareCollectionItem?.dtos) {
@@ -141,12 +140,10 @@ const SharedCollection = ({route, navigation}) => {
         },
       )
         .then(response => {
-          // console.log('공유 컬렉션별 친구 목록 불러오기error: ', response);
           return response.json();
         })
         .then(data => {
           setFriendList(data.memberList);
-          // console.log('공유컬렉션별 친구 목록 확인', data);
         });
     } catch (e) {
       console.log(e);
@@ -188,10 +185,6 @@ const SharedCollection = ({route, navigation}) => {
         }
         return response.json();
       });
-      // .then(data => {
-      // })
-      // .then(result => {
-      // }); //for debug
     } catch (e) {
       console.log('change fail', e);
     }
@@ -316,7 +309,6 @@ const SharedCollection = ({route, navigation}) => {
             <Ionic name="chevron-back" size={25} color={theme.basicText} />
           </StyledTouchableOpacity>
           <Input
-            // ref={refShareCollectionName}
             value={shareCollectionTitle}
             onChangeText={setShareCollectionTitle}
             onBlur={() => setShareCollectionTitle(shareCollectionTitle)}
@@ -408,8 +400,6 @@ const SharedCollection = ({route, navigation}) => {
                 <SubTitle>총 {items.length}개의 아이템을 담았어요 !</SubTitle>
               </View>
               <Row>
-                {/* <SearchIcon /> */}
-                {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
                   name={isEditing ? 'x' : 'edit-2'}
