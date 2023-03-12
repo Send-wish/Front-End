@@ -13,7 +13,6 @@ import {
   ChatRoom,
   LiveChat,
 } from './src/screens';
-import Share from './Share';
 
 // color theme
 import {ThemeProvider} from 'styled-components';
@@ -105,9 +104,8 @@ const App = () => {
               name="SharedCollection"
               component={SharedCollection}
             />
-            <Stack.Screen name="Share" component={Share} />
             <Stack.Screen name="ChatRoom" component={ChatRoom} />
-            <Stack.Screen name="LiveChat" component={LiveChat} />
+            {/* <Stack.Screen name="LiveChat" component={LiveChat} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </ThemeProvider>
