@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   ScrollView,
@@ -7,7 +7,6 @@ import {
   TouchableHighlight,
   FlatList,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -22,28 +21,20 @@ import {
   MySayingItem,
   OthersSayingItem,
   Button,
-  AddCollectionCircle,
   CollectionCircle,
   ChartButton,
   ChartItemBox,
   EditIcon,
   AddButton,
-  VoteItemBox,
-  VoteButton,
   TimerItemBox,
 } from '../components/ChatRoom';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionic from 'react-native-vector-icons/Ionicons';
-import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
 import Foundation from 'react-native-vector-icons/Foundation';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Modal} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {set} from 'immer/dist/internal';
 
 const Container = styled.View`
   flex: 1;
@@ -325,7 +316,6 @@ const ChatRoom = ({navigation, route}) => {
         return SockJS('https://api.sendwish.link:8081/ws');
       },
       debug: str => {
-        // console.log('STOMP: ' + str);
         setUpdate(str);
         _getItemsFromShareCollection();
       },

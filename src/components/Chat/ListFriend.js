@@ -1,13 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import ShareIcon from './ShareIcon';
-import DeleteIcon from './DeleteIcon';
-import {theme} from '../theme';
 import {
-  Text,
   View,
   TouchableHighlight,
-  ScrollView,
   TouchableOpacity,
 } from 'react-native';
 
@@ -58,13 +53,6 @@ const CollectionCircleCollectionImage = styled.Image`
 const CollectionCircleRow = styled.View`
   flex-direction: row;
   justify-content: center;
-`;
-
-const CollectionCircleTitle = styled.Text`
-  font-size: 11px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-  width: 80px;
 `;
 
 const CollectionCircle = ({onLongPress, firstDefaultImage}) => {
