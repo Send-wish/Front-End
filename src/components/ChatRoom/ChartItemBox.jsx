@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import React, {useRef, useState, useEffect} from 'react';
+import React, { useState, memo} from 'react';
 import {
-  TouchableOpacity,
   Animated,
-  PanResponder,
   View,
   TouchableHighlight,
 } from 'react-native';
@@ -172,4 +170,4 @@ const ChartItemBox = ({
   );
 };
 
-export default ChartItemBox;
+export default memo(ChartItemBox);

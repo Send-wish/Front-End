@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const ContiuneInApp = ({onPress}) => {
@@ -11,7 +11,7 @@ const ContiuneInApp = ({onPress}) => {
   );
 };
 
-export default ContiuneInApp;
+export default memo(ContiuneInApp);
 
 const styles = StyleSheet.create({
     ViewApp : {

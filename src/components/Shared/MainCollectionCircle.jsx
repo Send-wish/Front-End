@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, {useEffect, useState} from 'react';
+import React, {memo, useState} from 'react';
 import {TouchableHighlight, TouchableOpacity, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -172,4 +172,4 @@ const MainCollectionCircle = ({
   );
 };
 
-export default MainCollectionCircle;
+export default memo(MainCollectionCircle);

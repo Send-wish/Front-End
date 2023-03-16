@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {memo} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
@@ -24,4 +24,4 @@ const EditIcon = ({onPress,name}) => {
   );
 };
 
-export default EditIcon;
+export default memo(EditIcon);

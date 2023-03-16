@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import styled from "styled-components/native";
 import PropTypes from 'prop-types';
 
@@ -19,4 +19,4 @@ ErrorMessage.propTypes = {
     message:PropTypes.string.isRequired,
 };
 
-export default ErrorMessage;
+export default memo(ErrorMessage);

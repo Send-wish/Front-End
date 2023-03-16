@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
@@ -31,4 +31,4 @@ const Button = ({title, buttonStyle, onPress}) => {
   );
 };
 
-export default Button;
+export default memo(Button);

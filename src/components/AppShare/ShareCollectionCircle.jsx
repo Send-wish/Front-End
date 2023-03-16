@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo}from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 
@@ -53,7 +53,7 @@ const ShareCollectionCircle = ({
     );
   };
   
-export default ShareCollectionCircle;
+export default memo(ShareCollectionCircle);
 
 const styles = StyleSheet.create({
     CircleContainer: {

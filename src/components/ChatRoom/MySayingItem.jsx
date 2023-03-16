@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {memo} from 'react';
 import {View} from 'react-native';
-import {TouchableOpacity, TouchableHighlight} from 'react-native';
+import {TouchableHighlight} from 'react-native';
 
 const Container = styled.View`
   flex-wrap: wrap;
@@ -211,4 +211,4 @@ const MySayingItem = ({
   );
 };
 
-export default MySayingItem;
+export default memo(MySayingItem);

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {memo} from 'react';
 import {TouchableOpacity} from 'react-native';
 import View from 'react-native-view';
 import Feather from 'react-native-vector-icons/Feather';
@@ -61,4 +61,4 @@ const ProfileImage = ({title, image, onPress}) => {
   );
 };
 
-export default ProfileImage;
+export default memo(ProfileImage);

@@ -1,4 +1,4 @@
-import React, {useState, forwardRef} from 'react';
+import React, {useState, forwardRef, memo} from 'react';
 import styled from 'styled-components/native';
 import {theme} from '../../theme';
 
@@ -73,4 +73,4 @@ Input.defaultProps = {
   onBlur: () => {},
 };
 
-export default Input;
+export default memo(Input);

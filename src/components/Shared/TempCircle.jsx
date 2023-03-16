@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import React, {useState} from 'react';
-import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
+import React, {useState, memo} from 'react';
+import {TouchableHighlight, View} from 'react-native';
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -96,4 +96,4 @@ const TempCircle = ({frName, friendName, titleStyle, image, onPress}) => {
   );
 };
 
-export default TempCircle;
+export default memo(TempCircle);

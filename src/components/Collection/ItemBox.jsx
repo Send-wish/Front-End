@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, memo} from 'react';
 import {
-  TouchableOpacity,
   Animated,
   PanResponder,
   View,
@@ -9,7 +8,6 @@ import {
 } from 'react-native';
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
-import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled(Animated.createAnimatedComponent(View))`
   padding: 10px;
@@ -208,4 +206,4 @@ const ItemBox = ({
   );
 };
 
-export default ItemBox;
+export default memo(ItemBox);

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, {memo} from 'react';
 import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
 
 const Container = styled.View`
@@ -53,4 +53,4 @@ const CollectionCircle = ({onLongPress, frName, image}) => {
   );
 };
 
-export default CollectionCircle;
+export default memo(CollectionCircle);

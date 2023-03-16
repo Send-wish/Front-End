@@ -1,4 +1,4 @@
-import React, {useState, forwardRef} from 'react';
+import React, {forwardRef, memo} from 'react';
 import styled from 'styled-components/native';
 import {theme} from '../../theme';
 import PropTypes from 'prop-types';
@@ -69,4 +69,4 @@ Input.defaultProps = {
 //   isPassword:PropTypes.bool,
 // };
 
-export default Input;
+export default memo(Input);

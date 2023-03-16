@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import styled from 'styled-components/native';
 import {
   View,
@@ -122,4 +122,4 @@ const ListFriend = ({
   );
 };
 
-export default ListFriend;
+export default memo(ListFriend);

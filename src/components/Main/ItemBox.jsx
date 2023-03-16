@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, memo} from 'react';
 import {
   TouchableOpacity,
   Animated,
@@ -246,4 +246,4 @@ const ItemBox = ({
   );
 };
 
-export default ItemBox;
+export default memo(ItemBox);

@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
-import {View} from 'react-native';
-import {TouchableOpacity} from 'react-native';
+import React, {memo} from 'react';
 
 const Container = styled.View`
   flex-wrap: wrap;
@@ -100,4 +98,4 @@ const MySaying = ({sender, createAt, message, senderImg}) => {
   );
 };
 
-export default MySaying;
+export default memo(MySaying);

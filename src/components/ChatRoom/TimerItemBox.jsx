@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, memo} from 'react';
 import {View, Text, TouchableOpacity, Linking, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {theme} from '../../theme';
@@ -836,4 +836,4 @@ const TimerItemBox = ({
   }
 };
 
-export default TimerItemBox;
+export default memo(TimerItemBox);
