@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React, {useRef, useState, memo} from 'react';
 import {
-  TouchableOpacity,
   Animated,
   PanResponder,
   View,
@@ -10,15 +9,6 @@ import {
 import {theme} from '../../theme';
 import Feather from 'react-native-vector-icons/Feather';
 
-import {Component} from 'react-native';
-
-import {
-  LazyloadScrollView,
-  LazyloadView,
-  LazyloadImage,
-} from 'react-native-lazyload';
-
-// import ImageLazyLoading from "react-native-image-lazy-loading";
 
 const Container = styled(Animated.createAnimatedComponent(View))`
   padding: 10px;
@@ -31,20 +21,6 @@ const Container = styled(Animated.createAnimatedComponent(View))`
 `;
 
 const ItemImage = styled.Image`
-  background-color: ${({theme}) => theme.tintColorPink};
-  padding: 10px;
-  margin: 3px 3px 3px 3px;
-  width: 100px;
-  height: 100px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 30px;
-  flex-wrap: wrap;
-  border-style: solid;
-  border: ${({theme}) => theme.line};
-`;
-
-const LazyView = styled.View`
   background-color: ${({theme}) => theme.tintColorPink};
   padding: 10px;
   margin: 3px 3px 3px 3px;
@@ -175,13 +151,6 @@ const ItemBox = ({
         style={{display: isEditing ? 'none' : 'flex'}}
         onLongPress={onLongPress}>
         <Container>
-          {/* <LazyView>
-            <LazyloadImage
-              host={host}
-              source={{uri: itemImage}}
-              style={imageStyle}
-            />
-          </LazyView> */}
           <ItemImage source={{uri: itemImage}} style={imageStyle} />
           <Row>
             <Sale style={priceStyle}>{saleRate}</Sale>
@@ -211,13 +180,6 @@ const ItemBox = ({
                 zIndex: 10,
               }}
             />
-            {/* <LazyView>
-              <LazyloadImage
-                host={host}
-                source={{uri: itemImage}}
-                style={imageStyle}
-              />
-            </LazyView> */}
             <ItemImage
               source={{uri: itemImage}}
               style={{opacity: isChecked ? 0.4 : 0.3, position: 'absolute'}}

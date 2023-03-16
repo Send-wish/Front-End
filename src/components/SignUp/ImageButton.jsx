@@ -1,5 +1,4 @@
 import React, {memo} from 'react';
-import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
@@ -21,13 +20,11 @@ const Title = styled.Text`
   color: ${({theme}) => theme.basicText};
 `;
 
-const ImageButton = ({title, onPress, disabled}) => {
+const ImageButton = ({title, disabled}) => {
   return (
-    // <TouchableOpacity onPress={onPress} disabled={disabled}>
       <Container disabled ={disabled}>
         <Title>{title}</Title>
       </Container>
-    // </TouchableOpacity>
   );
 };
 

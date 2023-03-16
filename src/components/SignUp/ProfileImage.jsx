@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 import React, {memo} from 'react';
 import {TouchableOpacity} from 'react-native';
-import View from 'react-native-view';
-import Feather from 'react-native-vector-icons/Feather';
-import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
@@ -27,19 +24,6 @@ const SignUpImage = styled.Image`
   margin-bottom: 10px;
 `;
 
-const Title = styled.Text`
-  margin-top: 5px;
-  margin-right : 5px;
-  margin-left : 16px;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  height: 20px;
-  flex-wrap: wrap;
-`;
 
 const Row = styled.View`
   flex-direction: row;
@@ -47,7 +31,7 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const ProfileImage = ({title, image, onPress}) => {
+const ProfileImage = ({image, onPress}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress} style={{width: '100%'}}>

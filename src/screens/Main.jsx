@@ -18,15 +18,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
-// lazy loading
-import {Component} from 'react-native';
-
-import {
-  LazyloadScrollView,
-  LazyloadView,
-  LazyloadImage,
-} from 'react-native-lazyload';
-
 import {useQuery} from 'react-query';
 import _getItems from '../ReactQuery/useQuery/getItem';
 import _getCollections from '../ReactQuery/useQuery/getCollection';

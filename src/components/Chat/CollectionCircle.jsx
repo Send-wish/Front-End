@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, {memo} from 'react';
-import {TouchableOpacity, TouchableHighlight, View} from 'react-native';
+import {TouchableHighlight, View} from 'react-native';
 
 const Container = styled.View`
   margin: 10px 10px 10px 10px;

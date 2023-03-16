@@ -26,27 +26,13 @@ const SignUpImage = styled.Image`
   margin-bottom: 10px;
 `;
 
-const Title = styled.Text`
-  margin-top: 5px;
-  margin-right : 5px;
-  margin-left : 16px;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${({theme}) => theme.basicText};
-  justify-content: center;
-  align-items : center;
-  text-align: center;
-  height: 20px;
-  flex-wrap: wrap;
-`;
-
 const Row = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
 `;
 
-const RandomImage = ({title, image, onPress}) => {
+const RandomImage = ({image, onPress}) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress} style={{width: '100%'}}>

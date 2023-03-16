@@ -28,7 +28,6 @@ import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {Text, View} from 'react-native';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
 import {useFocusEffect} from '@react-navigation/native';
 
 const Container = styled.View`

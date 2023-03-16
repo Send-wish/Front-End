@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import React, {memo} from 'react';
 import {TouchableOpacity} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {theme} from '../../theme';
 
 const Container = styled.View`
   padding: 10px;
@@ -57,4 +56,4 @@ const AddCollectionCircle = ({onPress, title, imageStyle, titleStyle}) => {
   );
 };
 
-export default (memoAddCollectionCircle);
+export default memo(AddCollectionCircle);

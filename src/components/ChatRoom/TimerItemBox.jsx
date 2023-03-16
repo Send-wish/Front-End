@@ -4,7 +4,6 @@ import styled from 'styled-components/native';
 import {theme} from '../../theme';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
-import * as encoding from 'text-encoding';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const FriendsContainer = styled.View`

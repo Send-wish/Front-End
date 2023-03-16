@@ -1,6 +1,5 @@
 import React, {forwardRef, memo} from 'react';
 import styled from 'styled-components/native';
-import {theme} from '../../theme';
 import PropTypes from 'prop-types';
 
 const Container = styled.View`

@@ -1,19 +1,10 @@
 import React, {useState, forwardRef, memo} from 'react';
 import styled from 'styled-components/native';
-import {theme} from '../../theme';
 
 const Container = styled.View`
   flex-direction: column;
   width: 100%;
   margin-top: 10px;
-`;
-const Label = styled.Text`
-  font-size: 16px;
-  font-weight: 600;
-  margin-left: 5px;
-  margin-bottom: 10px;
-  color: ${({theme, isFocused}) =>
-    isFocused ? theme.basicText : theme.basicText};
 `;
 const StyledInput = styled.TextInput.attrs(({theme}) => ({
   placeholderTextColor: theme.placeholder,
