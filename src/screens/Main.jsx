@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, ScrollView, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -120,7 +120,6 @@ const Main = ({navigation, route}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
-
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const lazyItems = [...items];
@@ -171,7 +170,6 @@ const Main = ({navigation, route}) => {
         'nickNameData',
         appGroupIdentifier,
       );
-      // const value = await SharedGroupPreferences.getItem("nickNameData",nickName, appGroupIdentifier)
       // console.log('share check data==', value);
       // this.setState({username:value.name})
     } catch (errorCode) {
@@ -253,9 +251,9 @@ const Main = ({navigation, route}) => {
   };
 
   // 아이템 개별 오픈 링크
-  const _openUrl = url => {
+  const _openUrl = useCallback(url => {
     Linking.openURL(url);
-  };
+  }, []);
 
   // 아이템 추가 (Extension에서 공유된 URL)
   const _addItem = async () => {
@@ -312,7 +310,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  const _pressEditButton = () => {
+  const _pressEditButton = useCallback(() => {
     if (isCollectionEditing) {
       setIsCollectionEditing(false);
     } else {
@@ -322,9 +320,9 @@ const Main = ({navigation, route}) => {
         setIsEditing(true);
       }
     }
-  };
+  });
 
-  const _longPressCollection = () => {
+  const _longPressCollection = useCallback(() => {
     if (isEditing) {
       return;
     } else {
@@ -332,9 +330,9 @@ const Main = ({navigation, route}) => {
         ? setIsCollectionEditing(false)
         : setIsCollectionEditing(true);
     }
-  };
+  });
 
-  const _addItemToList = itemId => {
+  const _addItemToList = useCallback((itemId) => {
     if (addToCollection.includes(itemId)) {
       tempArray = addToCollection;
       for (let i = 0; i < tempArray.length; i++) {
@@ -349,7 +347,7 @@ const Main = ({navigation, route}) => {
       tempArray.push(itemId);
       setAddToCollection(tempArray);
     }
-  };
+  });
 
   // 컬렌션에 아이템 추가
   const _addItemToCollection = async (collectionId, nickName) => {
@@ -376,7 +374,7 @@ const Main = ({navigation, route}) => {
     }
   };
 
-  const _pressTargetCollection = (collectionId, collectionName, nickName) => {
+  const _pressTargetCollection = useCallback((collectionId, collectionName, nickName) => {
     setIsCollectionEditing(false);
     // 콜렉션 수정중이 아닐 때,
     if (!isCollectionEditing) {
@@ -394,7 +392,7 @@ const Main = ({navigation, route}) => {
     } else {
       _deleteCollection(collectionId, nickName);
     }
-  };
+  });
 
   // 아이템 렌더링
   const {isFetching, isLoading, data, isError, refetch} = useQuery(

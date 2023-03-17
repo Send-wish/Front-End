@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {View, TouchableOpacity, ScrollView, Modal, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -165,17 +165,17 @@ const Collection = ({route, navigation}) => {
   };
 
   // 아이템 개별 링크
-  const _openUrl = url => {
+  const _openUrl = useCallback(url => {
     Linking.openURL(url);
-  };
+  });
 
-  const _pressEditButton = () => {
+  const _pressEditButton = useCallback(() => {
     if (isEditing) {
       setIsEditing(false);
     } else {
       setIsEditing(true);
     }
-  };
+  });
 
   // 아이템 삭제
   const _deleteItemsFromCollection = async () => {

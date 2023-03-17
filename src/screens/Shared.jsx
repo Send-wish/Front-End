@@ -343,7 +343,7 @@ const Shared = ({route, navigation}) => {
   };
 
   // 공유 컬렉션 만들 친구 추가하기
-  const _addFriendList = frName => {
+  const _addFriendList = useCallback((frName) => {
     if (addFriendList.includes(frName)) {
       friendArray = addFriendList;
       for (let i = 0; i < friendArray.length; i++) {
@@ -360,25 +360,25 @@ const Shared = ({route, navigation}) => {
       setAddFriendList(friendArray);
       console.log('friendArraycheck ADDDD', addFriendList);
     }
-  };
+  });
 
   // 공유 컬렉션 생성시 추가할 개인 컬렉션
-  const _pressTargetCollection = collectionId => {
+  const _pressTargetCollection = useCallback((collectionId) => {
     setIsCollectionSelected(!isCollectionSelected);
     setTargetCollectionId(collectionId);
     if (isCollectionSelected && targetCollectionId === targetCollectionId) {
       setTargetCollectionId();
     }
     console.log('targetCollectionId', targetCollectionId);
-  };
+  });
 
   // 아이템 개별 링크
-  const _openUrl = url => {
+  const _openUrl = useCallback((url) => {
     console.log('url', url);
     Linking.openURL(url);
-  };
+  });
 
-  const _pressEditButton = () => {
+  const _pressEditButton = useCallback(() => {
     if (isShareCollectionEditing) {
       setIsShareCollectionEditing(false);
     } else {
@@ -388,9 +388,9 @@ const Shared = ({route, navigation}) => {
         setIsEditing(true);
       }
     }
-  };
+  });
 
-  const _longPressCollection = () => {
+  const _longPressCollection = useCallback(() => {
     if (isEditing) {
       return;
     } else {
@@ -398,10 +398,10 @@ const Shared = ({route, navigation}) => {
         ? setIsShareCollectionEditing(false)
         : setIsShareCollectionEditing(true);
     }
-  };
+  });
 
   // 공유 컬렉션에 추가할 아이템 선택
-  const _addItemToShareList = itemId => {
+  const _addItemToShareList = useCallback((itemId) => {
     if (addToShareCollection.includes(itemId)) {
       tempArray = addToShareCollection;
       for (let i = 0; i < tempArray.length; i++) {
@@ -416,7 +416,7 @@ const Shared = ({route, navigation}) => {
       tempArray.push(itemId);
       setAddToShareCollection(tempArray);
     }
-  };
+  });
 
   // 공유 컬렉션에 아이템 추가
   const _addItemToShareCollection = async (shareCollectionId, nickName) => {
@@ -442,7 +442,7 @@ const Shared = ({route, navigation}) => {
     }
   };
 
-  const _pressTargetShareCollection = (
+  const _pressTargetShareCollection = useCallback((
     shareCollectionId,
     nickName,
     shareCollectionName,
@@ -463,7 +463,7 @@ const Shared = ({route, navigation}) => {
     } else {
       _deleteShareCollection(shareCollectionId, nickName);
     }
-  };
+  });
 
   return (
     <Container insets={insets}>

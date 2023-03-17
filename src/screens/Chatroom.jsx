@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   ScrollView,
@@ -384,13 +384,13 @@ const ChatRoom = ({navigation, route}) => {
     }
   }, [isFocused]);
 
-  _pressEnter = () => {
+  _pressEnter = useCallback(() => {
     if (message === '') {
       return;
     }
     _publish(chatRoomId);
     setMessage('');
-  };
+  });
 
   // 공유컬렉션 아이템 렌더링
   const _getItemsFromShareCollection = () => {
@@ -447,9 +447,9 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  const _pressFilter = () => {
+  const _pressFilter = useCallback(() => {
     isSorted ? setIsSorted(false) : setIsSorted(true);
-  };
+  });
 
   useEffect(() => {
     _getItemsFromShareCollection();
@@ -506,9 +506,9 @@ const ChatRoom = ({navigation, route}) => {
     }
   };
 
-  const _pressFriend = friend => {
+  const _pressFriend = useCallback((friend) => {
     _getChart(friend).then(setChartModal(!chartModal));
-  };
+  });
 
   const _addItemToShareCollection = async (nickName, shareCollectionId) => {
     setIsEditing(false);
