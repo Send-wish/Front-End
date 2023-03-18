@@ -1,5 +1,5 @@
-const _deleteCollection = async (collectionId, nickName) => {
-    try {
+const _deleteCollect = async ({collectionId, nickName}) => {
+    const deleteCollect = await
       fetch(
         `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
         {
@@ -13,13 +13,7 @@ const _deleteCollection = async (collectionId, nickName) => {
           }),
         },
       )
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-    } catch (e) {
-      console.log(e);
-    }
+      return deleteCollect.json();
   };
+
+export default _deleteCollect;

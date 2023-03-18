@@ -88,7 +88,9 @@ const Share = () => {
     }
   };
 
+  // 서버에 아이템 등록
   const postItem = async url => {
+    console.log('url', url);
     try {
       fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',

@@ -1,8 +1,8 @@
-const _madeCollection = async () => {
+const _makeCollect = async ({nickName, collectionName}) => {
   if (collectionName === '') {
     return Alert.alert('컬렉션 이름을 입력해주세요');
   }
-  try {
+  const makeCollection = await
     fetch('https://api.sendwish.link:8081/collection', {
       method: 'POST',
       headers: {'Content-Type': `application/json`},
@@ -11,16 +11,7 @@ const _madeCollection = async () => {
         title: collectionName,
       }),
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        return data;
-      });
-  } catch (e) {
-    console.log(e);
-  }
-};
+    return makeCollection.json();
+  };
+
+export default _makeCollect;

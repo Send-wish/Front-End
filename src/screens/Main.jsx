@@ -19,8 +19,14 @@ import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
 import {useQuery} from 'react-query';
-import _getItems from '../ReactQuery/useQuery/getItem';
-import _getCollections from '../ReactQuery/useQuery/getCollection';
+import {_getItems, _getCollections} from '../ReactQuery/useQuery';
+import {
+  _makeCollect,
+  _deleteCollect,
+  _addNewItem,
+  _deleteItem,
+  _addItemToCollect,
+} from '../ReactQuery/useMutation';
 
 // 메인 컨테이너
 const Container = styled.View`
@@ -112,203 +118,83 @@ const Main = ({navigation, route}) => {
   const [collections, setCollections] = useState([]); // 컬렉션 목록
   const [items, setItems] = useState([]); // 아이템 목록
   const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
-  const [itemId, setItemId] = useState(0); // 아이템별 아이디
+  // const [itemId, setItemId] = useState(0); // 아이템별 아이디
   const refChangedColname = useRef(null);
-  const [loading, setLoading] = useState(false); // 로딩 및 로딩낭비 방지
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const [sharedUrl, setSharedUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const lazyItems = [...items];
-  let start = ~~(Math.random() * 900);
-  let list = items.splice(start, 100);
+  const appGroupIdentifier = 'group.app.sendwish.jungle';
 
   // 아이템 추가 자동 렌더링
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        // console.log('App has come to the foreground!');
-      }
-
-      appState.current = nextAppState;
+  const reRender = AppState.addEventListener('change', nextAppState => {
+    appState.current = nextAppState;
+    if (appState.current === 'active') {
       setAppStateVisible(appState.current);
-      // _getItems(nickName);
       refetch();
-      // console.log('AppState', appState.current);
-    });
+    }
+  });
+  useEffect(() => {
+    reRender;
   }, [appState]);
-
-  const appGroupIdentifier = 'group.app.sendwish.jungle';
 
   // Extension ID 공유 스토리지
   const saveUserDataToSharedStorage = async nickName => {
-    try {
-      await SharedGroupPreferences.setItem(
-        'nickNameData',
-        nickName,
-        appGroupIdentifier,
-      );
-      // this.loadUsernameFromSharedStorage()
-    } catch (errorCode) {
-      // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
-      // errorCode 1 = there is no value for that key
-      console.log(errorCode);
-    }
+    await SharedGroupPreferences.setItem(
+      'nickNameData',
+      nickName,
+      appGroupIdentifier,
+    );
   };
 
   saveUserDataToSharedStorage(nickName);
 
   const loadUsernameFromSharedStorage = async () => {
-    try {
-      const value = await SharedGroupPreferences.getItem(
-        'nickNameData',
-        appGroupIdentifier,
-      );
-      // console.log('share check data==', value);
-      // this.setState({username:value.name})
-    } catch (errorCode) {
-      // errorCode 0 = no group name exists. You probably need to setup your Xcode Project properly.
-      // errorCode 1 = there is no value for that key
-      console.log(errorCode);
-    }
+    const value = await SharedGroupPreferences.getItem(
+      'nickNameData',
+      appGroupIdentifier,
+    );
   };
   loadUsernameFromSharedStorage();
 
   // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
-    if (isFocused) console.log('Focused');
     setIsEditing(false);
     setIsCollectionEditing(false);
-    // _getCollections(nickName); // 컬렌션 목록 랜더링
-    // _getItems(nickName); // 아이템 목록 랜더링
   }, [isFocused]);
 
-  // Extension 아이템 자동 추가
-  useEffect(() => {
-    _addItem();
-  }, [sharedUrl]);
-
   // 컬렉션 생성
-  const _madeCollection = async () => {
-    if (collectionName === '') {
-      return Alert.alert('컬렉션 이름을 입력해주세요');
-    }
-    setVisibleModal(false);
-    try {
-      fetch('https://api.sendwish.link:8081/collection', {
-        method: 'POST',
-        headers: {'Content-Type': `application/json`},
-        body: JSON.stringify({
-          nickname: nickName,
-          title: collectionName,
-        }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(setCollectionName(''))
-        .then(() => _getCollections(nickName));
-    } catch (e) {
-      console.log('collection made fail');
-    }
-  };
+  const _makeCollection = useCallback((nickName, collectionName) => {
+    _makeCollect({nickName, collectionName}).then(() => {
+      setVisibleModal(false);
+      setCollectionName('');
+      collectionRefetch();
+    });
+  }, []);
 
-  // 컬렉션 삭제
-  const _deleteCollection = async (collectionId, nickName) => {
-    try {
-      fetch(
-        `https://api.sendwish.link:8081/collection/${nickName}/${collectionId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            nickname: nickName,
-            collectionId: collectionId,
-          }),
-        },
-      )
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(() => _getCollections(nickName));
-    } catch (e) {
-      console.log('delete fail', e);
-    }
-  };
+  //컬렉션 삭제
+  const _deleteCollection = useCallback((collectionId, nickName) => {
+    _deleteCollect({collectionId, nickName}).then(() => {
+      collectionRefetch();
+    });
+  }, []);
 
   // 아이템 개별 오픈 링크
   const _openUrl = useCallback(url => {
     Linking.openURL(url);
   }, []);
 
-  // 아이템 추가 (Extension에서 공유된 URL)
-  const _addItem = async () => {
-    // console.log('addItem start!');
-    if (sharedUrl === '' || sharedUrl === undefined || sharedUrl === null) {
-      return;
-    }
-    try {
-      await fetch('https://api.sendwish.link:8081/item/parsing', {
-        method: 'POST',
-        headers: {'Content-Type': `application/json`},
-        body: JSON.stringify({
-          url: sharedUrl,
-          nickname: nickName,
-        }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        setSharedUrl('');
-        _getItems(nickName);
-        return response.json();
-      });
-    } catch (e) {
-      console.log('send url fail');
-    }
-  };
-
   // 아이템 삭제
-  const _deleteItems = async () => {
-    try {
-      fetch(`https://api.sendwish.link:8081/items`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nickname: nickName,
-          itemIdList: addToCollection,
-        }),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 에러발생`);
-          }
-          return response.json();
-        })
-        .then(() => _getItems(nickName))
-        .then(() => _getCollections(nickName))
-        .then(setAddToCollection([]))
-        .then(setIsEditing(false));
-    } catch (e) {
-      console.log('items delete fail', e);
-    }
-  };
+  const _deleteItems = useCallback((nickName, addToCollection) => {
+    _deleteItem({nickName, addToCollection}).then(() => {
+      refetch();
+      collectionRefetch();
+      setAddToCollection([]);
+      setIsEditing(false);
+    });
+  }, []);
 
   const _pressEditButton = useCallback(() => {
     if (isCollectionEditing) {
@@ -332,7 +218,7 @@ const Main = ({navigation, route}) => {
     }
   });
 
-  const _addItemToList = useCallback((itemId) => {
+  const _addItemToList = useCallback(itemId => {
     if (addToCollection.includes(itemId)) {
       tempArray = addToCollection;
       for (let i = 0; i < tempArray.length; i++) {
@@ -350,49 +236,37 @@ const Main = ({navigation, route}) => {
   });
 
   // 컬렌션에 아이템 추가
-  const _addItemToCollection = async (collectionId, nickName) => {
-    setIsEditing(false);
-    try {
-      fetch('https://api.sendwish.link:8081/item/enrollment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          nickname: nickName,
-          collectionId: collectionId,
-          itemIdList: addToCollection,
-        }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        _getCollections(nickName);
-        addrefetch();
-        return response.json();
-      });
-    } catch (e) {
-      console.log('adding item to collection failed');
-    }
-  };
-
-  const _pressTargetCollection = useCallback((collectionId, collectionName, nickName) => {
-    setIsCollectionEditing(false);
-    // 콜렉션 수정중이 아닐 때,
-    if (!isCollectionEditing) {
-      if (isEditing) {
-        _addItemToCollection(collectionId, nickName);
-      } else {
+  const _addItemToCollection = useCallback(
+    (nickName, collectionId, addToCollection) => {
+      _addItemToCollect({nickName, collectionId, addToCollection}).then(() => {
         setIsEditing(false);
-        navigation.navigate('Collection', {
-          collectionId: collectionId,
-          collectionName: collectionName,
-          nickName: nickName,
-        });
+        collectionRefetch();
+      });
+    },
+    [],
+  );
+
+  const _pressTargetCollection = useCallback(
+    (collectionId, collectionName, nickName) => {
+      setIsCollectionEditing(false);
+      // 콜렉션 수정중이 아닐 때,
+      if (!isCollectionEditing) {
+        if (isEditing) {
+          _addItemToCollection(nickName, collectionId, addToCollection);
+        } else {
+          setIsEditing(false);
+          navigation.navigate('Collection', {
+            collectionId: collectionId,
+            collectionName: collectionName,
+            nickName: nickName,
+          });
+        }
+        // 콜렉션 수정 중일 때,
+      } else {
+        _deleteCollection(collectionId, nickName);
       }
-      // 콜렉션 수정 중일 때,
-    } else {
-      _deleteCollection(collectionId, nickName);
-    }
-  });
+    },
+  );
 
   // 아이템 렌더링
   const {isFetching, isLoading, data, isError, refetch} = useQuery(
@@ -410,12 +284,12 @@ const Main = ({navigation, route}) => {
   }, [data]);
 
   // 컬렉션 렌더링
-  const {data: collection, refetch:addrefetch} = useQuery(
+  const {data: collection, refetch: collectionRefetch} = useQuery(
     ['collection', nickName],
     () => _getCollections(nickName),
     {
       cacheTime: 60 * 1000,
-      staleTime: 0,
+      staleTime: 1000,
       refetchOnWindowFocus: false,
       retry: 0,
     },
@@ -462,14 +336,14 @@ const Main = ({navigation, route}) => {
               onBlur={() => setCollectionName(collectionName)}
               maxLength={10}
               onSubmitEditing={() => {
-                _madeCollection();
+                _makeCollection(nickName, collectionName);
               }}
               placeholder="새 컬렉션 이름"
               returnKeyType="done"
             />
             <Button
               title="새 컬렉션 만들기"
-              onPress={() => _madeCollection()}
+              onPress={() => _makeCollection(nickName, collectionName)}
             />
             <View style={{marginBottom: 20}} />
           </KeyboardAwareScrollView>
@@ -538,7 +412,6 @@ const Main = ({navigation, route}) => {
                         isEditing={isEditing}
                       />
                     ))}
-
                 <Ionicons
                   name="ellipsis-vertical"
                   size={15}
@@ -573,11 +446,9 @@ const Main = ({navigation, route}) => {
             ? theme.strongBackground
             : theme.subBackground,
         }}>
-        {/* <LazyloadScrollView name="lazyLoad"> */}
         <ScrollView scrollEnabled={true}>
           <Column>
             <SpackBetweenRow>
-              {/* <LazyloadView host="LazyLoad" style={{marginBottom: 10}}> */}
               <View style={{marginBottom: 10}}>
                 <Title
                   style={{
@@ -592,13 +463,7 @@ const Main = ({navigation, route}) => {
                   총 {items.length}개의 아이템을 컬렉션에 담아주세요 !
                 </SubTitle>
               </View>
-              {/* </LazyloadView> */}
               <Row>
-                {/* <SearchIcon
-                  style={{
-                    display: isEditing || isCollectionEditing ? 'none' : 'flex',
-                  }}
-                /> */}
                 {/* <FilterIcon /> */}
                 <EditIcon
                   onPress={() => _pressEditButton()}
@@ -608,11 +473,9 @@ const Main = ({navigation, route}) => {
             </SpackBetweenRow>
           </Column>
           <FlexRow>
-            {/* item rendering  */}
-            {lazyItems.error
+            {items.error
               ? null
-              : lazyItems.map((item, i) => (
-                  // <LazyloadView host="LazyLoad" key={i}>
+              : items.map((item, i) => (
                   <ItemBox
                     onLongPress={() => {
                       _pressEditButton();
@@ -643,13 +506,10 @@ const Main = ({navigation, route}) => {
                         : _openUrl(item?.originUrl);
                     }}
                     isEditing={isEditing}
-                    host="LazyLoad"
                   />
-                  // </LazyloadView>
                 ))}
           </FlexRow>
         </ScrollView>
-        {/* </LazyloadScrollView> */}
       </BottomContainer>
 
       <View
@@ -670,7 +530,7 @@ const Main = ({navigation, route}) => {
           buttonStyle={{backgroundColor: theme.tintColorPink}}
           title="삭제하기"
           onPress={() => {
-            _deleteItems();
+            _deleteItems(nickName, addToCollection);
           }}
         />
       </View>

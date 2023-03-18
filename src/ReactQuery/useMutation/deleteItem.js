@@ -1,5 +1,5 @@
-const _deleteItems = async () => {
-  try {
+const _deleteItem = async ({nickName, addToCollection}) => {
+  const deleteItem = await
     fetch(`https://api.sendwish.link:8081/items`, {
       method: 'DELETE',
       headers: {
@@ -10,16 +10,7 @@ const _deleteItems = async () => {
         itemIdList: addToCollection,
       }),
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        return data;
-      });
-  } catch (e) {
-    console.log('items delete fail', e);
-  }
+    return deleteItem.json();
 };
+
+export default _deleteItem;
