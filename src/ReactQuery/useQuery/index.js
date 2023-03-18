@@ -8,7 +8,7 @@ import _getShareCollections from "./getShareCollection";
 import _getFriends from "./getFriends";
 import _getChatList from "./getChatList";
 
-export default {
+export {
     _getItems,
     _getCollections,
     _getCollectionItems,

@@ -1,8 +1,9 @@
-const _addItem = () => {
+const _addNewItem = async () => {
     if (sharedUrl === '' || sharedUrl === undefined || sharedUrl === null) {
-      return;
+      return null;
     }
-    try {
+    console.log('sharedUrl', sharedUrl);
+    const addItem = await
       fetch('https://api.sendwish.link:8081/item/parsing', {
         method: 'POST',
         headers: {'Content-Type': `application/json`},
@@ -10,13 +11,8 @@ const _addItem = () => {
           url: sharedUrl,
           nickname: nickName,
         }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status} 에러발생`);
-        }
-        return response.json();
-      });
-    } catch (e) {
-      console.log(e);
-    }
+      })
+      return addItem.json();
   };
+
+export default _addNewItem;
