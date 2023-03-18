@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useContext} from 'react';
 import {View, ScrollView, Linking, TouchableOpacity, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -27,6 +27,8 @@ import {
 
 import _getShareCollections from '../ReactQuery/useQuery/getShareCollection';
 import _getFriends from '../ReactQuery/useQuery/getFriends';
+
+import { UserContext } from '../../App';
 
 const Container = styled.View`
   flex: 1;
@@ -127,8 +129,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Shared = ({route, navigation}) => {
+  const nick = useContext(UserContext);
+  console.log('nick', nick.nick);
   // Tab navigator route params check
-  const nickName = route.params.params.nickName;
+  const nickName = nick.nick;
+  // const nickName = route.params.params.nickName;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [shareCollections, setShareCollections] = useState([]); // 컬렉션 목록

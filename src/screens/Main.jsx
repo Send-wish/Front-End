@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useContext} from 'react';
 import {View, ScrollView, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -27,6 +27,8 @@ import {
   _deleteItem,
   _addItemToCollect,
 } from '../ReactQuery/useMutation';
+
+import { UserContext } from '../../App';
 
 // 메인 컨테이너
 const Container = styled.View`
@@ -112,7 +114,10 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Main = ({navigation, route}) => {
-  const nickName = route.params.nickName;
+  const nick = useContext(UserContext);
+  // console.log('nick', nick.nick);
+  const nickName = nick.nick;
+  // const nickName = route.params.nickName;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
   const [collections, setCollections] = useState([]); // 컬렉션 목록

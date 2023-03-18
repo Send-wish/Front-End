@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext, memo, useCallback} from 'react';
 
 import {Alert, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
@@ -9,6 +9,8 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {removeWhitespace} from '../utils';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {UserContext} from '../../App';
 
 const Container = styled.View`
   flex: 1;
@@ -59,6 +61,8 @@ const SignIn = ({navigation}) => {
   const refNickName = useRef(null);
   const refPassword = useRef(null);
 
+  const {nick, setNick} = useContext(UserContext);
+
   // 첫 로그인 시 async storage token 저장 + nickName 저장
   const storeData = async (nickName, accessToken) => {
     try{
@@ -79,7 +83,8 @@ const SignIn = ({navigation}) => {
    const getData = async () => {
     try{
       const value = await AsyncStorage.getItem('userdata')
-
+      console.log(JSON.parse(value).nickName,'data check');
+      setNick(JSON.parse(value).nickName);
       if(value !== null){
         navigation.navigate('Navigation',{screen:'Main', params:{nickName: JSON.parse(value).nickName, accessToken: JSON.parse(value).accessToken}})
       }

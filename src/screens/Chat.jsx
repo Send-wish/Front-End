@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   ScrollView,
@@ -24,6 +24,7 @@ import EventSource from 'react-native-sse';
 import {useQuery} from 'react-query';
 import _getFriends from '../ReactQuery/useQuery/getFriends';
 import _getChatList from '../ReactQuery/useQuery/getChatList';
+import { UserContext } from '../../App';
 
 const Item = ({
   item: {chatRoomId, lastMessage, collection, friends},
@@ -183,13 +184,15 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 `;
 
 const Chat = ({route, navigation}) => {
+  const nick = useContext(UserContext);
+  const nickName = nick.nick;
+  // const nickName = route.params.params.nickName;
   let flatListRef;
   const insets = useSafeAreaInsets();
   const [frName, setFrName] = useState('');
   const [friends, setFriends] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
-  const nickName = route.params.params.nickName;
   const [chatRoomList, setChatRoomList] = useState([]);
   const [update, setUpdate] = useState('');
   const [img, setImg] = useState('');

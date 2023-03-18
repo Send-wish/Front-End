@@ -1,5 +1,5 @@
 // Basic React Native App
-import React from 'react';
+import React, {createContext, useState, useMemo} from 'react';
 
 // Screens
 import {
@@ -86,28 +86,34 @@ const Navigation = props => {
   );
 };
 
+export const UserContext = createContext();
+
 const App = () => {
+  const [nick, setNick] = useState('');
+  const nickContext = useMemo(() => ({nick, setNick}), [nick]);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-            initialRouteName="SignIn">
-            <Stack.Screen name="SignIn" component={SignIn} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="Navigation" component={Navigation} />
-            <Stack.Screen name="Collection" component={Collection} />
-            <Stack.Screen
-              name="SharedCollection"
-              component={SharedCollection}
-            />
-            <Stack.Screen name="ChatRoom" component={ChatRoom} />
-            {/* <Stack.Screen name="LiveChat" component={LiveChat} /> */}
-          </Stack.Navigator>
-        </NavigationContainer>
+        <UserContext.Provider value={nickContext}>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
+              initialRouteName="SignIn">
+              <Stack.Screen name="SignIn" component={SignIn} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="Navigation" component={Navigation} />
+              <Stack.Screen name="Collection" component={Collection} />
+              <Stack.Screen
+                name="SharedCollection"
+                component={SharedCollection}
+              />
+              <Stack.Screen name="ChatRoom" component={ChatRoom} />
+              {/* <Stack.Screen name="LiveChat" component={LiveChat} /> */}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </UserContext.Provider>
       </ThemeProvider>
     </QueryClientProvider>
   );
