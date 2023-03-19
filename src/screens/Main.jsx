@@ -18,7 +18,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useIsFocused} from '@react-navigation/native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
-import {useQuery} from 'react-query';
+import {useQuery, useMutation, useQueryClient} from 'react-query';
 import {_getItems, _getCollections} from '../ReactQuery/useQuery';
 import {
   _makeCollect,
@@ -132,6 +132,7 @@ const Main = ({navigation, route}) => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const appGroupIdentifier = 'group.app.sendwish.jungle';
+  const queryClient = useQueryClient();
 
   // 아이템 추가 자동 렌더링
   const reRender = AppState.addEventListener('change', nextAppState => {
@@ -170,14 +171,22 @@ const Main = ({navigation, route}) => {
     setIsCollectionEditing(false);
   }, [isFocused]);
 
-  // 컬렉션 생성
-  const _makeCollection = useCallback((nickName, collectionName) => {
-    _makeCollect({nickName, collectionName}).then(() => {
+  const {mutateAsync: _makeCol} = useMutation(_makeCollect, {
+    onSuccess: () => {
       setVisibleModal(false);
       setCollectionName('');
-      collectionRefetch();
-    });
-  }, []);
+      queryClient.invalidateQueries('collection');
+    },
+  });
+
+  // 컬렉션 생성
+  // const _makeCollection = useCallback((nickName, collectionName) => {
+  //   _makeCollect({nickName, collectionName}).then(() => {
+  //     setVisibleModal(false);
+  //     setCollectionName('');
+  //     collectionRefetch();
+  //   });
+  // }, []);
 
   //컬렉션 삭제
   const _deleteCollection = useCallback((collectionId, nickName) => {
@@ -341,14 +350,14 @@ const Main = ({navigation, route}) => {
               onBlur={() => setCollectionName(collectionName)}
               maxLength={10}
               onSubmitEditing={() => {
-                _makeCollection(nickName, collectionName);
+                _makeCol(nickName, collectionName);
               }}
               placeholder="새 컬렉션 이름"
               returnKeyType="done"
             />
             <Button
               title="새 컬렉션 만들기"
-              onPress={() => _makeCollection(nickName, collectionName)}
+              onPress={() => {_makeCol(nickName, collectionName)}}
             />
             <View style={{marginBottom: 20}} />
           </KeyboardAwareScrollView>
