@@ -277,7 +277,7 @@ const Main = ({navigation, route}) => {
   const {isFetching, isLoading, data, isError, refetch} = useQuery(
     ['data', nickName],
     () => _getItems(nickName),
-    {staleTime: 1000, refetchOnWindowFocus: true, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: true, retry: 0},
   );
 
   useEffect(() => {
@@ -294,7 +294,7 @@ const Main = ({navigation, route}) => {
     () => _getCollections(nickName),
     {
       cacheTime: 60 * 1000,
-      staleTime: 1000,
+      staleTime: 5000,
       refetchOnWindowFocus: false,
       retry: 0,
     },

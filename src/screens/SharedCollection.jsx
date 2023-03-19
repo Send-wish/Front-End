@@ -117,7 +117,7 @@ const SharedCollection = ({route, navigation}) => {
   const {data: shareCollectionItem} = useQuery(
     ['shareCollectionItem', nickName, shareCollectionId],
     () => _getItemsFromShareCollection(nickName, shareCollectionId),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
   );
   console.log('shareCollectionItem', {shareCollectionItem});
 
