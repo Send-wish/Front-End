@@ -222,7 +222,7 @@ const Collection = ({route, navigation}) => {
   const {data: collectionItem} = useQuery(
     ['collectionItem', nickName, collectionId],
     () => _getCollectionItems(nickName, collectionId),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
   );
 
   useEffect(() => {

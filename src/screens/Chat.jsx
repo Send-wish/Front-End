@@ -203,7 +203,7 @@ const Chat = ({route, navigation}) => {
   const {data: queryFriends} = useQuery(
     ['queryFriends', nickName],
     () => _getFriends(nickName),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
   );
   useEffect(() => {
     if (queryFriends) {
@@ -217,7 +217,7 @@ const Chat = ({route, navigation}) => {
   const {data: queryChatList} = useQuery(
     ['queryChatList', nickName],
     () => _getChatList(nickName),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
   );
   useEffect(() => {
     if (queryChatList) {

@@ -165,7 +165,7 @@ const Shared = ({route, navigation}) => {
   const {isLoading, data, isError} = useQuery(
     ['data', nickName],
     () => _getItems(nickName),
-    {staleTime: 1000 ,refetchOnWindowFocus: true, retry: 0},
+    {staleTime: 5000 ,refetchOnWindowFocus: true, retry: 0},
   );
   useEffect(() => {
     if (data) {
@@ -181,7 +181,7 @@ const Shared = ({route, navigation}) => {
     () => _getCollections(nickName),
     {
       cacheTime: 60 * 1000,
-      staleTime: 0,
+      staleTime: 5000,
       refetchOnWindowFocus: false,
       retry: 0,
     },
@@ -199,7 +199,7 @@ const Shared = ({route, navigation}) => {
   const {data: getShareCollection} = useQuery(
     ['getShareCollection', nickName],
     () => _getShareCollections(nickName),
-    {staleTime: 0, refetchOnWindowFocus: false, retry: 0},
+    {staleTime: 5000, refetchOnWindowFocus: false, retry: 0},
   );
 
   useEffect(() => {
