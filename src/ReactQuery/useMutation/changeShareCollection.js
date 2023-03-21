@@ -20,10 +20,7 @@ const _changeShareCollectionName = async () => {
         }
         return response.json();
       })
-      .then(data => {
-        return data;
-      });
   } catch (e) {
-    console.log('change fail', e);
+    console.log(e);
   }
 };

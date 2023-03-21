@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useRef, useCallback, useContext} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from 'react';
 import {View, ScrollView, Linking, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -28,9 +34,8 @@ import {
   _addItemToCollect,
 } from '../ReactQuery/useMutation';
 
-import { UserContext } from '../../App';
+import {UserContext} from '../../App';
 
-// 메인 컨테이너
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.mainBackground};
@@ -38,7 +43,6 @@ const Container = styled.View`
   z-index: 100;
 `;
 
-// 상단 컨테이너
 const UpperContainer = styled.View`
   flex: 1;
   flex-direction: column;
@@ -46,7 +50,6 @@ const UpperContainer = styled.View`
   padding: 0 5px;
 `;
 
-// 하단 컨테이너
 const BottomContainer = styled.View`
   flex: 2.7;
   flex-direction: row;
@@ -56,12 +59,10 @@ const BottomContainer = styled.View`
   border-top-right-radius: 30px;
 `;
 
-// 가로
 const Row = styled.View`
   flex-direction: row;
 `;
 
-// 세로
 const Column = styled.View`
   flex-direction: column;
   margin-left: 10px;
@@ -115,17 +116,16 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 
 const Main = ({navigation, route}) => {
   const nick = useContext(UserContext);
-  // console.log('nick', nick.nick);
   const nickName = nick.nick;
   // const nickName = route.params.nickName;
   const insets = useSafeAreaInsets();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [collections, setCollections] = useState([]); // 컬렉션 목록
-  const [items, setItems] = useState([]); // 아이템 목록
-  const [collectionName, setCollectionName] = useState(''); // 컬렉션 개별 이름
-  // const [itemId, setItemId] = useState(0); // 아이템별 아이디
+  const [collections, setCollections] = useState([]);
+  const [items, setItems] = useState([]);
+  const [collectionName, setCollectionName] = useState('');
+  // const [itemId, setItemId] = useState(0);
   const refChangedColname = useRef(null);
-  const isFocused = useIsFocused(); // 스크린 이동시 포커싱 및 useEffect 실행
+  const isFocused = useIsFocused();
   const [isEditing, setIsEditing] = useState(false);
   const [addToCollection, setAddToCollection] = useState([]);
   const [isCollectionEditing, setIsCollectionEditing] = useState(false);
@@ -165,7 +165,6 @@ const Main = ({navigation, route}) => {
   };
   loadUsernameFromSharedStorage();
 
-  // 화면이동시마다 랜더링 건들지 말것
   useEffect(() => {
     setIsEditing(false);
     setIsCollectionEditing(false);
@@ -176,6 +175,9 @@ const Main = ({navigation, route}) => {
       setVisibleModal(false);
       setCollectionName('');
       queryClient.invalidateQueries('collection');
+    },
+    onError: () => {
+      console.log('error');
     },
   });
 
@@ -188,14 +190,13 @@ const Main = ({navigation, route}) => {
   //   });
   // }, []);
 
-  //컬렉션 삭제
   const _deleteCollection = useCallback((collectionId, nickName) => {
-    _deleteCollect({collectionId, nickName}).then(() => {
-      collectionRefetch();
-    });
+    _deleteCollect({collectionId, nickName})
+      .then(() => {
+        collectionRefetch();
+      })
   }, []);
 
-  // 아이템 개별 오픈 링크
   const _openUrl = useCallback(url => {
     Linking.openURL(url);
   }, []);
@@ -255,10 +256,10 @@ const Main = ({navigation, route}) => {
       _addItemToCollect({nickName, collectionId, addToCollection}).then(() => {
         setIsEditing(false);
         collectionRefetch();
+      }).catch((err) => {
+        console.log(err);
       });
-    },
-    [],
-  );
+    },[]);
 
   const _pressTargetCollection = useCallback(
     (collectionId, collectionName, nickName) => {
@@ -357,7 +358,9 @@ const Main = ({navigation, route}) => {
             />
             <Button
               title="새 컬렉션 만들기"
-              onPress={() => {_makeCol(nickName, collectionName)}}
+              onPress={() => {
+                _makeCol(nickName, collectionName);
+              }}
             />
             <View style={{marginBottom: 20}} />
           </KeyboardAwareScrollView>
