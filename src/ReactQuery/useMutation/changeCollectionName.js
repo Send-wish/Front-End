@@ -20,9 +20,6 @@ const _changeCollectionName = async () => {
         }
         return response.json();
       })
-      .then(data => {
-        return data;
-      });
   } catch (e) {
     console.log(e);
   }

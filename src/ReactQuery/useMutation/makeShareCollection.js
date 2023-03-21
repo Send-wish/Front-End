@@ -16,15 +16,8 @@ const _madeShareCollection = async () => {
         }),
       })
         .then(response => {
-          if (!response.ok) {
-            throw new Error(`${response.status} 공유 컬렉션 생성 에러발생`);
-          } else {
             return response.json();
-          }
-        })
-        .then(data => {
-          return data;
-        })
+          })
     } catch (e) {
       console.log(e);
     }

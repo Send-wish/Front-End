@@ -17,11 +17,7 @@ const _deleteShareCollection = async (shareCollectionId, nickName) => {
         if (!response.ok) {
           throw new Error(`${response.status} 에러발생`);
         }
-        return;
       })
-      .then(data => {
-        return data;
-      });
   } catch (e) {
     console.log('delete fail', e);
   }

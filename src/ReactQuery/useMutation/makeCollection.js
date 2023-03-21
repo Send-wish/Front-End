@@ -12,6 +12,6 @@ const _makeCollect = async ({nickName, collectionName}) => {
       }),
     })
     return makeCollection.json();
-  };
+};
 
 export default _makeCollect;
